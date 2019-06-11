@@ -1,8 +1,8 @@
 
 {
-    var generateShape = shapes3dToolbox.spongeGenerator;
+    var generateShape = shapes3dToolbox.flakeGenerator;
     var illo = undefined; // pointer to the main object (for refreshing)
-    var list_levels = ['1', '2', '3'];
+    var list_levels = ['1', '2', '3', '4'];
     var level_value = list_levels[0];
     var isSpinning = true;
 

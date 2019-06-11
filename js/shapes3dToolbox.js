@@ -764,22 +764,24 @@ var shapes3dToolbox = (function () {
 
     /**
      * Menger Sponge Fractal Generator
+     * Adaptation of an algorithm of Frido VerWeij : https://library.fridoverweij.com
      * @param config.x
      * @param config.y
      * @param config.z
      * @param config.r
      * @param config.level
+     * @param config.maxLevel
      * @param config.ref  (zdog object master)
      */
     function spongeGenerator(config) {
-        var x, y, z, r, level, objmaster;
+        var x, y, z, r, level, objmaster, maxLevel;
         x = config.x;
         y = config.y;
         z = config.z;
         r = config.r;
-        objmaster = config.ref;
-        var maxLevel = 2;
         level = config.level;
+        maxLevel = config.maxLevel || 2;
+        objmaster = config.ref;
         if (level > 0 && level <= maxLevel && level <= 3) {
             let newR = r/3;
             let pos = [];
@@ -793,10 +795,6 @@ var shapes3dToolbox = (function () {
                             let t = pos.length;
                             pos[t] = { x:x+i*newR, y:y+j*newR, z:z+k*newR };
                             if (level === maxLevel) {
-                                //pjs.pushMatrix();
-                                //pjs.translate(pos[t].x, pos[t].y, pos[t].z);
-                                //pjs.box(newR, newR, newR);
-                                //pjs.popMatrix();
                                 new Zdog.Box({
                                     addTo: objmaster,
                                     width: newR,
@@ -810,7 +808,6 @@ var shapes3dToolbox = (function () {
                                     topFace: '#ED0',
                                     bottomFace: '#636',
                                 });
-
                             }
                         }
                     }
@@ -819,9 +816,69 @@ var shapes3dToolbox = (function () {
             // recursion
             let nextLevel = level + 1;
             for (let t=0, tmax=pos.length; t < tmax; t++) {
-                spongeGenerator({x:pos[t].x, y:pos[t].y, z:pos[t].z, r:newR, level:nextLevel, ref: objmaster});
+                spongeGenerator({x:pos[t].x, y:pos[t].y, z:pos[t].z, r:newR, level:nextLevel, maxLevel: maxLevel, ref: objmaster});
             }
         }
+    }
+
+    /**
+     * Menger Flake Fractal Generator
+     * Adaptation of an algorithm of Frido VerWeij : https://library.fridoverweij.com
+     * @param config.x
+     * @param config.y
+     * @param config.z
+     * @param config.r
+     * @param config.level
+     * @param config.maxLevel
+     * @param config.ref  (zdog object master)
+     */
+    function flakeGenerator(config) {
+        var x, y, z, r, level, objmaster, maxLevel;
+        x = config.x;
+        y = config.y;
+        z = config.z;
+        r = config.r;
+        level = config.level;
+        maxLevel = config.maxLevel || 3;
+        objmaster = config.ref;
+
+    	if (level > 0 && level <= maxLevel && level <= 4) {
+    		let newR = r/3;
+    		let pos = [];
+    		for (let i = -1; i < 2; i++) {
+    			for (let j = -1; j < 2; j++) {
+    				for (let k = -1; k < 2; k++) {
+    					// Of the mid boxes always at least 2 coordinates are 0. Thus for those not to be drawn boxes: sum <= 1.
+    					// Inspired by: The Coding Train: Coding Challenge #2: Menger Sponge Fractal, https://youtu.be/LG8ZK-rRkXo
+    					let sum = Math.abs(i) + Math.abs(j)+ Math.abs(k);
+    					if (sum <= 1) {
+    						let t = pos.length;
+    						pos[t] = { x:x+i*newR, y:y+j*newR, z:z+k*newR };
+    						if (level === maxLevel) {
+                                new Zdog.Box({
+                                    addTo: objmaster,
+                                    width: newR,
+                                    height: newR,
+                                    depth: newR,
+                                    translate: {x:pos[t].x, y:pos[t].y, z:pos[t].z},
+                                    stroke: false,
+                                    color: '#C25', // default face color
+                                    leftFace: '#EA0',
+                                    rightFace: '#E62',
+                                    topFace: '#ED0',
+                                    bottomFace: '#636',
+                                });
+    						}
+    					}
+    				}
+    			}
+    		}
+    		// recursion
+    		var nextLevel = level + 1;
+    		for (let t=0, tmax=pos.length; t < tmax; t++) {
+    			flakeGenerator({x:pos[t].x, y:pos[t].y, z:pos[t].z, r:newR, level:nextLevel, maxLevel:maxLevel, ref: objmaster});
+    		}
+    	}
     }
 
     // public functions and constants (items not declared here are private)
@@ -835,6 +892,7 @@ var shapes3dToolbox = (function () {
         generateRadialGradientBitmap: generateRadialGradientBitmap,
         import3dObj: import3dObj,
         getGeneratorsList: getGeneratorsList,
-        spongeGenerator: spongeGenerator
+        spongeGenerator: spongeGenerator,
+        flakeGenerator: flakeGenerator
       };
 })();
