@@ -9,12 +9,37 @@
                         'magnolia', 'shuttle', 'skyscraper',
                         'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus'];
 
-    var shape3d = shapes3dToolbox.import3dObjSync ({
-        url: "./assets/"+list_shapes[0]+".obj.txt",
-        scaleTo: 200,
-        reorder: false,
-        center: true
-    });
+    var isSpinning = true;
+    var illo, mainshape;
+
+    function start() {
+        shapes3dToolbox.import3dObjAsync ({
+            url: "./assets/"+list_shapes[0]+".obj.txt",
+            scaleTo: 200,
+            reorder: false,
+            center: true
+        }, function(shape3d) {
+            illo = new Zdog.Illustration({
+                element: '.zdog-canvas',
+                dragRotate: true,
+                // pause spinning while dragging
+                onDragStart: () => isSpinning = false,
+                onDragEnd: () => isSpinning = true
+            });
+
+            mainshape = new Zdog.Shape({
+                addTo: illo,
+                path: generatePath(shape3d),
+                translate: { z: 10 },
+                color: default_color,
+                stroke: stroke_value,
+                closed: false,
+                fill: fill_value,
+            });
+
+            animate();
+        });
+    }
 
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
@@ -43,19 +68,18 @@
         objselector.addEventListener('change', function(evt) {
           evt.preventDefault();
           this.blur();
-            let newshape = shapes3dToolbox.import3dObjSync ({
+            let newshape = shapes3dToolbox.import3dObjAsync ({
                 url: "./assets/"+this.value+".obj.txt",
                 scaleTo: 200,
                 reorder: false,
                 center: true
-            });
-            setTimeout(function(){
+            }, function(newshape){
                 stroke_value = 1;
                 mainshape.stroke = stroke_value;
                 mainshape.path = generatePath(newshape);
                 mainshape.updatePath();
                 resetScale();
-            }, 1000);
+            });
         }, false);
     } else {
         console.warn('obj selector not found');
@@ -84,26 +108,6 @@
         });
         return path;
     }
-
-    var isSpinning = true;
-
-    var illo = new Zdog.Illustration({
-        element: '.zdog-canvas',
-        dragRotate: true,
-        // pause spinning while dragging
-        onDragStart: () => isSpinning = false,
-        onDragEnd: () => isSpinning = true
-    });
-
-    var mainshape = new Zdog.Shape({
-        addTo: illo,
-        path: generatePath(shape3d),
-        translate: { z: 10 },
-        color: default_color,
-        stroke: stroke_value,
-        closed: false,
-        fill: fill_value,
-    });
 
     function draw (){
         if (isSpinning) {
@@ -221,7 +225,7 @@
 
     document.addEventListener("DOMContentLoaded", function(event) {
         console.log("DOM fully loaded and parsed");
-        animate();
+        start();
     });
 
 }

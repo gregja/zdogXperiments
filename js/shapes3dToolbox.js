@@ -615,7 +615,7 @@ var shapes3dToolbox = (function () {
      * synchronuous loading (not the best practice, but easier for an introduction to coding)
      * @param config.url
      */
-    var getOBJFile = function (config) {
+    function getOBJFileSync(config) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", config.url, false);
         xhr.send(null);
@@ -625,13 +625,14 @@ var shapes3dToolbox = (function () {
         } else {
             return xhr.responseText.trim();
         }
-    };
+    }
 
     /**
-     * Import 3D obj files
+     * Import 3D obj files (synchronuous AJAX loading)
+     * see the function import3dObjAsync for a better practice (with asynchronuous loading)
      * @param config.scale
      */
-    function import3dObj(config) {
+    function import3dObjSync(config) {
         var vertex = [],
             faces = [],
             uvs = [];
@@ -639,9 +640,8 @@ var shapes3dToolbox = (function () {
         var scale = config.scale || 1;
         var minx, miny, minz, maxx, maxy, maxz;
         minx = miny = minz = maxx = maxy = maxz = 0;
-        var points, polygons, edges;
 
-        var data = getOBJFile(config);
+        var data = getOBJFileSync(config);
         if (data == false) {
             return;
         }
@@ -748,6 +748,132 @@ var shapes3dToolbox = (function () {
             points: vertex,
             polygons: faces
         }
+    }
+
+    /**
+     * Import 3D obj files (asynchronuous AJAX loading)
+     * see the function import3dObjAsync for a better practice (with asynchronuous loading)
+     * @param config ({url:'http...', scaleTo:200, reorder:false, center:true})
+     * @param fnc (callback for drawing the object)
+     */
+    function import3dObjAsync(config, fnc) {
+
+        fetch(config.url)
+          .then(function(response) { return response.text(); })
+          .then(function(data) {
+
+              var vertex = [],
+                  faces = [],
+                  uvs = [];
+              var re = /\s+/;
+              var scale = config.scale || 1;
+              var minx, miny, minz, maxx, maxy, maxz;
+              minx = miny = minz = maxx = maxy = maxz = 0;
+
+              var lines = data.split("\n");
+
+              for (let i = 0, imax=lines.length; i < imax; i++) {
+                  let line = lines[i].split(re);
+                  switch (line[0]) {
+                      case "v":
+                          var x = parseFloat(line[1]) * scale,
+                              y = parseFloat(line[2]) * scale,
+                              z = parseFloat(line[3]) * scale;
+                          vertex.push({
+                              x: x,
+                              y: y,
+                              z: z
+                          });
+                          if (x < minx) {
+                              minx = x
+                          } else {
+                              if (x > maxx) {
+                                  maxx = x
+                              }
+                          }
+                          if (y < miny) {
+                              miny = y
+                          } else {
+                              if (y > maxy) {
+                                  maxy = y
+                              }
+                          }
+                          if (z < minz) {
+                              minz = z
+                          } else {
+                              if (z > maxz) {
+                                  maxz = z
+                              }
+                          }
+                          break;
+                      case "vt":
+                          var u = parseFloat(line[1]),
+                              v = parseFloat(line[2]);
+                          uvs.push([u, v]);
+                          break;
+                      case "f":
+                          line.splice(0, 1);
+                          var vertices = [],
+                              uvcoords = [];
+                          for (var j = 0, vindex, vps; j < line.length; j++) {
+                              vindex = line[config.reorder ? line.length - j - 1 : j];
+                              if (vindex.length !== 0) {
+                                  vps = vindex.split("/");
+                                  vertices.push(parseInt(vps[0]) - 1);
+                                  if (vps.length > 1 && vindex.indexOf("//") === -1) {
+                                      var uv = parseInt(vps[1]) - 1;
+                                      if (uvs.length > uv) {
+                                          uvcoords.push(uvs[uv][0], uvs[uv][1])
+                                      }
+                                  }
+                              }
+                          }
+                          faces.push(vertices);
+                          if (uvcoords.length !== 0) {
+                              poly.uvs = uvcoords
+                          }
+                          break
+                  }
+              }
+              if (config.center) {
+                  var cdispx = (minx + maxx) / 2,
+                      cdispy = (miny + maxy) / 2,
+                      cdispz = (minz + maxz) / 2;
+                  for (var i = 0; i < vertex.length; i++) {
+                      vertex[i].x -= cdispx;
+                      vertex[i].y -= cdispy;
+                      vertex[i].z -= cdispz
+                  }
+              }
+              if (config.scaleTo) {
+                  var sizex = maxx - minx,
+                      sizey = maxy - miny,
+                      sizez = maxz - minz;
+                  var scalefactor = 0;
+                  if (sizey > sizex) {
+                      if (sizez > sizey) {
+                          scalefactor = 1 / (sizez / config.scaleTo)
+                      } else {
+                          scalefactor = 1 / (sizey / config.scaleTo)
+                      }
+                  } else {
+                      if (sizez > sizex) {
+                          scalefactor = 1 / (sizez / config.scaleTo)
+                      } else {
+                          scalefactor = 1 / (sizex / config.scaleTo)
+                      }
+                  }
+                  for (let i = 0, imax=vertex.length; i < imax; i++) {
+                      vertex[i].x *= scalefactor;
+                      vertex[i].y *= scalefactor;
+                      vertex[i].z *= scalefactor
+                  }
+              }
+              fnc({
+                  points: vertex,
+                  polygons: faces
+              });
+          })
     }
 
     function getGeneratorsList() {
@@ -890,7 +1016,8 @@ var shapes3dToolbox = (function () {
         generateCylinder: generateCylinder,
         generateCuboid: generateCuboid,
         generateRadialGradientBitmap: generateRadialGradientBitmap,
-        import3dObj: import3dObj,
+        import3dObjSync: import3dObjSync,
+        import3dObjAsync: import3dObjAsync,
         getGeneratorsList: getGeneratorsList,
         spongeGenerator: spongeGenerator,
         flakeGenerator: flakeGenerator
