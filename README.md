@@ -16,9 +16,11 @@ The content of the project :
 
 - 3D shapes : shapes generated programmatically => cube, sphere, icosahedron, pyramid, cylinder and cuboïd
 
-- Load wavefront obj files (*) : cube, dodecahedron, icosahedron, and a lot of other objects, found on this site : http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html
+- Load wavefront obj files V1 (*) : cube, dodecahedron, icosahedron, and a lot of other objects, found on this site : http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html
 
-- Load wavefront obj files V2 (*) : same than previous, with asynchronuous loading of the 3D objects (better practice using the Fetch API)
+- Load wavefront obj files V2 (*) : V1 with asynchronuous loading of the 3D objects (better practice using the Fetch API)
+
+- Load wavefront obj files V3 (*) : V2 plus a new "paint" mode (the same used for "3D Cube" and "3D shapes")
 
 - Menger Sponge & Flake generators : adaptation of algorithms of Frido Verweij (https://library.fridoverweij.com/codelab/menger_fractals/)
 

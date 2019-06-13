@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>3D Object with Zdog</title>
+		<style>
+			html { height: 100%; }
+			body {
+			  min-height: 100%;
+			  margin: 0;
+		  	background: white;
+			  font-family: sans-serif;
+			  text-align: center;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+			canvas {
+			  display: block;
+			  margin: 0px auto 20px;
+			  cursor: move;
+			}
+			p {
+				font-size: 12px;
+			}
+		</style>
+	</head>
+ <body>
+	 <div class="container">
+	   <canvas class="zdog-canvas" width="800" height="600"></canvas>
+	   <p>Click &amp; drag to rotate</p>
+		 <input id="colorpicker" type="color">
+		 <select id="objselector"></select>
+		 <select id="fill_switcher"></select>
+		 <p>Up & Down arrow keys : same zoom+/zoom- on the X, Y and Z axes<br>
+			 Left & Right arrow keys : zoom+/zoom- on Y axes only<br>
+       Escape key : reset scale to 1 on the X, Y and Z axes<br>
+			 Others 3D objects on <a href="http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html" target="_blank">this site</a>
+		 </p>
+	 </div>
+	<script src="js/zdog.dist.js"></script>
+	<script src="js/chroma.min.js"></script>
+	<script src="js/shapes3dToolbox.js"></script>
+	<script src="zdog_obj_v3.js"></script>
+</body>
+</html>

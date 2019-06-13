@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Zdog Wspin</title>
+		<style>
+			html,
+			body {
+			  height: 100%;
+			}
+			body {
+			  align-items: center;
+			  background-color: #0001;
+			  display: flex;
+			  overflow: hidden;
+			  justify-content: center;
+			}
+			canvas {
+			  background-color: #000;
+			  box-shadow: 0 0 200px 5px ;
+			  cursor: grab;
+			  display: block;
+			  border-radius: 15px;
+			}
+			canvas:active {
+			  cursor: grabbing;
+			}
+		</style>
+		<script src="calc_toolbox.js"></script>
+	</head>
+ <body>
+	 <!-- https://codepen.io/aliabdulhamid/pen/mZyEgw />-->
+	 <div class="container">
+	   <canvas id="logo" width="500" height="500"></canvas>
+	 </div>
+	<script src="../js/zdog.dist.js"></script>
+	<script src="zdog_bigrings.js"></script>
+</body>
+</html>
