@@ -31,23 +31,22 @@
 
     var objselector = document.getElementById("objselector");
     if (objselector) {
-      objselector.setAttribute("value", "0");
+      objselector.setAttribute("value", "p0");
         list_shapes.forEach((item, idx) => {
           console.log(item)
             let option = document.createElement('option');
-            option.setAttribute('value', String(idx));
+            option.setAttribute('value', 'p' + String(idx));
             option.innerHTML = item.name;
             objselector.append(option);
             if (idx == 0) {
               option.setAttribute("selected", "selected");
             }
         });
-        objselector.value = list_shapes[0];
         objselector.blur();
         objselector.addEventListener('change', function(evt) {
           evt.preventDefault();
           this.blur();
-          var current_id = Number(this.value);
+          var current_id = Number(String(this.value).replace('p', ''));
           generateShape = shapes3dToolbox[list_shapes[current_id].fn];
           shape_params = list_shapes[current_id].default;
           if (draw_mode_default == 'Wireframe') {
