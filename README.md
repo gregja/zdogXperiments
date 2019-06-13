@@ -31,6 +31,9 @@ The content of the project :
 
 ------------------
 
+The example "3D shapes" is visible on Codepen :
+https://codepen.io/gregja/pen/BgodWw
+
 Link to this github repository :
 https://github.com/gregja/zdogXperiments
 
