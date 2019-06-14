@@ -26,6 +26,7 @@ The content of the project :
 
 - Tunnel 3D : shape generated using an algorithm of Niklas Knaack, found on this pen : https://codepen.io/NiklasKnaack/pen/WyWqja
 
+- 8 cubes linked
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
 
@@ -33,6 +34,9 @@ The content of the project :
 
 The example "3D shapes" is visible on Codepen :
 https://codepen.io/gregja/pen/BgodWw
+
+The example "8 cubes linked" is visible on Codepen :
+https://codepen.io/gregja/pen/rEVNvQ
 
 Link to this github repository :
 https://github.com/gregja/zdogXperiments
