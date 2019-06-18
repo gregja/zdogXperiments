@@ -4,7 +4,6 @@
 let illo = new Zdog.Illustration({
   element: '.zdog-canvas',
   dragRotate: true,
-  scale: {x:2, y:2, z:2}
 });
 
 var side = 40;

@@ -119,14 +119,16 @@
 
     var isSpinning = true;
 
+    illo = new Zdog.Illustration({
+        element: '.zdog-canvas',
+        dragRotate: true,
+        // pause spinning while dragging
+        onDragStart: () => isSpinning = false,
+        onDragEnd: () => isSpinning = true
+    });
+
     function generateGraph() {
-        illo = new Zdog.Illustration({
-            element: '.zdog-canvas',
-            dragRotate: true,
-            // pause spinning while dragging
-            onDragStart: () => isSpinning = false,
-            onDragEnd: () => isSpinning = true
-        });
+        illo.children = []; // drop all children before regeneration
 
         if (draw_mode_default == 'Wireframe') {
             mainshape = new Zdog.Shape({

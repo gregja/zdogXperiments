@@ -12,6 +12,14 @@
     var isSpinning = true;
     var illo, mainshape;
 
+    illo = new Zdog.Illustration({
+        element: '.zdog-canvas',
+        dragRotate: true,
+        // pause spinning while dragging
+        onDragStart: () => isSpinning = false,
+        onDragEnd: () => isSpinning = true
+    });
+
     function start() {
         shapes3dToolbox.import3dObjAsync ({
             url: "./assets/"+list_shapes[0]+".obj.txt",
@@ -19,13 +27,7 @@
             reorder: false,
             center: true
         }, function(shape3d) {
-            illo = new Zdog.Illustration({
-                element: '.zdog-canvas',
-                dragRotate: true,
-                // pause spinning while dragging
-                onDragStart: () => isSpinning = false,
-                onDragEnd: () => isSpinning = true
-            });
+            illo.children = []; // drop all children before regeneration
 
             mainshape = new Zdog.Shape({
                 addTo: illo,

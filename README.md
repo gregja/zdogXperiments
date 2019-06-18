@@ -28,6 +28,8 @@ The content of the project :
 
 - 8 cubes linked
 
+- Parametric surfaces (Ellipsoid, Sphere, Torus, Hyperboloid)
+
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
 
 ------------------

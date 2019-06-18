@@ -2,7 +2,7 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
-		<title>Tunnel 3D with Zdog</title>
+		<title>Zdog - parametric surfaces</title>
 		<style>
 			html { height: 100%; }
 			body {
@@ -25,13 +25,15 @@
 	</head>
  <body>
 	 <div class="container">
-	   <canvas class="zdog-canvas" width="800" height="600"></canvas>
-		 <input id="colorpicker" type="color">
-		 <p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
+		 <h2>SURFACES OF PARAMETRIC EQUATIONS</h2>
+	   <canvas class="zdog-canvas" width="1024" height="800"></canvas>
+
+		 <p>Click &amp; drag to rotate</p>
 
 	 </div>
+  <script src="js/dat.gui.min.js"></script>
 	<script src="js/zdog.dist.js"></script>
-	<script src="jsdatas/zdog_tunnel_data3.js"></script>
-	<script src="zdog_tunnel.js"></script>
+	<script src="js/surf_param.js"></script>
+	<script src="zdog_surf_param.js"></script>
 </body>
 </html>

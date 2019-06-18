@@ -41,6 +41,14 @@
         });
     }
 
+    illo = new Zdog.Illustration({
+        element: '.zdog-canvas',
+        dragRotate: true,
+        // pause spinning while dragging
+        onDragStart: () => isSpinning = false,
+        onDragEnd: () => isSpinning = true
+    });
+
     function start() {
         shapes3dToolbox.import3dObjAsync ({
             url: "./assets/"+list_shapes[0]+".obj.txt",
@@ -48,13 +56,7 @@
             reorder: false,
             center: true
         }, function(shape3d) {
-            illo = new Zdog.Illustration({
-                element: '.zdog-canvas',
-                dragRotate: true,
-                // pause spinning while dragging
-                onDragStart: () => isSpinning = false,
-                onDragEnd: () => isSpinning = true
-            });
+            illo.children = []; // drop all children before regeneration
             if (draw_mode_default == 'Paint') {
                 genShape2(illo, shape3d);
             } else {
@@ -93,13 +95,7 @@
             reorder: false,
             center: true
         }, function(newshape){
-            illo = new Zdog.Illustration({
-                element: '.zdog-canvas',
-                dragRotate: true,
-                // pause spinning while dragging
-                onDragStart: () => isSpinning = false,
-                onDragEnd: () => isSpinning = true
-            });
+            illo.children = []; // drop all children before regeneration
             if (draw_mode_default == 'Paint') {
                 genShape2(illo, newshape);
             } else {

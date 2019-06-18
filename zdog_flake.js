@@ -27,14 +27,16 @@
         console.warn('level selector not found');
     }
 
+    illo = new Zdog.Illustration({
+        element: '.zdog-canvas',
+        dragRotate: true,
+        // pause spinning while dragging
+        onDragStart: () => isSpinning = false,
+        onDragEnd: () => isSpinning = true
+    });
+
     function generateGraph() {
-        illo = new Zdog.Illustration({
-            element: '.zdog-canvas',
-            dragRotate: true,
-            // pause spinning while dragging
-            onDragStart: () => isSpinning = false,
-            onDragEnd: () => isSpinning = true
-        });
+        illo.children = []; // drop all children before regeneration
 
         var shape_params = {x:0, y:0, z:0, r:250, level:1, ref:illo, maxLevel: Number(level_value)};
         generateShape(shape_params);
