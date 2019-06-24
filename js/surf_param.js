@@ -14,20 +14,26 @@
 *
 *******************************************************/
 
-var parametricSurfaces = (function () {
+var parametricalSurfaces = (function () {
     "use strict";
 
     const cos = Math.cos;
     const sin = Math.sin;
     const PI = Math.PI;
+    const tanh = Math.tanh;
+    const cosh = Math.cosh;
+    const sinh = Math.sinh;
 
     var current_surface_type = 0;
     var current_surface_name = '';
+
+    const DEFAULT_SCALE = 50;
 
     var A, B, C;
     var FX = (u, v) => false;
     var FY = (u, v) => false;
     var FZ = (u, v) => false;
+    var SCALE = DEFAULT_SCALE;
 
     var last_point = 0;
 
@@ -41,29 +47,77 @@ var parametricSurfaces = (function () {
         fx: (u, v)=>A*cos(u)*cos(v),
         fy: (u, v)=>B*cos(u)*sin(v),
         fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE
     });
     surface_types.push({
         id: 1,
-        name: 'Sphere',
+        name: 'Sphere 1',
         params: {A:4.0, B:4.0, C:4.5},
         u: {begin:-PI/2, end:PI/2, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
         fx: (u, v)=>A*cos(u)*cos(v),
         fy: (u, v)=>B*cos(u)*sin(v),
         fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE
     });
     surface_types.push({
         id: 2,
-        name: 'Torus',
+        name: 'Sphere 2 (truncated)',
+        params: {A:4.0, B:4.0, C:4.5},
+        u: {begin:-PI/2, end:1, dist:0.2},
+        v: {begin:-PI, end:1, dist:0.2},
+        fx: (u, v)=>A*cos(u)*cos(v),
+        fy: (u, v)=>B*cos(u)*sin(v),
+        fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE
+    });
+    surface_types.push({
+        id: 3,
+        name: 'Sphere 3 (truncated)',
+        params: {A:4.0, B:4.0, C:4.5},
+        u: {begin:-PI/3, end:0, dist:0.2},
+        v: {begin:-PI, end:0, dist:0.2},
+        fx: (u, v)=>A*cos(u)*cos(v),
+        fy: (u, v)=>B*cos(u)*sin(v),
+        fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 4,
+        name: 'Torus 1',
+        params: {A:6.0, B:3.0, C:3.0},
+        u: {begin:-PI, end:PI, dist:0.4},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=>(A+B*cos(u))*cos(v),
+        fy: (u, v)=>(A+B*cos(u))*sin(v),
+        fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE / 2
+    });
+    surface_types.push({
+        id: 5,
+        name: 'Torus 2 (tire)',
         params: {A:6.0, B:3.0, C:3.0},
         u: {begin:-PI/2, end:PI/2, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
         fx: (u, v)=>(A+B*cos(u))*cos(v),
         fy: (u, v)=>(A+B*cos(u))*sin(v),
         fz: (u, v)=>C*sin(u),
+        scale: DEFAULT_SCALE / 2
     });
     surface_types.push({
-        id: 3,
+        id: 6,
+        name: 'Torus 3 (flattened)',
+        params: {A:6.0, B:3.0, C:3.0},
+        u: {begin:-PI, end:PI, dist:0.4},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=>(A+B*cos(u))*cos(v),
+        fy: (u, v)=>(A+B*cos(u))*sin(v),
+        fz: (u, v)=>B*sin(v),
+        scale: DEFAULT_SCALE / 2
+    });
+    surface_types.push({
+        id: 7,
         name: 'Hyperboloid',
         params: {A:1.0, B:1.0, C:1.0},
         u: {begin:-PI/2, end:PI/2, dist:0.2},
@@ -71,6 +125,78 @@ var parametricSurfaces = (function () {
         fx: (u, v)=>u,
         fy: (u, v)=>v,
         fz: (u, v)=>u*u-v*v,
+        scale: DEFAULT_SCALE
+    });
+    surface_types.push({
+        id: 8,
+        name: 'Cone',
+        params: {A:1.0, B:1.0, C:1.0},
+        u: {begin:-1, end:2.6, dist:0.2},
+        v: {begin:-2, end:0, dist:0.2},
+        fx: (u, v)=> v * cos(u) * sin(PI/6),
+        fy: (u, v)=> v * sin(u) * sin(PI/6),
+        fz: (u, v)=> v * cos(PI/6),
+        scale: DEFAULT_SCALE * 4
+    });
+
+    surface_types.push({
+        id: 9,
+        name: 'Bi-horn',
+        params: {A:1.0, B:1.0, C:1.0},
+        u: {begin:-PI, end:PI, dist:0.4},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=> (2 - cos(v)) * cos(u),
+        fy: (u, v)=> (2 - sin(v)) * cos(u),
+        fz: (u, v)=> sin(u),
+        scale: DEFAULT_SCALE * 1.5
+    });
+
+    surface_types.push({
+        id: 10,
+        name: 'Pseudo-sphere 1',
+        params: {A:4.0, B:4.0, C:4.5},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-3, end:3, dist:0.2},
+        fx: (u, v)=> cos(u) / cosh(v),
+        fy: (u, v)=> sin(u) / cosh(v),
+        fz: (u, v)=> v - tanh(v),
+        scale: DEFAULT_SCALE * 3
+    });
+
+    surface_types.push({
+        id: 11,
+        name: 'Pseudo-sphere 2 (half)',
+        params: {A:4.0, B:4.0, C:4.5},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:0, end:4, dist:0.2},
+        fx: (u, v)=> cos(u) / cosh(v),
+        fy: (u, v)=> sin(u) / cosh(v),
+        fz: (u, v)=> v - tanh(v),
+        scale: DEFAULT_SCALE * 3
+    });
+
+    surface_types.push({
+        id: 12,
+        name: 'Axial (Hélicoïde)',
+        params: {A:PI/2, B:4.0, C:4.5},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=> cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
+        fy: (u, v)=> cos(A) * sin(v) * cosh(u) - sin(A) * cos(v) * sinh(u),
+        fz: (u, v)=> cos(A) * u + sin(A) * v,
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 13,
+        name: 'Catenoïd',
+        params: {A:0, B:4.0, C:4.5},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=> cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
+        fy: (u, v)=> cos(A) * sin(v) * cosh(u) - sin(A) * cos(v) * sinh(u),
+        fz: (u, v)=> cos(A) * u + sin(A) * v,
+        scale: DEFAULT_SCALE / 2
     });
 
     function setSurface(shape_name) {
@@ -85,17 +211,20 @@ var parametricSurfaces = (function () {
         }
         if (current_type != -1) {
             let surface = surface_types[current_type];
+            current_surface_type = current_type;
+            console.log(current_surface_type);
             current_surface_name = surface.name;
             A = surface.params.A;
             B = surface.params.B;
             C = surface.params.C;
-
+            SCALE = surface.scale;
             FX = surface.fx;
             FY = surface.fy;
             FZ = surface.fz;
         } else {
             console.warn(`surface ID (${current_type}) not found - ignored`);
         }
+        return getInfos();
     }
 
     function getInfos() {
@@ -107,7 +236,8 @@ var parametricSurfaces = (function () {
             fz: FZ.toString(),
             A: A,
             B: B,
-            C: C
+            C: C,
+            scale: SCALE
         }
     }
 
@@ -122,8 +252,9 @@ var parametricSurfaces = (function () {
 
     setSurface(surface_types[current_surface_type].name);
 
-    function courbesEnU() {
+    function curvesInU() {
         let surface = surface_types[current_surface_type];
+        console.log(surface);
         points = [];
         polys  = [];
         curpoly = -1;
@@ -152,7 +283,7 @@ var parametricSurfaces = (function () {
         }
     }
 
-    function courbesEnV() {
+    function curvesInV() {
         let surface = surface_types[current_surface_type];
         points = [];
         polys  = [];
@@ -202,8 +333,8 @@ var parametricSurfaces = (function () {
 
     // Declare here public functions and constants (the items not declared here are private)
     return {
-        courbesEnU: courbesEnU,
-        courbesEnV: courbesEnV,
+        curvesInU: curvesInU,
+        curvesInV: curvesInV,
         getInfos: getInfos,
         getList: getList,
         setSurface: setSurface

@@ -1,22 +1,17 @@
-/*
-   parametric surfaces
-*/
+
 {
     "use strict";
-    var init_scale = 50;
-    var surface_listing = parametricSurfaces.getList();
+
+    var surface_listing = parametricalSurfaces.getList();
     var settings = {
-        default_colorU: "#ff0000",
+    	default_colorU: "#ff0000",
         default_colorV: "#336699",
         draw_graphU: true,
         draw_graphV: true,
-        stroke_value: 2,
-        isSpinning: true,
-        speed: 0.003,
-        init_scale: init_scale,
-        scaleX: init_scale,
-        scaleY: init_scale,
-        scaleZ: init_scale,
+    	stroke_value: 2,
+    	isSpinning: true,
+    	speed: 0.003,
+        init_scale: 50,
         type: surface_listing[0]
     }
 
@@ -35,7 +30,7 @@
         illo.children = []; // drop all children before regeneration
 
         if (settings.draw_graphU) {
-            shapeU = parametricSurfaces.courbesEnU();
+            shapeU = parametricalSurfaces.curvesInU();
 
             mainGroupU = new Zdog.Anchor({
               addTo: illo,
@@ -68,7 +63,7 @@
         }
 
         if (settings.draw_graphV) {
-            shapeV = parametricSurfaces.courbesEnV();
+            shapeV = parametricalSurfaces.curvesInV();
 
             mainGroupV = new Zdog.Anchor({
               addTo: illo,
@@ -108,10 +103,6 @@
         if (settings.isSpinning) {
             illo.rotate.z += settings.speed;
         }
-        illo.scale.x = settings.scaleX;
-        illo.scale.y = settings.scaleY;
-        illo.scale.z = settings.scaleZ;
-
         let changes = false;
         let newshape = false;
         for(let item in backup_settings) {
@@ -125,7 +116,10 @@
         }
         if (changes) {
             if (newshape) {
-                parametricSurfaces.setSurface(settings.type);
+                let infos = parametricalSurfaces.setSurface(settings.type);
+                illo.scale.x = infos.scale;
+                illo.scale.y = infos.scale;
+                illo.scale.z = infos.scale;
             }
             generateGraph();
         }
@@ -139,10 +133,58 @@
     }
 
     function resetScale() {
-        illo.scale.x = init_scale;
-        illo.scale.y = init_scale;
-        illo.scale.z = init_scale;
+        illo.scale.x = settings.init_scale;
+        illo.scale.y = settings.init_scale;
+        illo.scale.z = settings.init_scale;
     }
+
+    function keyPressed (e) {
+        e.preventDefault();
+        // console.log(e.keyCode);
+
+        // Documentation about keyboard events :
+        //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+        const DOWN_ARROW = 40;
+        const LEFT_ARROW = 37;
+        const RIGHT_ARROW = 39;
+        const UP_ARROW = 38;
+        const ESCAPE = 27;
+
+        switch (e.keyCode) {
+          case ESCAPE:{
+              resetScale();
+              break;
+          }
+          case LEFT_ARROW:{
+              illo.scale.z += 0.3;
+              break;
+          }
+          case RIGHT_ARROW:{
+              illo.scale.z -= 0.3;
+              break;
+          }
+          case UP_ARROW:{
+              illo.scale.x += 0.3;
+              illo.scale.y += 0.3;
+              illo.scale.z += 0.3;
+              break;
+          }
+          case DOWN_ARROW:{
+              illo.scale.x -= 0.3;
+              illo.scale.y -= 0.3;
+              illo.scale.z -= 0.3;
+              break;
+          }
+        }
+      }
+
+    function keyReleased (e) {
+        e.preventDefault();
+        // TODO : find something to implement here ;)
+    }
+
+    document.addEventListener('keydown', keyPressed, false);
+    document.addEventListener('keyup', keyReleased, false);
 
     function addGui(obj, surf_list) {
 
@@ -160,10 +202,6 @@
         gui.add(obj, 'stroke_value').min(1).max(5).step(1);
 
         gui.add(obj, 'speed').min(0).max(.01).step(.001);
-
-        gui.add(obj, 'scaleX').min(1).max(100).step(1);
-        gui.add(obj, 'scaleY').min(1).max(100).step(1);
-        gui.add(obj, 'scaleZ').min(1).max(100).step(1);
 
         var f1 = gui.addFolder('Colors');
         f1.addColor(obj, 'default_colorU');
