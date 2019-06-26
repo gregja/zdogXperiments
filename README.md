@@ -30,6 +30,8 @@ The content of the project :
 
 - Parametric surfaces : Ellipsoid, Sphere, Torus, Hyperboloïd, Cone, Pseudo-sphere, Axial (Hélicoïde), Catenoïd
 
+- 8 cubes linked and clickable (new) : how to set a list of clickables shapes with Zdog and a ghost ;)
+
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
 
 ------------------
@@ -39,6 +41,9 @@ https://codepen.io/gregja/pen/BgodWw
 
 The example "8 cubes linked" is visible on Codepen :
 https://codepen.io/gregja/pen/rEVNvQ
+
+The example "8 cubes linked and clickable" is visible on Codepen :
+https://codepen.io/gregja/pen/rEGmGB
 
 Link to this github repository :
 https://github.com/gregja/zdogXperiments

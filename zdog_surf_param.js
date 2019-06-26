@@ -2,23 +2,24 @@
 {
     "use strict";
 
-    var surface_listing = parametricalSurfaces.getList();
-    var settings = {
+    let surface_listing = parametricalSurfaces.getList();
+    let settings = {
     	default_colorU: "#ff0000",
         default_colorV: "#336699",
         draw_graphU: true,
         draw_graphV: true,
-    	stroke_value: 2,
+    	stroke_value: 1,
     	isSpinning: true,
     	speed: 0.003,
-        init_scale: 50,
+        init_scale: parametricalSurfaces.getDefaultScale(),
         type: surface_listing[0]
     }
 
-    // backup to detect changes
-    var backup_settings = Object.assign({}, settings);
+    // clone settings for detection of changes
+    let backup_settings = Object.assign({}, settings);
 
-    var illo, mainGroupU, mainGroupV, shapeU, shapeV;
+    // global variables
+    let illo, mainGroupU, mainGroupV, shapeU, shapeV;
 
     illo = new Zdog.Illustration({
         element: '.zdog-canvas',
@@ -50,6 +51,7 @@
                         datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
                     }
                 })
+//console.log(datas)
 
                 new Zdog.Shape({
                     addTo: mainGroupU,
@@ -188,7 +190,7 @@
 
     function addGui(obj, surf_list) {
 
-        var gui = new dat.gui.GUI();
+        let gui = new dat.gui.GUI();
 
         //gui.remember(obj);
 
@@ -203,7 +205,7 @@
 
         gui.add(obj, 'speed').min(0).max(.01).step(.001);
 
-        var f1 = gui.addFolder('Colors');
+        let f1 = gui.addFolder('Colors');
         f1.addColor(obj, 'default_colorU');
         f1.addColor(obj, 'default_colorV');
     }

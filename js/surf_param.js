@@ -3,14 +3,16 @@
 * This program draws 3D surfaces deended by equations
 *     x = f(u,v), y = g(u,v), z = h(u,v)
 *
-* Algorithms largely inspired by the book :
+* Algorithms inspired by the book :
 * "Graphisme dans le plan et dans l'espace en Turbo Pascal"
 *   By R. Dony, ed MASSON Paris 1990
+*
+* Rewritten for Javascript by Gregory Jarrige
+*  MIT License
 * ---------------------------------------------------
-*   Surface Type: 1. Ellipsoid
-*                 2. Sphere
-*                 3. Torus
-*                 4. Hyperboloid
+*   Surface Types:
+*      Ellipsoid, Sphere, Torus, Hyperboloïd, Cone,
+*      Pseudo-sphere, Axial (Hélicoïde), Catenoïd, ...
 *
 *******************************************************/
 
@@ -24,20 +26,27 @@ var parametricalSurfaces = (function () {
     const cosh = Math.cosh;
     const sinh = Math.sinh;
 
-    var current_surface_type = 0;
-    var current_surface_name = '';
+    let current_surface_type = 0;
+    let current_surface_name = '';
 
     const DEFAULT_SCALE = 50;
 
-    var A, B, C;
-    var FX = (u, v) => false;
-    var FY = (u, v) => false;
-    var FZ = (u, v) => false;
-    var SCALE = DEFAULT_SCALE;
+    // Values for the current surface (setted by the call of the "setSurface" function)
+    let A, B, C;
+    let FX = (u, v) => false;
+    let FY = (u, v) => false;
+    let FZ = (u, v) => false;
+    let SCALE = DEFAULT_SCALE;
 
-    var last_point = 0;
+    let last_point = 0;
 
-    var surface_types = [];
+    let surface_types = [];
+
+    let points = [];
+    let edges  = [];
+    let polys  = [];
+    let curpoly = -1;
+
     surface_types.push({
         id: 0,
         name: 'Ellipsoid',
@@ -160,7 +169,7 @@ var parametricalSurfaces = (function () {
         fx: (u, v)=> cos(u) / cosh(v),
         fy: (u, v)=> sin(u) / cosh(v),
         fz: (u, v)=> v - tanh(v),
-        scale: DEFAULT_SCALE * 3
+        scale: DEFAULT_SCALE * 2
     });
 
     surface_types.push({
@@ -172,12 +181,12 @@ var parametricalSurfaces = (function () {
         fx: (u, v)=> cos(u) / cosh(v),
         fy: (u, v)=> sin(u) / cosh(v),
         fz: (u, v)=> v - tanh(v),
-        scale: DEFAULT_SCALE * 3
+        scale: DEFAULT_SCALE * 2
     });
 
     surface_types.push({
         id: 12,
-        name: 'Axial (Hélicoïde)',
+        name: 'Helicoid (Hélicoïde)',
         params: {A:PI/2, B:4.0, C:4.5},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
@@ -189,7 +198,7 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 13,
-        name: 'Catenoïd',
+        name: 'Katenoid (Caténoïde)',
         params: {A:0, B:4.0, C:4.5},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
@@ -200,7 +209,6 @@ var parametricalSurfaces = (function () {
     });
 
     function setSurface(shape_name) {
-        console.log(shape_name);
         var current_type = -1;
         for (let i=0, imax=surface_types.length; i<imax; i++) {
             let item = surface_types[i];
@@ -212,7 +220,6 @@ var parametricalSurfaces = (function () {
         if (current_type != -1) {
             let surface = surface_types[current_type];
             current_surface_type = current_type;
-            console.log(current_surface_type);
             current_surface_name = surface.name;
             A = surface.params.A;
             B = surface.params.B;
@@ -241,25 +248,21 @@ var parametricalSurfaces = (function () {
         }
     }
 
+    function getDefaultScale() {
+        return DEFAULT_SCALE;
+    }
+
     function getList() {
         return surface_types.map(item => item.name)
     }
 
-    var points = [];
-    var edges  = [];
-    var polys  = [];
-    var curpoly = -1;
-
-    setSurface(surface_types[current_surface_type].name);
-
     function curvesInU() {
         let surface = surface_types[current_surface_type];
-        console.log(surface);
         points = [];
         polys  = [];
         curpoly = -1;
-        var x,y,z;
-        var u = surface.u.begin;
+        let x,y,z;
+        let u = surface.u.begin;
         while (u <= surface.u.end) {
             let v = surface.v.begin;
             x = FX(u,v);
@@ -288,9 +291,9 @@ var parametricalSurfaces = (function () {
         points = [];
         polys  = [];
         curpoly = -1;
-        var x,y,z;
+        let x,y,z;
 
-        var v = surface.v.begin;
+        let v = surface.v.begin;
         while (v <= surface.v.end) {
             let u = surface.u.begin;
             x = FX(u,v);
@@ -330,6 +333,8 @@ var parametricalSurfaces = (function () {
         last_point = new_point;
     }
 
+    // Default values initialized with the first surface of the list (Ellipsoid)
+    setSurface(surface_types[current_surface_type].name);
 
     // Declare here public functions and constants (the items not declared here are private)
     return {
@@ -337,6 +342,7 @@ var parametricalSurfaces = (function () {
         curvesInV: curvesInV,
         getInfos: getInfos,
         getList: getList,
-        setSurface: setSurface
+        setSurface: setSurface,
+        getDefaultScale: getDefaultScale
     };
 })();
