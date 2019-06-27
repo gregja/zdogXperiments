@@ -28,9 +28,9 @@ The content of the project :
 
 - 8 cubes linked
 
-- Parametric surfaces : Ellipsoid, Sphere, Torus, Hyperboloïd, Cone, Pseudo-sphere, Axial (Hélicoïde), Catenoïd
-
 - 8 cubes linked and clickable (new) : how to set a list of clickables shapes with Zdog and a ghost ;)
+
+- Parametric surfaces : Ellipsoid, Sphere, Torus, Hyperboloid, Cone, Pseudo-sphere, Helicoid, Katenoid, Möbius, etc.
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
 

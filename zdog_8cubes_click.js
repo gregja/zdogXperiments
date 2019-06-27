@@ -1,5 +1,5 @@
 // Made with Zdog
-// https://codepen.io/gregja/pen/2b14a173072a742e2e259f65bd0c7cc6
+// https://codepen.io/gregja/pen/rEGmGB
 {
     "use strict";
 
@@ -24,7 +24,7 @@
 
     let side = 40;
     let dist = 50;
-    let mid_side = side / 2;
+    //let mid_side = side / 2;
     let global_dist = dist * 2;
     let isSpinning = true;
 
@@ -203,9 +203,7 @@
         illo.scale.x = 1;
         illo.scale.y = 1;
         illo.scale.z = 1;
-        ghost.scale.x = 1;
-        ghost.scale.y = 1;
-        ghost.scale.z = 1;
+        ghost.scale = illo.scale
     }
 
     function keyPressed (e) {
@@ -230,30 +228,26 @@
           }
           case LEFT_ARROW:{
               illo.scale.z += mini_move;
-              ghost.scale.z -= mini_move;
+              ghost.scale = illo.scale;
               break;
           }
           case RIGHT_ARROW:{
               illo.scale.z -= mini_move;
-              ghost.scale.z -= mini_move;
+              ghost.scale = illo.scale;
               break;
           }
           case UP_ARROW:{
               illo.scale.x += mini_move;
               illo.scale.y += mini_move;
               illo.scale.z += mini_move;
-              ghost.scale.x += mini_move;
-              ghost.scale.y += mini_move;
-              ghost.scale.z += mini_move;
+              ghost.scale = illo.scale
               break;
           }
           case DOWN_ARROW:{
               illo.scale.x -= mini_move;
               illo.scale.y -= mini_move;
               illo.scale.z -= mini_move;
-              ghost.scale.x -= mini_move;
-              ghost.scale.y -= mini_move;
-              ghost.scale.z -= mini_move;
+              ghost.scale = illo.scale;
               break;
           }
 
@@ -293,7 +287,6 @@
 
     let button = document.getElementById('hide_ghost');
     if (button) {
-        console.log(button);
         button.innerHTML = 'Hide the ghost';
         button.setAttribute('data-status', 'visible');
         button.addEventListener('click', function(evt) {
@@ -305,7 +298,7 @@
                 status = 'visible';
                 this.innerHTML = 'Hide the ghost';
             }
-            this.setAttribute('data-status', status);            
+            this.setAttribute('data-status', status);
             canvas_ghost.style.visibility = status;
         }, false)
     } else {

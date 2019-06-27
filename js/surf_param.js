@@ -139,12 +139,12 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 8,
         name: 'Cone',
-        params: {A:1.0, B:1.0, C:1.0},
+        params: {A:PI/6, B:1.0, C:1.0},
         u: {begin:-1, end:2.6, dist:0.2},
         v: {begin:-2, end:0, dist:0.2},
-        fx: (u, v)=> v * cos(u) * sin(PI/6),
-        fy: (u, v)=> v * sin(u) * sin(PI/6),
-        fz: (u, v)=> v * cos(PI/6),
+        fx: (u, v)=> v * cos(u) * sin(A),
+        fy: (u, v)=> v * sin(u) * sin(A),
+        fz: (u, v)=> v * cos(A),
         scale: DEFAULT_SCALE * 4
     });
 
@@ -163,7 +163,7 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 10,
         name: 'Pseudo-sphere 1',
-        params: {A:4.0, B:4.0, C:4.5},
+        params: {A:1.0, B:1.0, C:1.0},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:-3, end:3, dist:0.2},
         fx: (u, v)=> cos(u) / cosh(v),
@@ -175,7 +175,7 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 11,
         name: 'Pseudo-sphere 2 (half)',
-        params: {A:4.0, B:4.0, C:4.5},
+        params: {A:1.0, B:1.0, C:1.0},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:0, end:4, dist:0.2},
         fx: (u, v)=> cos(u) / cosh(v),
@@ -186,25 +186,73 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 12,
-        name: 'Helicoid (Hélicoïde)',
-        params: {A:PI/2, B:4.0, C:4.5},
+        name: 'Helicoid 1',
+        params: {A:PI/2, B:PI/2, C:PI/2},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
         fx: (u, v)=> cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
-        fy: (u, v)=> cos(A) * sin(v) * cosh(u) - sin(A) * cos(v) * sinh(u),
-        fz: (u, v)=> cos(A) * u + sin(A) * v,
+        fy: (u, v)=> cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
+        fz: (u, v)=> cos(C) * u + sin(C) * v,
         scale: DEFAULT_SCALE / 2
     });
 
     surface_types.push({
         id: 13,
-        name: 'Katenoid (Caténoïde)',
-        params: {A:0, B:4.0, C:4.5},
+        name: 'Helicoid 2',
+        params: {A:PI/2, B:PI, C:PI/2},
         u: {begin:-PI, end:PI, dist:0.2},
         v: {begin:-PI, end:PI, dist:0.2},
         fx: (u, v)=> cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
-        fy: (u, v)=> cos(A) * sin(v) * cosh(u) - sin(A) * cos(v) * sinh(u),
-        fz: (u, v)=> cos(A) * u + sin(A) * v,
+        fy: (u, v)=> cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
+        fz: (u, v)=> cos(C) * u + sin(C) * v,
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 14,
+        name: 'Katenoid',
+        params: {A:6.0, B:6.0, C:6.0},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=> cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
+        fy: (u, v)=> cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
+        fz: (u, v)=> cos(C) * u + sin(C) * v,
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 15,
+        name: 'Plücker\'s conoid',
+        params: {A:6.0, B:6.0, C:6.0},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=>A * cos(v),
+        fy: (u, v)=>B * sin(v),
+        fz: (u, v)=>C * cos(4 * v),
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 16,
+        name: 'Milk carton (in french "Berlingot")',
+        params: {A:1.0, B:2, C:0.0},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=> B * A * (1 + u) * cos(v),
+        fy: (u, v)=> B * A * (1 - u) * sin(v),
+        fz: (u, v)=> A * u,
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 17,
+        name: 'Möbius surface',
+        params: {A:6.0, B:6.0, C:0.0},
+        u: {begin:-PI, end:PI, dist:0.2},
+        v: {begin:-PI, end:PI, dist:0.2},
+        fx: (u, v)=>(A + u * cos(v/2)) * cos(v),
+        fy: (u, v)=>(B + u * cos(v/2)) * sin(v),
+        fz: (u, v)=>(C + u * sin(v/2)),
         scale: DEFAULT_SCALE / 2
     });
 
