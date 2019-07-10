@@ -22,6 +22,7 @@ var parametricalSurfaces = (function () {
     const cos = Math.cos;
     const sin = Math.sin;
     const PI = Math.PI;
+    const TAU = PI * 2;
     const tanh = Math.tanh;
     const cosh = Math.cosh;
     const sinh = Math.sinh;
@@ -152,24 +153,24 @@ var parametricalSurfaces = (function () {
         id: 9,
         name: 'Bi-horn',
         params: {A:1.0, B:1.0, C:1.0},
-        u: {begin:-PI, end:PI, dist:0.4},
-        v: {begin:-PI, end:PI, dist:0.2},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-PI, end:PI, dist:0.1},
         fx: (u, v)=> (2 - cos(v)) * cos(u),
         fy: (u, v)=> (2 - sin(v)) * cos(u),
         fz: (u, v)=> sin(u),
-        scale: DEFAULT_SCALE * 1.5
+        scale: DEFAULT_SCALE * 2
     });
 
     surface_types.push({
         id: 10,
         name: 'Pseudo-sphere 1',
         params: {A:1.0, B:1.0, C:1.0},
-        u: {begin:-PI, end:PI, dist:0.2},
-        v: {begin:-3, end:3, dist:0.2},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-3, end:3, dist:0.1},
         fx: (u, v)=> cos(u) / cosh(v),
         fy: (u, v)=> sin(u) / cosh(v),
         fz: (u, v)=> v - tanh(v),
-        scale: DEFAULT_SCALE * 2
+        scale: DEFAULT_SCALE * 3
     });
 
     surface_types.push({
@@ -181,7 +182,7 @@ var parametricalSurfaces = (function () {
         fx: (u, v)=> cos(u) / cosh(v),
         fy: (u, v)=> sin(u) / cosh(v),
         fz: (u, v)=> v - tanh(v),
-        scale: DEFAULT_SCALE * 2
+        scale: DEFAULT_SCALE * 3
     });
 
     surface_types.push({
@@ -254,6 +255,19 @@ var parametricalSurfaces = (function () {
         fy: (u, v)=>(B + u * cos(v/2)) * sin(v),
         fz: (u, v)=>(C + u * sin(v/2)),
         scale: DEFAULT_SCALE / 2
+    });
+
+    // https://blender.stackexchange.com/questions/18955/modelling-a-klein-bottle
+    surface_types.push({
+        id: 18,
+        name: 'Klein bottle',
+        params: {A:0.0, B:0.0, C:0.0},
+        u: {begin:0, end:PI, dist:0.05},
+        v: {begin:0, end:TAU, dist:0.1},
+        fx: (u, v)=>-2/15*cos(u)*(3*cos(v)-30*sin(u)+90*cos(u)**4*sin(u)-60*cos(u)**6*sin(u)+5*cos(u)*cos(v)*sin(u)),
+        fy: (u, v)=>-1/15*sin(u)*(3*cos(v)-3*cos(u)**2*cos(v)-48*cos(u)**4*cos(v)+48*cos(u)**6*cos(v)-60*sin(u)+5*cos(u)*cos(v)*sin(u)-5*cos(u)**3*cos(v)*sin(u)-80*cos(u)**5*cos(v)*sin(u)+80*cos(u)**7*cos(v)*sin(u)),
+        fz: (u, v)=>2/15*(3+5*cos(u)*sin(u))*sin(v),
+        scale: DEFAULT_SCALE * 2
     });
 
     function setSurface(shape_name) {
