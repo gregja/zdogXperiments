@@ -28,14 +28,20 @@ The content of the project :
 
 - 8 cubes linked
 
-- 8 cubes linked and clickable (new) : how to set a list of clickables shapes with Zdog and a ghost canvas
+- 8 cubes linked and clickable (new) : how to set a list of clickables shapes with Zdog and a ghost canvas (*2)
 
 - Parametric surfaces : Ellipsoid, Sphere, Torus, Hyperboloid, Cone, Pseudo-sphere, Helicoid, Katenoid, Möbius ribbon, Klein bottle, etc.
 
 - Magnetic cubes
 
+- Solar system (n-body algorithm) (=> experimental, for fun, not finalized)
+
+- XWing 
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
+
+(*2) see improved version by José (thank's José):
+https://codepen.io/ncodefun/pen/aggZKP
 
 ------------------
 
