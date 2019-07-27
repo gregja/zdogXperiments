@@ -15,6 +15,7 @@
     var mainshape = undefined;  // pointer to the wireframe shape (when it's activated)
     var draw_modes = ['Wireframe', 'Paint'];
     var draw_mode_default = draw_modes[0];
+    var zoom_factor = 0.03;
 
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
@@ -192,23 +193,23 @@
               break;
           }
           case LEFT_ARROW:{
-              illo.scale.z += 0.3;
+              illo.scale.z += zoom_factor;
               break;
           }
           case RIGHT_ARROW:{
-              illo.scale.z -= 0.3;
+              illo.scale.z -= zoom_factor;
               break;
           }
           case UP_ARROW:{
-              illo.scale.x += 0.3;
-              illo.scale.y += 0.3;
-              illo.scale.z += 0.3;
+              illo.scale.x += zoom_factor;
+              illo.scale.y += zoom_factor;
+              illo.scale.z += zoom_factor;
               break;
           }
           case DOWN_ARROW:{
-              illo.scale.x -= 0.3;
-              illo.scale.y -= 0.3;
-              illo.scale.z -= 0.3;
+              illo.scale.x -= zoom_factor;
+              illo.scale.y -= zoom_factor;
+              illo.scale.z -= zoom_factor;
               break;
           }
           case KEY_ONE:{
@@ -274,6 +275,32 @@
         }, false);
     } else {
         console.warn('draw mode button not found');
+    }
+
+    var zoom1_btn = document.getElementById('zoom1');
+    if (zoom1_btn) {
+      zoom1_btn.addEventListener('click', function(e){
+        console.log('zoom 1');
+        e.preventDefault();
+        illo.scale.x -= zoom_factor;
+        illo.scale.y -= zoom_factor;
+        illo.scale.z -= zoom_factor;
+      }, false);
+    } else {
+      console.warn('zoom- button not found');
+    }
+
+    var zoom2_btn = document.getElementById('zoom2');
+    if (zoom2_btn) {
+      zoom2_btn.addEventListener('click', function(e){
+        console.log('zoom 2');
+        e.preventDefault();
+        illo.scale.x += zoom_factor;
+        illo.scale.y += zoom_factor;
+        illo.scale.z += zoom_factor;
+      }, false);
+    } else {
+      console.warn('zoom+ button not found');
     }
 
     document.addEventListener('keydown', keyPressed, false);
