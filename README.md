@@ -31,7 +31,7 @@ The content of the project :
 - 8 cubes linked and clickable (new) : how to set a list of clickables shapes with Zdog and a ghost canvas (*2)
 
 - Parametric surfaces :
-     Ellipsoid, Sphere, Torus, Hyperboloid, Cone, Pseudo-sphere, Helicoid, Katenoid, Möbius ribbon, Klein bottle
+     Ellipsoid, Sphere, Torus, Hyperboloid, Cone, Pseudo-sphere, Helicoid, Katenoid, Möbius ribbon, Klein bottle, 
      plus some new shapes : Limpet torus, triaxial hexatorus, saddle torus, triaxial tritorus, bow curve, etc.
 
 - Magnetic cubes
