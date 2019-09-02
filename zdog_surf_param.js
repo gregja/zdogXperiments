@@ -11,6 +11,7 @@
     	stroke_value: 1,
     	isSpinning: true,
     	speed: 0.003,
+        scale: parametricalSurfaces.getDefaultScale(),
         init_scale: parametricalSurfaces.getDefaultScale(),
         type: surface_listing[0]
     }
@@ -44,14 +45,13 @@
 
                 vertices.forEach((item, idx) => {
                     points.push({point:shapeU.points[vertices[idx]]});
-                })
+                });
 
                 points.forEach(item => {
                     if (item.point != undefined && item.point.x != undefined) {
                         datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
                     }
-                })
-//console.log(datas)
+                });
 
                 new Zdog.Shape({
                     addTo: mainGroupU,
@@ -78,13 +78,13 @@
 
                 vertices.forEach((item, idx) => {
                     points.push({point:shapeV.points[vertices[idx]]});
-                })
+                });
 
                 points.forEach(item => {
                     if (item.point != undefined && item.point.x != undefined) {
                         datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
                     }
-                })
+                });
 
                 new Zdog.Shape({
                     addTo: mainGroupV,
@@ -107,10 +107,15 @@
         }
         let changes = false;
         let newshape = false;
+        let change_scale = false;
         for(let item in backup_settings) {
             if (backup_settings[item] != settings[item]) {
                 if (item == 'type') {
                     newshape = true;
+                } else {
+                    if (item == 'scale') {
+                        change_scale = true;
+                    }
                 }
                 backup_settings[item] = settings[item];
                 changes = true;
@@ -119,9 +124,18 @@
         if (changes) {
             if (newshape) {
                 let infos = parametricalSurfaces.setSurface(settings.type);
-                illo.scale.x = infos.scale;
-                illo.scale.y = infos.scale;
-                illo.scale.z = infos.scale;
+                illo.scale.x = infos.scale ;
+                illo.scale.y = infos.scale ;
+                illo.scale.z = infos.scale ;
+                settings.scale = infos.scale;
+                backup_settings.scale = infos.scale;
+            } else {
+                if (change_scale) {
+                    let scale = Number(backup_settings['scale']);
+                    illo.scale.x = scale;
+                    illo.scale.y = scale;
+                    illo.scale.z = scale;
+                }
             }
             generateGraph();
         }
@@ -133,60 +147,6 @@
         draw();
         requestAnimationFrame( animate );
     }
-
-    function resetScale() {
-        illo.scale.x = settings.init_scale;
-        illo.scale.y = settings.init_scale;
-        illo.scale.z = settings.init_scale;
-    }
-
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
-
-        // Documentation about keyboard events :
-        //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
-        const DOWN_ARROW = 40;
-        const LEFT_ARROW = 37;
-        const RIGHT_ARROW = 39;
-        const UP_ARROW = 38;
-        const ESCAPE = 27;
-
-        switch (e.keyCode) {
-          case ESCAPE:{
-              resetScale();
-              break;
-          }
-          case LEFT_ARROW:{
-              illo.scale.z += 0.3;
-              break;
-          }
-          case RIGHT_ARROW:{
-              illo.scale.z -= 0.3;
-              break;
-          }
-          case UP_ARROW:{
-              illo.scale.x += 0.3;
-              illo.scale.y += 0.3;
-              illo.scale.z += 0.3;
-              break;
-          }
-          case DOWN_ARROW:{
-              illo.scale.x -= 0.3;
-              illo.scale.y -= 0.3;
-              illo.scale.z -= 0.3;
-              break;
-          }
-        }
-      }
-
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
-    document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
 
     function addGui(obj, surf_list) {
 
@@ -205,9 +165,12 @@
 
         gui.add(obj, 'speed').min(0).max(.01).step(.001);
 
+        gui.add(obj, 'scale').min(0).max(400).step(1);
+
         let f1 = gui.addFolder('Colors');
         f1.addColor(obj, 'default_colorU');
         f1.addColor(obj, 'default_colorV');
+
     }
 
     document.addEventListener("DOMContentLoaded", function(event) {

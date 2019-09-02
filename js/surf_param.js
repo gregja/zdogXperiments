@@ -12,20 +12,35 @@
 * ---------------------------------------------------
 *   Surface Types:
 *      Ellipsoid, Sphere, Torus, Hyperboloïd, Cone,
-*      Pseudo-sphere, Axial (Hélicoïde), Catenoïd, ...
+*      Pseudo-sphere, Axial (Hélicoïde), Catenoïd,
+*      Möbius surface, Klein bottle, ...
 *
 *******************************************************/
 
 var parametricalSurfaces = (function () {
     "use strict";
 
+/*
     const cos = Math.cos;
     const sin = Math.sin;
     const PI = Math.PI;
-    const TAU = PI * 2;
     const tanh = Math.tanh;
     const cosh = Math.cosh;
     const sinh = Math.sinh;
+    const sqrt = Math.sqrt;
+    const pow = Math.pow;
+    const abs = Math.abs;
+    const sign = Math.sign;
+*/
+
+    const {
+        cos, sin, PI, tanh, cosh, sinh, sqrt, pow, abs, sign
+    } = Math;
+
+    const TAU = PI * 2;
+    const TWO_TAU = TAU * 2;
+
+    const cos2 = (x) => pow(cos(x), 2);
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -268,6 +283,98 @@ var parametricalSurfaces = (function () {
         fy: (u, v)=>-1/15*sin(u)*(3*cos(v)-3*cos(u)**2*cos(v)-48*cos(u)**4*cos(v)+48*cos(u)**6*cos(v)-60*sin(u)+5*cos(u)*cos(v)*sin(u)-5*cos(u)**3*cos(v)*sin(u)-80*cos(u)**5*cos(v)*sin(u)+80*cos(u)**7*cos(v)*sin(u)),
         fz: (u, v)=>2/15*(3+5*cos(u)*sin(u))*sin(v),
         scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 19,
+        name: 'Limpet Torus',
+        params: {A:2.0, B:0.0, C:0.0},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-PI, end:PI, dist:0.1},
+        fx: (u, v)=> cos(u) / (sqrt(A) + sin(v)),
+        fy: (u, v)=> sin(u) / (sqrt(A) + sin(v)),
+        fz: (u, v)=> 1 / (sqrt(A) + cos(v)),
+        scale: DEFAULT_SCALE * 1.5
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 20,
+        name: 'Figure 8 Torus by Paul Bourke',
+        params: {A:0, B:0, C:pow(2, 1/4)},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-PI, end:PI, dist:0.1},
+        fx: (u, v)=> cos(u) * (C + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
+        fy: (u, v)=> sin(u) * (C + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
+        fz: (u, v)=> sin(u) * sin(v) + cos(u) * sin(2 * v) / 2,
+        scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 21,
+        name: 'Torus by Roger Bagula',
+        params: {A:pow(2, 1/4), B:0, C:0},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-PI, end:PI, dist:0.1},
+        fx: (u, v)=> cos(u) * (A + cos(v)),
+        fy: (u, v)=> sin(u) * (A + sin(v)),
+        fz: (u, v)=> sqrt(pow((u/PI),2) + pow((v/PI),2)),
+        scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 22,
+        name: 'Saddle torus by Roger Bagula',
+        params: {A:2, B:3,
+                    C: (s) => 1 - cos2(s) - cos2(s + TAU / B)},
+        u: {begin:0, end:TAU, dist:0.1},
+        v: {begin:0, end:TAU, dist:0.1},
+        fx: (u, v)=> (A + cos(u)) * cos(v),
+        fy: (u, v)=> (A + cos(u + TAU / B)) * cos(v + TAU / B),
+        fz: (u, v)=> (A + sign(C(u)) * sqrt(abs(C(u)))) * sign(C(v)) * sqrt(abs(C(v))) ,
+        scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 23,
+        name: 'Triaxial Hexatorus',
+        params: {A:2, B:3, C: 0},
+        u: {begin:0, end:TAU, dist:0.1},
+        v: {begin:0, end:TAU, dist:0.1},
+        fx: (u, v)=> sin(u) / (sqrt(A) + cos(v)),
+        fy: (u, v)=> sin(u + TAU / B) / (sqrt(2) + cos(v + TAU / B)),
+        fz: (u, v)=> cos(u - TAU / B) / (sqrt(2) + cos(v - TAU / B)) ,
+        scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 24,
+        name: 'Triaxial Tritorus',
+        params: {A:1, B:3, C: 0},
+        u: {begin:-PI, end:PI, dist:0.1},
+        v: {begin:-PI, end:PI, dist:0.1},
+        fx: (u, v)=> sin(u) * (A + cos(v)),
+        fy: (u, v)=> sin(u + TAU / B) * (1 + cos(v + TAU / B)),
+        fz: (u, v)=> sin(u + TWO_TAU / B) * (1 + cos(v + TWO_TAU / B)) ,
+        scale: DEFAULT_SCALE * 2
+    });
+
+    // http://paulbourke.net/geometry/toroidal/
+    surface_types.push({
+        id: 25,
+        name: 'Bow Curve By Paul Bourke',
+        params: {A:.7, B:0, C: 0},
+        u: {begin:0, end:1, dist:0.05},
+        v: {begin:0, end:1, dist:0.01},
+        fx: (u, v)=> (2 + A * sin(TAU * u)) * sin(TWO_TAU * v),
+        fy: (u, v)=> (2 + A * sin(TAU * u)) * cos(TWO_TAU * v),
+        fz: (u, v)=> A * cos(TAU * u) + 3 * cos(TAU * v) ,
+        scale: DEFAULT_SCALE
     });
 
     function setSurface(shape_name) {
