@@ -204,35 +204,129 @@ var shapes3dToolbox = (function () {
     }
 
     /**
-     * Cone generator
+     * Tetrahedron generator
      * @param config.scale
      * @param config.xRot
      * @param config.yRot
      * @param config.zRot
      */
-    function generateCone(config) {
-        var s = config.scale || 1;
+    function generateTetrahedron(config) {
+        var s = config.scale || 100;
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
 
-        var r = config.r || 100;
-        var h = config.h || 200;
-        var dAlpha = 0.1;
+        var nodes = [{
+            x: 1 * s,
+            y: 1 * s,
+            z: 1 * s
+        }, {
+            x: 1 * s,
+            y: -1 * s,
+            z: -1 * s
+        }, {
+            x: -1 * s,
+            y: 1 * s,
+            z: -1 * s
+        }, {
+            x: -1 * s,
+            y: -1 * s,
+            z: 1 * s
+        }, {
+            x: -1 * s,
+            y: -1 * s,
+            z: -1 * s
+        },{
+            x: -1 * s,
+            y: 1 * s,
+            z: 1 * s
+        },{
+            x: 1 * s,
+            y: -1 * s,
+            z: 1 * s
+        },{
+            x: 1 * s,
+            y: 1 * s,
+            z: -1 * s
+        }
+        ];
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: [{
+                a: 4,
+                b: 3
+            }, {
+                a: 3,
+                b: 5
+            }, {
+                a: 5,
+                b: 2
+            }, {
+                a: 2,
+                b: 4
+            }, {
+                a: 1,
+                b: 6
+            }, {
+                a: 6,
+                b: 0
+            }, {
+                a: 4,
+                b: 1
+            }, {
+                a: 3,
+                b: 6
+            }, {
+                a: 5,
+                b: 0
+            }],
+            polygons: [
+                [0, 1, 2],
+                [1, 2, 3],
+                [0, 2, 3],
+                [0, 1, 3]
+            ]
+        }
+    }
+
+    /**
+     * Cone generator
+     * @param config.scale
+     * @param config.radius
+     * @param config.length
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateCone(config) {
+        var scale = config.scale || 1;
+        var radius = config.radius || 100;
+        var height = config.height || 200;
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
 
         var nodes = [];
         var edges = [];
         var faces = [];
 
+        var mid_height = height / 2;
+
         //creating nodes
         var alpha = 0;
-        nodes[0] = [0,-h/2,0];
+        var dAlpha = 0.1;
+        nodes[0] = [0,-mid_height,0];
         var i = 1;
         var limit = TAU + dAlpha;
         while (alpha <= limit) {
-            var x = r * cos(alpha) * s;
-            var z = r * sin(alpha) * s;
-            nodes[i] = [x, h/2, z];
+            var x = radius * cos(alpha) * scale;
+            var z = radius * sin(alpha) * scale;
+            nodes[i] = [x, mid_height, z];
             alpha += dAlpha;
             i += 1;
         }
@@ -525,8 +619,8 @@ var shapes3dToolbox = (function () {
      * @param config.xCenter
      * @param config.yCenter
      * @param config.zCenter
-     * @param config.r
-     * @param config.h
+     * @param config.radius
+     * @param config.length
      * @param config.xRot
      * @param config.yRot
      * @param config.zRot
@@ -537,22 +631,25 @@ var shapes3dToolbox = (function () {
         var xCenter = config.xCenter || 0;
         var yCenter = config.yCenter || 0;
         var zCenter = config.zCenter || 0;
-        var r = config.r || 100;
-        var h = config.h || 200;
+
+        var radius = config.radius || 100;
+        var length = config.length || 200;
+
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
-        var dAlpha = 0.1;
+
         // creating the nodes
         var nodes = [];
+        var dAlpha = 0.1;
         var alpha = 0;
         var i = 0;
-        var mid_h = h/2;
+        var mid_length = length/2;
         while (alpha <= 2 * PI + dAlpha) {
-            let x = r*cos(alpha) + xCenter;
-            let z = r*sin(alpha) + zCenter;
-            nodes[i] = [x, yCenter + mid_h, z];
-            nodes[i+1] = [x, yCenter - mid_h, z];
+            let x = radius * cos(alpha) + xCenter;
+            let z = radius * sin(alpha) + zCenter;
+            nodes[i] = [x, yCenter + mid_length, z];
+            nodes[i+1] = [x, yCenter - mid_length, z];
             alpha += dAlpha;
             i += 2;
         }
@@ -584,54 +681,54 @@ var shapes3dToolbox = (function () {
 
     /**
      * Cuboid generator version 1
-     * @param config.scalex
-     * @param config.scaley
-     * @param config.scalez
+     * @param config.xScale
+     * @param config.yScale
+     * @param config.zScale
      * @param config.xRot
      * @param config.yRot
      * @param config.zRot
      */
     function generateCuboid1(config) {
-        var scalex = config.scalex || 1,
-            scaley = config.scaley || 1,
-            scalez = config.scalez || 1;
+        var xScale = config.xScale || 1,
+            yScale = config.yScale || 1,
+            zScale = config.zScale || 1;
 
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
 
         var nodes = [{
-            x: -1 * scalex,
-            y: 1 * scaley,
-            z: -1 * scalez
+            x: -1 * xScale,
+            y: 1 * yScale,
+            z: -1 * zScale
         }, {
-            x: 1 * scalex,
-            y: 1 * scaley,
-            z: -1 * scalez
+            x: 1 * xScale,
+            y: 1 * yScale,
+            z: -1 * zScale
         }, {
-            x: 1 * scalex,
-            y: -1 * scaley,
-            z: -1 * scalez
+            x: 1 * xScale,
+            y: -1 * yScale,
+            z: -1 * zScale
         }, {
-            x: -1 * scalex,
-            y: -1 * scaley,
-            z: -1 * scalez
+            x: -1 * xScale,
+            y: -1 * yScale,
+            z: -1 * zScale
         }, {
-            x: -1 * scalex,
-            y: 1 * scaley,
-            z: 1 * scalez
+            x: -1 * xScale,
+            y: 1 * yScale,
+            z: 1 * zScale
         }, {
-            x: 1 * scalex,
-            y: 1 * scaley,
-            z: 1 * scalez
+            x: 1 * xScale,
+            y: 1 * yScale,
+            z: 1 * zScale
         }, {
-            x: 1 * scalex,
-            y: -1 * scaley,
-            z: 1 * scalez
+            x: 1 * xScale,
+            y: -1 * yScale,
+            z: 1 * zScale
         }, {
-            x: -1 * scalex,
-            y: -1 * scaley,
-            z: 1 * scalez
+            x: -1 * xScale,
+            y: -1 * yScale,
+            z: 1 * zScale
         }];
 
         rotateZ3D(zRot, nodes, true);
@@ -1166,128 +1263,128 @@ var shapes3dToolbox = (function () {
     function import3dObjAsync(config, fnc) {
 
         fetch(config.url)
-          .then(function(response) { return response.text(); })
-          .then(function(data) {
-              var scale = config.scale || 1;
-              var xRot = config.xRot || null;
-              var yRot = config.yRot || null;
-              var zRot = config.zRot || null;
+            .then(function(response) { return response.text(); })
+            .then(function(data) {
+                var scale = config.scale || 1;
+                var xRot = config.xRot || null;
+                var yRot = config.yRot || null;
+                var zRot = config.zRot || null;
 
-              var vertex = [],
-                  faces = [],
-                  uvs = [];
-              var re = /\s+/;
+                var vertex = [],
+                    faces = [],
+                    uvs = [];
+                var re = /\s+/;
 
-              var minx, miny, minz, maxx, maxy, maxz;
-              minx = miny = minz = maxx = maxy = maxz = 0;
+                var minx, miny, minz, maxx, maxy, maxz;
+                minx = miny = minz = maxx = maxy = maxz = 0;
 
-              var lines = data.split("\n");
+                var lines = data.split("\n");
 
-              for (let i = 0, imax=lines.length; i < imax; i++) {
-                  let line = lines[i].split(re);
-                  switch (line[0]) {
-                      case "v":
-                          var x = parseFloat(line[1]) * scale,
-                              y = parseFloat(line[2]) * scale,
-                              z = parseFloat(line[3]) * scale;
-                          vertex.push({
-                              x: x,
-                              y: y,
-                              z: z
-                          });
-                          if (x < minx) {
-                              minx = x
-                          } else {
-                              if (x > maxx) {
-                                  maxx = x
-                              }
-                          }
-                          if (y < miny) {
-                              miny = y
-                          } else {
-                              if (y > maxy) {
-                                  maxy = y
-                              }
-                          }
-                          if (z < minz) {
-                              minz = z
-                          } else {
-                              if (z > maxz) {
-                                  maxz = z
-                              }
-                          }
-                          break;
-                      case "vt":
-                          var u = parseFloat(line[1]),
-                              v = parseFloat(line[2]);
-                          uvs.push([u, v]);
-                          break;
-                      case "f":
-                          line.splice(0, 1);
-                          var vertices = [],
-                              uvcoords = [];
-                          for (var j = 0, vindex, vps; j < line.length; j++) {
-                              vindex = line[config.reorder ? line.length - j - 1 : j];
-                              if (vindex.length !== 0) {
-                                  vps = vindex.split("/");
-                                  vertices.push(parseInt(vps[0]) - 1);
-                                  if (vps.length > 1 && vindex.indexOf("//") === -1) {
-                                      var uv = parseInt(vps[1]) - 1;
-                                      if (uvs.length > uv) {
-                                          uvcoords.push(uvs[uv][0], uvs[uv][1])
-                                      }
-                                  }
-                              }
-                          }
-                          faces.push(vertices);
-                          if (uvcoords.length !== 0) {
-                              poly.uvs = uvcoords
-                          }
-                          break
-                  }
-              }
-              if (config.center) {
-                  var cdispx = (minx + maxx) / 2,
-                      cdispy = (miny + maxy) / 2,
-                      cdispz = (minz + maxz) / 2;
-                  for (var i = 0; i < vertex.length; i++) {
-                      vertex[i].x -= cdispx;
-                      vertex[i].y -= cdispy;
-                      vertex[i].z -= cdispz
-                  }
-              }
-              if (config.scaleTo) {
-                  var sizex = maxx - minx,
-                      sizey = maxy - miny,
-                      sizez = maxz - minz;
-                  var scalefactor = 0;
-                  if (sizey > sizex) {
-                      if (sizez > sizey) {
-                          scalefactor = 1 / (sizez / config.scaleTo)
-                      } else {
-                          scalefactor = 1 / (sizey / config.scaleTo)
-                      }
-                  } else {
-                      if (sizez > sizex) {
-                          scalefactor = 1 / (sizez / config.scaleTo)
-                      } else {
-                          scalefactor = 1 / (sizex / config.scaleTo)
-                      }
-                  }
-                  for (let i = 0, imax=vertex.length; i < imax; i++) {
-                      vertex[i].x *= scalefactor;
-                      vertex[i].y *= scalefactor;
-                      vertex[i].z *= scalefactor
-                  }
-              }
-              rotateZ3D(zRot, nodes, true);
-              rotateY3D(yRot, nodes, true);
-              rotateX3D(xRot, nodes, true);
-              fnc({
-                  points: vertex,
-                  polygons: faces
-              });
-          })
+                for (let i = 0, imax=lines.length; i < imax; i++) {
+                    let line = lines[i].split(re);
+                    switch (line[0]) {
+                        case "v":
+                            var x = parseFloat(line[1]) * scale,
+                                y = parseFloat(line[2]) * scale,
+                                z = parseFloat(line[3]) * scale;
+                            vertex.push({
+                                x: x,
+                                y: y,
+                                z: z
+                            });
+                            if (x < minx) {
+                                minx = x
+                            } else {
+                                if (x > maxx) {
+                                    maxx = x
+                                }
+                            }
+                            if (y < miny) {
+                                miny = y
+                            } else {
+                                if (y > maxy) {
+                                    maxy = y
+                                }
+                            }
+                            if (z < minz) {
+                                minz = z
+                            } else {
+                                if (z > maxz) {
+                                    maxz = z
+                                }
+                            }
+                            break;
+                        case "vt":
+                            var u = parseFloat(line[1]),
+                                v = parseFloat(line[2]);
+                            uvs.push([u, v]);
+                            break;
+                        case "f":
+                            line.splice(0, 1);
+                            var vertices = [],
+                                uvcoords = [];
+                            for (var j = 0, vindex, vps; j < line.length; j++) {
+                                vindex = line[config.reorder ? line.length - j - 1 : j];
+                                if (vindex.length !== 0) {
+                                    vps = vindex.split("/");
+                                    vertices.push(parseInt(vps[0]) - 1);
+                                    if (vps.length > 1 && vindex.indexOf("//") === -1) {
+                                        var uv = parseInt(vps[1]) - 1;
+                                        if (uvs.length > uv) {
+                                            uvcoords.push(uvs[uv][0], uvs[uv][1])
+                                        }
+                                    }
+                                }
+                            }
+                            faces.push(vertices);
+                            if (uvcoords.length !== 0) {
+                                poly.uvs = uvcoords
+                            }
+                            break
+                    }
+                }
+                if (config.center) {
+                    var cdispx = (minx + maxx) / 2,
+                        cdispy = (miny + maxy) / 2,
+                        cdispz = (minz + maxz) / 2;
+                    for (var i = 0; i < vertex.length; i++) {
+                        vertex[i].x -= cdispx;
+                        vertex[i].y -= cdispy;
+                        vertex[i].z -= cdispz
+                    }
+                }
+                if (config.scaleTo) {
+                    var sizex = maxx - minx,
+                        sizey = maxy - miny,
+                        sizez = maxz - minz;
+                    var scalefactor = 0;
+                    if (sizey > sizex) {
+                        if (sizez > sizey) {
+                            scalefactor = 1 / (sizez / config.scaleTo)
+                        } else {
+                            scalefactor = 1 / (sizey / config.scaleTo)
+                        }
+                    } else {
+                        if (sizez > sizex) {
+                            scalefactor = 1 / (sizez / config.scaleTo)
+                        } else {
+                            scalefactor = 1 / (sizex / config.scaleTo)
+                        }
+                    }
+                    for (let i = 0, imax=vertex.length; i < imax; i++) {
+                        vertex[i].x *= scalefactor;
+                        vertex[i].y *= scalefactor;
+                        vertex[i].z *= scalefactor
+                    }
+                }
+                rotateZ3D(zRot, vertex, true);
+                rotateY3D(yRot, vertex, true);
+                rotateX3D(xRot, vertex, true);
+                fnc({
+                    points: vertex,
+                    polygons: faces
+                });
+            })
     }
 
     /**
@@ -1370,19 +1467,19 @@ var shapes3dToolbox = (function () {
         maxLevel = config.maxLevel || 3;
         objmaster = config.ref;
 
-    	if (level > 0 && level <= maxLevel && level <= 4) {
-    		let newR = r/3;
-    		let pos = [];
-    		for (let i = -1; i < 2; i++) {
-    			for (let j = -1; j < 2; j++) {
-    				for (let k = -1; k < 2; k++) {
-    					// Of the mid boxes always at least 2 coordinates are 0. Thus for those not to be drawn boxes: sum <= 1.
-    					// Inspired by: The Coding Train: Coding Challenge #2: Menger Sponge Fractal, https://youtu.be/LG8ZK-rRkXo
-    					let sum = Math.abs(i) + Math.abs(j)+ Math.abs(k);
-    					if (sum <= 1) {
-    						let t = pos.length;
-    						pos[t] = { x:x+i*newR, y:y+j*newR, z:z+k*newR };
-    						if (level === maxLevel) {
+        if (level > 0 && level <= maxLevel && level <= 4) {
+            let newR = r/3;
+            let pos = [];
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    for (let k = -1; k < 2; k++) {
+                        // Of the mid boxes always at least 2 coordinates are 0. Thus for those not to be drawn boxes: sum <= 1.
+                        // Inspired by: The Coding Train: Coding Challenge #2: Menger Sponge Fractal, https://youtu.be/LG8ZK-rRkXo
+                        let sum = Math.abs(i) + Math.abs(j)+ Math.abs(k);
+                        if (sum <= 1) {
+                            let t = pos.length;
+                            pos[t] = { x:x+i*newR, y:y+j*newR, z:z+k*newR };
+                            if (level === maxLevel) {
                                 new Zdog.Box({
                                     addTo: objmaster,
                                     width: newR,
@@ -1396,17 +1493,17 @@ var shapes3dToolbox = (function () {
                                     topFace: '#ED0',
                                     bottomFace: '#636',
                                 });
-    						}
-    					}
-    				}
-    			}
-    		}
-    		// recursion
-    		var nextLevel = level + 1;
-    		for (let t=0, tmax=pos.length; t < tmax; t++) {
-    			flakeGenerator({x:pos[t].x, y:pos[t].y, z:pos[t].z, r:newR, level:nextLevel, maxLevel:maxLevel, ref: objmaster});
-    		}
-    	}
+                            }
+                        }
+                    }
+                }
+            }
+            // recursion
+            var nextLevel = level + 1;
+            for (let t=0, tmax=pos.length; t < tmax; t++) {
+                flakeGenerator({x:pos[t].x, y:pos[t].y, z:pos[t].z, r:newR, level:nextLevel, maxLevel:maxLevel, ref: objmaster});
+            }
+        }
     }
 
     /**
@@ -1522,13 +1619,28 @@ var shapes3dToolbox = (function () {
             {name: "icosahedron", fn:"generateIcosahedron", default:{scale:100}},
             {name: "pyramid", fn:"generatePyramid", default:{scale:100}},
             {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30}},
-            {name: "cylinder2", fn:"generateCylinder2", default:{r:100, h:200, xRot:50, yRot:40, zRot:10}},
-            {name: "cuboid1", fn:"generateCuboid1", default:{scalex:100, scaley:30, scalez:50, xRot:50, yRot:40, zRot:45}},
-            {name: "cuboid2", fn:"generateCuboid2", default:{xRot:50, yRot:40, zRot:10}},
-            {name: "cone", fn:"generateCone", default:{xRot:50, yRot:40, zRot:10, scale:1}},
+            {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10}},
+            {name: "cuboid1", fn:"generateCuboid1", default:{xScale:100, yScale:30, zScale:50, xRot:50, yRot:40, zRot:45}},
+            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10}},
+            {name: "cone", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1}},
+            {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
         ]
     }
 
+    /**
+     * Example with a mix of five 3D objects
+     * largely inspired by : https://library.fridoverweij.com/codelab/3d_wireframe/index.html
+     * @returns {*[]}
+     */
+    function getAssemblyObject01() {
+        return [
+            {name: "cuboid2a", fn:"generateCuboid2", default:{xCenter:0, yCenter:0, zCenter:0, xLength:200, yLength:10, zLength:100, xRot:0, yRot:0, zRot:0}},
+            {name: "cylinder2a", fn:"generateCylinder2", default:{xCenter:0, yCenter:-110, zCenter:0, radius:50, length:200, xRot:0, yRot:0, zRot:0}},
+            {name: "sphere2", fn:"generateSphere2", default:{xCenter:0, yCenter:-210, zCenter:0, r:50}},
+            {name: "cylinder2b", fn:"generateCylinder2", default:{xCenter:-210, yCenter:-100, zCenter:0, radius:50, length:200, xRot:0, yRot:0, zRot:90}},
+            {name: "cuboid2b", fn:"generateCuboid2", default:{xCenter:210, yCenter:-150, zCenter:0, xLength:10, yLength:160, zLength:100, xRot:0, yRot:0, zRot:0}},
+        ]
+    }
     // public functions and constants (items not declared here are private)
     return {
         generateCube: generateCube,
@@ -1547,8 +1659,10 @@ var shapes3dToolbox = (function () {
         generateCylinder2: generateCylinder2,
         generateCuboid2: generateCuboid2,
         generateCone: generateCone,
+        generateTetrahedron: generateTetrahedron,
         rotateX3D: rotateX3D,
         rotateY3D: rotateY3D,
-        rotateZ3D: rotateZ3D
-      };
+        rotateZ3D: rotateZ3D,
+        getAssemblyObject01:getAssemblyObject01
+    };
 })();

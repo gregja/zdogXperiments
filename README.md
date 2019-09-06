@@ -40,12 +40,19 @@ The content of the project :
 
 - XWing
 
+- Complex 3D object created with 3 primitives (*4)
+
+-------------------
+
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
 
 (*2) see improved version by José (thank's José):
 https://codepen.io/ncodefun/pen/aggZKP
 
 (*3) sphere2, cuboid2 and cylinder2 : added the 5th sept. 2019
+
+(*4) recreation with zdog of : https://library.fridoverweij.com/codelab/3d_wireframe/
+
 ------------------
 
 The example "3D shapes" is visible on Codepen :

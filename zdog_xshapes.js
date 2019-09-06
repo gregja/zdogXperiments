@@ -1,17 +1,18 @@
-
+/*
+   Example of a complex 3D object created with 3 primitives
+   largely inspired by : https://library.fridoverweij.com/codelab/3d_wireframe/index.html
+*/
 {
     "use strict";
 
-    var list_shapes = shapes3dToolbox.getGeneratorsList();
+    var list_shapes = shapes3dToolbox.getAssemblyObject01();
     var id_shapes = Object.keys(list_shapes);
-
-    var generateShape = shapes3dToolbox[list_shapes[id_shapes[0]].fn];
-    var shape_params = list_shapes[id_shapes[0]].default;
 
     var default_color = "#000000";  // color picker : https://www.w3schools.com/colors/colors_picker.asp
     var stroke_value = 1;
     var illo = undefined; // pointer to the main object (for refreshing)
-    var mainshape = undefined;  // pointer to the wireframe shape (when it's activated)
+    var shapes_wire = [];
+    var shapes_paint = [];
     var draw_modes = ['Wireframe', 'Paint'];
     var draw_mode_default = draw_modes[0];
     var spin_modes = ['Spinning', 'Static'];
@@ -22,53 +23,14 @@
         colpicker.value = default_color;
         colpicker.addEventListener('change', function(evt) {
             default_color = this.value;
-            if (mainshape) {
-                mainshape.color = default_color;
+            if (shapes_wire.length > 0) {
+                shapes_wire.forEach(item => {
+                    item.color = default_color;
+                })
             }
         }, false);
     } else {
         console.warn('color picker not found');
-    }
-
-    var objselector = document.getElementById("objselector");
-    if (objselector) {
-        objselector.setAttribute("value", "p0");
-        list_shapes.forEach((item, idx) => {
-            console.log(item)
-            let option = document.createElement('option');
-            option.setAttribute('value', 'p' + String(idx));
-            option.innerHTML = item.name;
-            objselector.append(option);
-            if (idx == 0) {
-                option.setAttribute("selected", "selected");
-            }
-        });
-        objselector.blur();
-        objselector.addEventListener('change', function(evt) {
-            evt.preventDefault();
-            this.blur();
-            var current_id = Number(String(this.value).replace('p', ''));
-            generateShape = shapes3dToolbox[list_shapes[current_id].fn];
-            shape_params = list_shapes[current_id].default;
-            if (draw_mode_default == 'Wireframe') {
-                mainshape = new Zdog.Shape({
-                    addTo: illo,
-                    path: genShape1(generateShape(shape_params)),
-                    color: default_color,
-                    closed: false,
-                    stroke: stroke_value,
-                    fill: false,
-                });
-                mainshape.updatePath();
-            } else {
-                mainshape = null;
-                genShape2(illo);
-            }
-            resetScale();
-            generateGraph();
-        }, false);
-    } else {
-        console.warn('obj selector not found');
     }
 
     // Wireframe shape
@@ -90,9 +52,10 @@
     }
 
     // filled shape
-    function genShape2(ref) {
-        var obj3d = generateShape(shape_params);
-
+    function genShape2(ref, shape) {
+        let generateShape = shapes3dToolbox[shape.fn];
+        let shape_params = shape.default;
+        let obj3d = generateShape(shape_params);
         var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
@@ -107,14 +70,14 @@
                 shape.push({x:item.point.x, y:item.point.y, z:item.point.z});
             })
 
-            new Zdog.Shape({
+            shapes_paint.push(new Zdog.Shape({
                 addTo: ref,
                 path: shape,
                 color: colors[idx],
                 closed: false,
                 stroke: stroke_value,
                 fill: true,
-            });
+            }));
         });
     }
 
@@ -132,17 +95,31 @@
         illo.children = []; // drop all children before regeneration
 
         if (draw_mode_default == 'Wireframe') {
-            mainshape = new Zdog.Shape({
-                addTo: illo,
-                path: genShape1(generateShape(shape_params)),
-                color: default_color,
-                closed: false,
-                stroke: stroke_value,
-                fill: false,
+            shapes_wire = [];
+            shapes_paint = [];
+
+            list_shapes.forEach((item) => {
+                let generateShape = shapes3dToolbox[item.fn];
+                let shape_params = item.default;
+
+                shapes_wire.push(new Zdog.Shape({
+                    addTo: illo,
+                    path: genShape1(generateShape(shape_params)),
+                    color: default_color,
+                    closed: false,
+                    stroke: stroke_value,
+                    fill: false,
+                }));
             });
+
         } else {
-            mainshape = null;
-            genShape2(illo);
+            shapes_wire = [];
+            shapes_paint = [];
+
+            list_shapes.forEach(item => {
+                genShape2(illo, item);
+            });
+
         }
     }
 
@@ -207,41 +184,6 @@
                 illo.scale.x -= 0.3;
                 illo.scale.y -= 0.3;
                 illo.scale.z -= 0.3;
-                break;
-            }
-            case KEY_ONE:{
-                stroke_value = 1;
-                if (mainshape) {
-                    mainshape.stroke = stroke_value;
-                }
-                break;
-            }
-            case KEY_TWO:{
-                stroke_value = 2;
-                if (mainshape) {
-                    mainshape.stroke = stroke_value;
-                }
-                break;
-            }
-            case KEY_THREE:{
-                stroke_value = 3;
-                if (mainshape) {
-                    mainshape.stroke = stroke_value;
-                }
-                break;
-            }
-            case KEY_FOUR:{
-                stroke_value = 4;
-                if (mainshape) {
-                    mainshape.stroke = stroke_value;
-                }
-                break;
-            }
-            case KEY_FIVE:{
-                stroke_value = 5;
-                if (mainshape) {
-                    mainshape.stroke = stroke_value;
-                }
                 break;
             }
 
