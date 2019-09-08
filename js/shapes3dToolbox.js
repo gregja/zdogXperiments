@@ -370,6 +370,7 @@ var shapes3dToolbox = (function () {
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
+        var crossing = config.crossing || false;
 
         var nodes = [];
         var edges = [];
@@ -398,7 +399,12 @@ var shapes3dToolbox = (function () {
             let edge = [nodes[n], nodes[n+1]];
             //let face = [nodes[0], nodes[p], nodes[p+1]];
             if (n > 1) {
-              let face = [n-2, n-1, n, n+1];
+              let face;
+              if (crossing) {
+                face = [n-2, n-1, n, n+1];
+              } else {
+                face = [n-2, n-1, n+1, n];
+              }
               faces.push(face);
             }
             edges.push(edge);
@@ -687,6 +693,7 @@ var shapes3dToolbox = (function () {
      * @param config.xRot
      * @param config.yRot
      * @param config.zRot
+     * @param config.crossing (default : true)
      * @returns {{polygons: Array, edges: {a: *, b: *}[], points: {x: *, y: *, z: *}[]}}
      */
     function generateCylinder2(config) {
@@ -701,6 +708,8 @@ var shapes3dToolbox = (function () {
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
+
+        var crossing = config.crossing || true;
 
         // creating the nodes
         var nodes = [];
@@ -733,7 +742,7 @@ var shapes3dToolbox = (function () {
         rotateY3D(yRot, nodes);
         rotateX3D(xRot, nodes);
 
-        let mesh = generateMesh(edges);
+        let mesh = generateMesh(edges, crossing);
 
         return {
             points: nodes.map(item => { return { x: item[0], y: item[1], z:item[2] }}),
@@ -859,6 +868,7 @@ var shapes3dToolbox = (function () {
      * @param config.xRot
      * @param config.yRot
      * @param config.zRot
+     * @param config.crossing (default : false)
      * @returns {{polygons: Array, edges: {a: *, b: *}[], points: {x: *, y: *, z: *}[]}}
      */
     function generateCuboid2(config) {
@@ -868,6 +878,7 @@ var shapes3dToolbox = (function () {
         var xLength = config.xLength || 100;
         var yLength = config.yLength || 20;
         var zLength = config.zLength || 50;
+        var crossing = config.crossing || false;
 
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
@@ -902,7 +913,7 @@ var shapes3dToolbox = (function () {
         rotateY3D(yRot, nodes);
         rotateX3D(xRot, nodes);
 
-        let mesh = generateMesh(edges);
+        let mesh = generateMesh(edges, crossing);
 
         return {
             points: nodes.map(item => { return { x: item[0], y: item[1], z:item[2] }}),
@@ -916,13 +927,18 @@ var shapes3dToolbox = (function () {
      * @param edges
      * @returns {Array}
      */
-    function generateMesh(edges) {
+    function generateMesh(edges, crossing=true) {
         let polys = [];
         for (let i=0, imax = edges.length; i<imax; i+=2) {
             let edge1 = edges[i];
             let edge2 = edges[i+1];
             if (edge2 != undefined) {
+              if (crossing) {
                 polys.push([edge1[0], edge1[1], edge2[0], edge2[1]]);
+              } else {
+                polys.push([edge1[0], edge1[1], edge2[1], edge2[0]]);
+              }
+
             }
         }
         return polys;
@@ -1031,7 +1047,8 @@ var shapes3dToolbox = (function () {
         var xCenter = config.xCenter || 0;
         var yCenter = config.yCenter || 0;
         var zCenter = config.zCenter || 0;
-        var r = config.r || 100;
+        var radius = config.radius || 100;
+        var crossing = config.crossing || false;
 
         var yIncr = 5;
         var angleIncr = 0.3;
@@ -1043,8 +1060,8 @@ var shapes3dToolbox = (function () {
         var nLa = 0; // number of lines of latitude
 
         // create nodes and lines of latitude of half sphere
-        for ( let y1 = r; y1 >= 0; y1 -= yIncr ) {
-            let r_this = sqrt(pow(r,2) - pow(y1,2));
+        for ( let y1 = radius; y1 >= 0; y1 -= yIncr ) {
+            let r_this = sqrt(pow(radius,2) - pow(y1,2));
             let i = 0;
             for ( let angle = 0; angle < TAU; angle += angleIncr ) {
                 let x = cos(angle) * r_this + xCenter;
@@ -1065,13 +1082,13 @@ var shapes3dToolbox = (function () {
         }
 
         // create nodes and lines of latitude of other half sphere
-        for ( let y1 = -yIncr; y1 >= -r; y1 -= yIncr ) {
-            let r_this = sqrt(pow(r,2) - pow(y1,2));
+        for ( let y1 = -yIncr; y1 >= -radius; y1 -= yIncr ) {
+            let r_this = sqrt(pow(radius,2) - pow(y1,2));
             let i = true;
             for ( let angle = 0; angle < TAU; angle += angleIncr ) {
-                var x = cos(angle) * r_this + xCenter;
-                var z = sin(angle) * r_this + zCenter;
-                var y = y1 + yCenter;
+                let x = cos(angle) * r_this + xCenter;
+                let z = sin(angle) * r_this + zCenter;
+                let y = y1 + yCenter;
                 nodes[j] = [x,y,z];
                 if (i==true) {
                     var p = j;
@@ -1096,7 +1113,7 @@ var shapes3dToolbox = (function () {
             }
         }
 
-        let mesh = generateMesh(edges);
+        let mesh = generateMesh(edges, crossing);
 
         return {
             points: nodes.map(item => { return { x: item[0], y: item[1], z:item[2] }}),
@@ -1678,16 +1695,16 @@ var shapes3dToolbox = (function () {
         return [
             {name: "cube", fn:"generateCube", default:{scale:100}},
             {name: "sphere1", fn:"generateSphere1", default:{scale:200, lats:20, longs:20}},
-            {name: "sphere2", fn:"generateSphere2", default:{r:200}},
+            {name: "sphere2", fn:"generateSphere2", default:{radius:200}},
             {name: "icosahedron", fn:"generateIcosahedron", default:{scale:100}},
             {name: "pyramid", fn:"generatePyramid", default:{scale:100}},
             {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30}},
             {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10}},
             {name: "cuboid1", fn:"generateCuboid1", default:{xScale:100, yScale:30, zScale:50, xRot:50, yRot:40, zRot:45}},
-            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10}},
+            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10, crossing:true}},
             {name: "cone", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1}},
             {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
-            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1}},
+            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1, crossing:false}},
         ]
     }
 
@@ -1698,11 +1715,11 @@ var shapes3dToolbox = (function () {
      */
     function getAssemblyObject01() {
         return [
-            {name: "cuboid2a", fn:"generateCuboid2", default:{xCenter:0, yCenter:0, zCenter:0, xLength:200, yLength:10, zLength:100, xRot:0, yRot:0, zRot:0}},
+            {name: "cuboid2a", fn:"generateCuboid2", default:{xCenter:0, yCenter:0, zCenter:0, xLength:200, yLength:10, zLength:100, xRot:0, yRot:0, zRot:0, crossing:false}},
             {name: "cylinder2a", fn:"generateCylinder2", default:{xCenter:0, yCenter:-110, zCenter:0, radius:50, length:200, xRot:0, yRot:0, zRot:0}},
-            {name: "sphere2", fn:"generateSphere2", default:{xCenter:0, yCenter:-210, zCenter:0, r:50}},
+            {name: "sphere2", fn:"generateSphere2", default:{xCenter:0, yCenter:-210, zCenter:0, radius:50}},
             {name: "cylinder2b", fn:"generateCylinder2", default:{xCenter:-210, yCenter:-100, zCenter:0, radius:50, length:200, xRot:0, yRot:0, zRot:90}},
-            {name: "cuboid2b", fn:"generateCuboid2", default:{xCenter:210, yCenter:-150, zCenter:0, xLength:10, yLength:160, zLength:100, xRot:0, yRot:0, zRot:0}},
+            {name: "cuboid2b", fn:"generateCuboid2", default:{xCenter:210, yCenter:-150, zCenter:0, xLength:10, yLength:160, zLength:100, xRot:0, yRot:0, zRot:0, crossing:true}},
         ]
     }
     // public functions and constants (items not declared here are private)
