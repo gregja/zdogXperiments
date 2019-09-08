@@ -324,8 +324,8 @@ var shapes3dToolbox = (function () {
         var i = 1;
         var limit = TAU + dAlpha;
         while (alpha <= limit) {
-            var x = radius * cos(alpha) * scale;
-            var z = radius * sin(alpha) * scale;
+            let x = radius * cos(alpha) * scale;
+            let z = radius * sin(alpha) * scale;
             nodes[i] = [x, mid_height, z];
             alpha += dAlpha;
             i += 1;
@@ -339,6 +339,69 @@ var shapes3dToolbox = (function () {
             faces.push(face);
             edges.push(edge);
             p += 1;
+        }
+
+        rotateZ3D(zRot, nodes);
+        rotateY3D(yRot, nodes);
+        rotateX3D(xRot, nodes);
+
+        return {
+            points: nodes.map(item => { return { x: item[0], y: item[1], z:item[2] }}),
+            edges: edges.map(item => { return { a: item[0], b: item[1] }}),
+            polygons: faces
+        }
+    }
+
+    /**
+     * Conical Frustum generator
+     * @param config.scale
+     * @param config.radius
+     * @param config.length
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateConicalFrustum(config) {
+        var scale = config.scale || 1;
+        var radiusTop = config.radiusTop || 50;
+        var radiusBottom = config.radiusBottom || 100;
+        var heightTop = config.heightTop || 50;
+        var heightBottom = config.heightBottom || 200;
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var nodes = [];
+        var edges = [];
+        var faces = [];
+
+        //creating nodes
+        var alpha = 0;
+        var dAlpha = 0.1;
+
+        var i = 0;
+        var limit = TAU + dAlpha;
+        while (alpha <= limit) {
+            let x = radiusTop * cos(alpha) * scale;
+            let z = radiusTop * sin(alpha) * scale;
+            nodes[i] = [x, heightTop, z];
+            i += 1;
+            x = radiusBottom * cos(alpha) * scale;
+            z = radiusBottom * sin(alpha) * scale;
+            nodes[i] = [x, heightBottom, z];
+            alpha += dAlpha;
+            i += 1;
+        }
+        //creating faces
+        var p = 0;
+        for (let n = 0, nmax = nodes.length; n < nmax; n+=2 ) {
+            let edge = [nodes[n], nodes[n+1]];
+            //let face = [nodes[0], nodes[p], nodes[p+1]];
+            if (n > 1) {
+              let face = [n-2, n-1, n, n+1];
+              faces.push(face);
+            }
+            edges.push(edge);
         }
 
         rotateZ3D(zRot, nodes);
@@ -1624,6 +1687,7 @@ var shapes3dToolbox = (function () {
             {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10}},
             {name: "cone", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1}},
             {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
+            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1}},
         ]
     }
 
@@ -1660,6 +1724,7 @@ var shapes3dToolbox = (function () {
         generateCuboid2: generateCuboid2,
         generateCone: generateCone,
         generateTetrahedron: generateTetrahedron,
+        generateConicalFrustum: generateConicalFrustum,
         rotateX3D: rotateX3D,
         rotateY3D: rotateY3D,
         rotateZ3D: rotateZ3D,
