@@ -399,13 +399,13 @@ var shapes3dToolbox = (function () {
             let edge = [nodes[n], nodes[n+1]];
             //let face = [nodes[0], nodes[p], nodes[p+1]];
             if (n > 1) {
-              let face;
-              if (crossing) {
-                face = [n-2, n-1, n, n+1];
-              } else {
-                face = [n-2, n-1, n+1, n];
-              }
-              faces.push(face);
+                let face;
+                if (crossing) {
+                    face = [n-2, n-1, n, n+1];
+                } else {
+                    face = [n-2, n-1, n+1, n];
+                }
+                faces.push(face);
             }
             edges.push(edge);
         }
@@ -933,11 +933,11 @@ var shapes3dToolbox = (function () {
             let edge1 = edges[i];
             let edge2 = edges[i+1];
             if (edge2 != undefined) {
-              if (crossing) {
-                polys.push([edge1[0], edge1[1], edge2[0], edge2[1]]);
-              } else {
-                polys.push([edge1[0], edge1[1], edge2[1], edge2[0]]);
-              }
+                if (crossing) {
+                    polys.push([edge1[0], edge1[1], edge2[0], edge2[1]]);
+                } else {
+                    polys.push([edge1[0], edge1[1], edge2[1], edge2[0]]);
+                }
 
             }
         }
@@ -1139,9 +1139,9 @@ var shapes3dToolbox = (function () {
         var zRot = config.zRot || null;
 
         if (datas.length == 0) {
-          datas.push({r: 30, z:0});
-          datas.push({r: 45, z:20});
-          datas.push({r: 30, z:40});
+            datas.push({r: 30, z:0});
+            datas.push({r: 45, z:20});
+            datas.push({r: 30, z:40});
         }
 
         var nodes = [];
@@ -1152,38 +1152,38 @@ var shapes3dToolbox = (function () {
         const C = -95;
 
         for (let i=0, imax=datas.length; i<imax; i++) {
-          let r = datas[i].r * scale;
-          let z = datas[i].z * scale;
-          let s = 0;
-          for (let ang=0; ang<=360; ang+= 36) {
-            let a_rad = ang * DEG_TO_RAD;
-            let x = r * cos(a_rad);
-            let y = r * sin(a_rad);
+            let r = datas[i].r * scale;
+            let z = datas[i].z * scale;
+            let s = 0;
+            for (let ang=0; ang<=360; ang+= 36) {
+                let a_rad = ang * DEG_TO_RAD;
+                let x = r * cos(a_rad);
+                let y = r * sin(a_rad);
 
-            let b_rad = (ang+B) * DEG_TO_RAD;
-            let cb = cos(b_rad);
-            let sb = sin(b_rad);
+                let b_rad = (ang+B) * DEG_TO_RAD;
+                let cb = cos(b_rad);
+                let sb = sin(b_rad);
 
-            let c_rad = (ang+C) * DEG_TO_RAD;
-            let cc = cos(c_rad);
-            let sc = sin(c_rad);
+                let c_rad = (ang+C) * DEG_TO_RAD;
+                let cc = cos(c_rad);
+                let sc = sin(c_rad);
 
-            let x1 = x * cb + z * sb;
-            let y1 = y;
-            let z1 = -x * sb + z * cb;
+                let x1 = x * cb + z * sb;
+                let y1 = y;
+                let z1 = -x * sb + z * cb;
 
-            let x2 = x1;
-            let y2 = y1 * cc - z1 * sc;
-            let z2 = y1 * sc + z1 * cc;
+                let x2 = x1;
+                let y2 = y1 * cc - z1 * sc;
+                let z2 = y1 * sc + z1 * cc;
 
-            let level_node = nodes.length;
-            nodes[level_node] = [x1, y1, z1];
-            nodes[level_node+1] = [x2, y2, z2];
-            edges.push([level_node, level_node+1]);
+                let level_node = nodes.length;
+                nodes[level_node] = [x1, y1, z1];
+                nodes[level_node+1] = [x2, y2, z2];
+                edges.push([level_node, level_node+1]);
 
-            x2 = x2 + 160;
-            y2 = 100 - y2;
-          }
+                x2 = x2 + 160;
+                y2 = 100 - y2;
+            }
         }
 
         rotateZ3D(zRot, nodes);
@@ -1210,57 +1210,59 @@ var shapes3dToolbox = (function () {
     function generateDiamond(config) {
         var scale = config.scale || 1;
         var datas = config.datas || [];
+        var facets = config.facets || 10;
         var xRot = config.xRot || null;
         var yRot = config.yRot || null;
         var zRot = config.zRot || null;
 
         if (datas.length == 0) {
-          // shape by default if not defined
-          datas.push({r: 30, z:0});
-          datas.push({r: 45, z:20});
-          datas.push({r: 30, z:40});
+            // shape by default if not defined
+            datas.push({r: 30, z:0});
+            datas.push({r: 45, z:20});
+            datas.push({r: 30, z:40});
         }
 
         var nodes = [];
         var edges = [];
         var faces = [];
 
-        let points = [];
+        var points = [];
+        var step = 360 / facets;
 
         for (let i=0, imax=datas.length; i<imax; i++) {
-          let r = datas[i].r * scale;
-          let z = datas[i].z * scale;
-          points[i] = [];
+            let r = datas[i].r * scale;
+            let z = datas[i].z * scale;
+            points[i] = [];
 
-          for (let j=0; j<11; j++) {
-            let ang = (j * 36) * DEG_TO_RAD;
-            let x = r * cos(ang);
-            let y = r * sin(ang);
+            for (let j=0; j<= facets; j++) {
+                let ang = (j * step) * DEG_TO_RAD;
+                let x = r * cos(ang);
+                let y = r * sin(ang);
 
-            let level_node = nodes.length;
-            nodes[level_node] = [x, y, z];
+                let level_node = nodes.length;
+                nodes[level_node] = [x, y, z];
 
-            points[i].push(level_node);
+                points[i].push(level_node);
 
-            if (j > 0) {
-              // edges on the current circle
-              edges.push([level_node-1, level_node]);
-            }
-          }
-
-          if (i > 0) {
-            for (let k=0, kmax=points[i].length; k<kmax; k++) {
-              let point1 = points[i][k];
-              let point2 = points[i-1][k];
-              edges.push([point1, point2]);
-              if (k > 0) {
-                let pointp1 = points[i][k-1];
-                let pointp2 = points[i-1][k-1];
-                faces.push([point1, point2, pointp2, pointp1]);
-              }
+                if (j > 0) {
+                    // edges on the current circle
+                    edges.push([level_node-1, level_node]);
+                }
             }
 
-          }
+            if (i > 0) {
+                for (let k=0, kmax=points[i].length; k<kmax; k++) {
+                    let point1 = points[i][k];
+                    let point2 = points[i-1][k];
+                    edges.push([point1, point2]);
+                    if (k > 0) {
+                        let pointp1 = points[i][k-1];
+                        let pointp2 = points[i-1][k-1];
+                        faces.push([point1, point2, pointp2, pointp1]);
+                    }
+                }
+
+            }
         }
 
         rotateZ3D(zRot, nodes);
@@ -1858,7 +1860,9 @@ var shapes3dToolbox = (function () {
             {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
             {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1, crossing:false}},
             {name: "diamond", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}]}},
-            {name: "strangeDiamond", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 45, z:60}, {r: 20, z:80}]}},
+            {name: "doubleDiamond", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 45, z:60}, {r: 20, z:80}]}},
+            {name: "calyx", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:3, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
+            {name: "calyx2", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
             {name: "strangeFruit1", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:false}},
             {name: "strangeFruit2", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:true}},
         ]

@@ -1,8 +1,5 @@
 // Made with Zdog
-// inspired by the pen "Swing" (by Pogany)
-//    https://codepen.io/giaco/pen/RzjMBY
 
-// version perso pour tests : https://codepen.io/gregja/pen/24862834456fafa972ca681cc71b5661?editors=0010
 {
     "use strict";
 
