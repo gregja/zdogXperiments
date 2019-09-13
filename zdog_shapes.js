@@ -12,7 +12,7 @@
     var stroke_value = 1;
     var illo = undefined; // pointer to the main object (for refreshing)
     var mainshape = undefined;  // pointer to the wireframe shape (when it's activated)
-    var draw_modes = ['Wireframe', 'Paint'];
+    var draw_modes = ['Paint', 'Wireframe'];
     var draw_mode_default = draw_modes[0];
     var spin_modes = ['Spinning', 'Static'];
     var spin_mode_default = spin_modes[0];
@@ -90,10 +90,36 @@
     }
 
     // filled shape
-    function genShape2(ref) {
+    function genShape2(ref, gradient_color=1) {
         var obj3d = generateShape(shape_params);
 
-        var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
+        if (shape_params.hasOwnProperty('gradient_color')) {
+            gradient_color = Number(shape_params.gradient_color);
+            if (gradient_color != 1 && gradient_color != 2) {
+                console.warn('gradient color mode is bad, taken 1 by default');
+                gradient_color = 1;
+            }
+        }
+
+        var colors = [];
+        if (gradient_color == 1) {
+            // each polygon has a unique color
+            colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length)
+        } else {
+            // generate a first set of unique colors (from darkest to brightest) for the first half
+            // of the polygons, then reverse that color series for the second half of the polygons
+            // (interesting mode for cylinders and cones)
+            let nb_colors = obj3d.polygons.length;
+            if (nb_colors % 2 == 0) {
+                // we wish an odd number
+                nb_colors += 1;
+            }
+            let tmp_colors = chroma.scale(['#9cdf7c', '#2A4858']).mode('lch').colors(Math.round(nb_colors / 2));
+            for (let i=tmp_colors.length-1; i>=0; i--) {
+                tmp_colors.push(tmp_colors[i]);
+            }
+            colors = tmp_colors;
+        }
 
         obj3d.polygons.forEach((vertices, idx) => {
             let points = [];

@@ -1207,7 +1207,7 @@ var shapes3dToolbox = (function () {
      * @param config.yRot
      * @param config.zRot
      */
-    function generateDiamond(config) {
+    function generateTube(config) {
         var scale = config.scale || 1;
         var datas = config.datas || [];
         var facets = config.facets || 10;
@@ -1852,17 +1852,19 @@ var shapes3dToolbox = (function () {
             {name: "sphere2", fn:"generateSphere2", default:{radius:200}},
             {name: "icosahedron", fn:"generateIcosahedron", default:{scale:100}},
             {name: "pyramid", fn:"generatePyramid", default:{scale:100}},
-            {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30}},
-            {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10}},
+            {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30, gradient_color:1}},
+            {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10, gradient_color:2}},
             {name: "cuboid1", fn:"generateCuboid1", default:{xScale:100, yScale:30, zScale:50, xRot:50, yRot:40, zRot:45}},
             {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10, crossing:true}},
-            {name: "cone", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1}},
+            {name: "cone1", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:1}},
+            {name: "cone2", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:2}},
             {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
-            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1, crossing:false}},
-            {name: "diamond", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}]}},
-            {name: "doubleDiamond", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 45, z:60}, {r: 20, z:80}]}},
-            {name: "calyx", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:3, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
-            {name: "calyx2", fn:"generateDiamond", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
+            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1, crossing:false, gradient_color:2}},
+            {name: "tube", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 40, z:40}]}},
+            {name: "diamond", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}]}},
+            {name: "doubleDiamond", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 45, z:60}, {r: 20, z:80}]}},
+            {name: "calyx", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
+            {name: "calyx2", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
             {name: "strangeFruit1", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:false}},
             {name: "strangeFruit2", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:true}},
         ]
@@ -1903,7 +1905,7 @@ var shapes3dToolbox = (function () {
         generateTetrahedron: generateTetrahedron,
         generateConicalFrustum: generateConicalFrustum,
         generateStrangeFruit:generateStrangeFruit,
-        generateDiamond: generateDiamond,
+        generateTube: generateTube,
         rotateX3D: rotateX3D,
         rotateY3D: rotateY3D,
         rotateZ3D: rotateZ3D,
