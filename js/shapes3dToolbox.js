@@ -631,7 +631,7 @@ var shapes3dToolbox = (function () {
         var points = [],
             polygons = [],
             edges = [];
-        var inc = 2 * PI / strips;
+        var inc = TAU / strips;
         for (var s = 0, offset = 0; s <= strips; s++) {
             points.push({
                 x: cos(offset) * radius,
@@ -717,7 +717,7 @@ var shapes3dToolbox = (function () {
         var alpha = 0;
         var i = 0;
         var mid_length = length/2;
-        while (alpha <= 2 * PI + dAlpha) {
+        while (alpha <= TAU + dAlpha) {
             let x = radius * cos(alpha) + xCenter;
             let z = radius * sin(alpha) + zCenter;
             nodes[i] = [x, yCenter + mid_length, z];
@@ -964,7 +964,7 @@ var shapes3dToolbox = (function () {
         for (let latNumber = 0; latNumber <= lats; ++latNumber) {
             for (let longNumber = 0; longNumber <= longs; ++longNumber) {
                 var theta = latNumber * PI / lats;
-                var phi = longNumber * 2 * PI / longs;
+                var phi = longNumber * TAU / longs;
                 var sinTheta = sin(theta);
                 var sinPhi = sin(phi);
                 var cosTheta = cos(theta);
