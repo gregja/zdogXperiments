@@ -428,6 +428,7 @@ var parametricalSurfaces = (function () {
     function curvesInU() {
         let surface = surface_types[current_surface_type];
         points = [];
+        edges = [];
         polys  = [];
         curpoly = -1;
         let x,y,z;
@@ -458,6 +459,7 @@ var parametricalSurfaces = (function () {
     function curvesInV() {
         let surface = surface_types[current_surface_type];
         points = [];
+        edges = [];
         polys  = [];
         curpoly = -1;
         let x,y,z;

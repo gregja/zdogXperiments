@@ -38,6 +38,7 @@
               addTo: illo,
               translate: {x: 0, y: 0, z: 0 }
             });
+      console.log('graphU polygons =>'+shapeU.polygons.length);
 
             shapeU.polygons.forEach(vertices => {
                 let points = [];
@@ -71,7 +72,7 @@
               addTo: illo,
               translate: {x: 0, y: 0, z: 0 }
             });
-
+console.log('graphV polygons =>'+shapeV.polygons.length);
             shapeV.polygons.forEach(vertices => {
                 let points = [];
                 let datas = [];
