@@ -10,6 +10,7 @@
         draw_graphV: true,
         draw_mesh1: false,
         draw_mesh2: false,
+        draw_mesh3: false,
         stroke_value: 1,
         isSpinning: true,
         speed: 0.003,
@@ -33,7 +34,6 @@
     function generateGraph() {
         illo.children = []; // drop all children before regeneration
 
-        // TODO : experimental object mesh to finalize
         if (settings.draw_mesh1) {
             mesh = parametricalSurfaces.curvesInMesh();
 
@@ -67,9 +67,14 @@
             });
 
         }
-        // TODO : experimental object mesh to finalize
-        if (settings.draw_mesh2) {
-            let obj3d = parametricalSurfaces.curvesInMesh();
+
+        if (settings.draw_mesh2 || settings.draw_mesh3) {
+            let render_mode = 1; // draw one facet on two
+            if (settings.draw_mesh3){
+                render_mode = 2;  // draw all facets
+            }
+
+            let obj3d = parametricalSurfaces.curvesInMesh(render_mode);
 
             mainGroupU = new Zdog.Anchor({
                 addTo: illo,
@@ -250,8 +255,9 @@
 
         gui.add(obj, 'draw_graphU');
         gui.add(obj, 'draw_graphV');
-      //  gui.add(obj, 'draw_mesh1');  // TODO : to finalize
-      //  gui.add(obj, 'draw_mesh2');  // TODO : to finalize
+        gui.add(obj, 'draw_mesh1');
+        gui.add(obj, 'draw_mesh2');
+        gui.add(obj, 'draw_mesh3');
         gui.add(obj, 'isSpinning');
 
         gui.add(obj, 'stroke_value').min(1).max(5).step(1);

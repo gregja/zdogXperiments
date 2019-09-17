@@ -21,60 +21,24 @@ var parametricalSurfaces = (function () {
     "use strict";
 
     const {
-        cos, sin, PI, tanh, cosh, sinh, sqrt, pow, abs, sign, max
+        cos, sin, PI, tan, tanh, cosh, sinh, sqrt, pow, abs, sign, max, floor, log
     } = Math;
 
     const TAU = PI * 2;
     const TWO_TAU = TAU * 2;
+    const HALF_PI = PI / 2;
 
     const cos2 = (x) => pow(cos(x), 2);
 
-    // function constrain taken on P5.js
-    const constrain = function (n, low, high) {
-        return max(Math.min(n, high), low);
-    };
-
-    // function map taken on P5.js
-    const map = (n, start1, stop1, start2, stop2, withinBounds) => {
-        var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-        if (!withinBounds) {
-            return newval;
+    // function power taken on http://www.generative-gestaltung.de/2/
+    const power = (b, e) => {
+        if (b >= 0 || floor(e) == e) {
+            return pow(b, e);
         }
-        if (start2 < stop2) {
-            return constrain(newval, start2, stop2);
-        } else {
-            return constrain(newval, stop2, start2);
+        else {
+            return -pow(-b, e);
         }
     };
-
-    /**
-     * Split an array in blocks of arrays
-     * @param arr
-     * @param len
-     * @param dispatch
-     * @returns {*[]}
-     */
-    const chunk = (arr, len, dispatch = true) => {
-        var chunks = [],
-            i = 0,
-            n = arr.length;
-        while (i < n) {
-            chunks.push(arr.slice(i, i += len));
-        }
-
-        if (chunks.length > len && dispatch) {
-            let num_dispatch = 0;
-            chunks[chunks.length - 1].forEach(item => {
-                chunks[num_dispatch].push(item);
-                num_dispatch++;
-            });
-            chunks[chunks.length - 1] = [];
-        }
-
-        return chunks.filter(function (el) {
-            return el.length > 0;
-        });
-    }
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -82,7 +46,7 @@ var parametricalSurfaces = (function () {
     const DEFAULT_SCALE = 50;
 
     // Values for the current surface (setted by the call of the "setSurface" function)
-    let A, B, C;
+    let A, B, C, D;
     let FX = (u, v) => false;
     let FY = (u, v) => false;
     let FZ = (u, v) => false;
@@ -121,7 +85,7 @@ var parametricalSurfaces = (function () {
     });
     surface_types.push({
         id: 2,
-        name: 'Sphere 2 (truncated)',
+        name: 'Sphere 1 (truncated)',
         params: {A: 4.0, B: 4.0, C: 4.5},
         u: {begin: -PI / 2, end: 1, dist: 0.2},
         v: {begin: -PI, end: 1, dist: 0.2},
@@ -132,14 +96,14 @@ var parametricalSurfaces = (function () {
     });
     surface_types.push({
         id: 3,
-        name: 'Sphere 3 (truncated)',
-        params: {A: 4.0, B: 4.0, C: 4.5},
-        u: {begin: -PI / 3, end: 0, dist: 0.2},
-        v: {begin: -PI, end: 0, dist: 0.2},
-        fx: (u, v) => A * cos(u) * cos(v),
-        fy: (u, v) => B * cos(u) * sin(v),
-        fz: (u, v) => C * sin(u),
-        scale: DEFAULT_SCALE
+        name: 'Sphere 2',
+        params: {A: 2.0, B: 1.0, C: 0},
+        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
+        v: {begin: -PI, end: PI, dist: 0.2},
+        fx: (u, v) => A * (sin(v) * sin(u)),
+        fy: (u, v) => A * (B * cos(v)),
+        fz: (u, v) => A * (sin(v) * cos(u)),
+        scale: DEFAULT_SCALE * 2
     });
 
     surface_types.push({
@@ -427,7 +391,7 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 27,
-        name: 'wave1',
+        name: 'wave',
         params: {A: 0, B: 0, C: 0},
         u: {begin: -10, end: 10, dist: .5},
         v: {begin: -10, end: 10, dist: .5},
@@ -439,7 +403,7 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 28,
-        name: 'wave2',
+        name: 'complex wave',
         params: {A: 0, B: 0, C: 0},
         u: {begin: -10, end: 10, dist: .5},
         v: {begin: -10, end: 10, dist: .5},
@@ -451,13 +415,61 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 29,
-        name: 'wave3',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: 0, end: 50, dist: .5},
+        name: 'shell(1)',
+        params: {A: .5, B: 1, C: 2, D:3},
+        u: {begin: -10, end: 10, dist: .5},
         v: {begin: -10, end: 10, dist: .5},
-        fx: (u, v) => .75 * v,
-        fy: (u, v) => sin(u) * v,
-        fz: (u, v) => cos(u) * cos(v),
+        fx: (u, v) => B * (1 - (u / TAU)) * cos(A*u) * (1 + cos(v)) + C * cos(A*u),
+        fy: (u, v) => B * (1 - (u / TAU)) * sin(A*u) * (1 + cos(v)) + C * sin(A*u),
+        fz: (u, v) => D * (u / TAU) + A * (1 - (u / TAU)) * sin(v),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 30,
+        name: 'shell(2)',
+        params: {A: 2, B: 0.5, C: .1, D:1.5},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => B * (1 - (u / TAU)) * cos(A*u) * (1 + cos(v)) + C * cos(A*u),
+        fy: (u, v) => B * (1 - (u / TAU)) * sin(A*u) * (1 + cos(v)) + C * sin(A*u),
+        fz: (u, v) => D * (u / TAU) + A * (1 - (u / TAU)) * sin(v),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 31,
+        name: 'paraboloid',
+        params: {A: PI, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => power((v/A),0.5) * sin(u),
+        fy: (u, v) => v,
+        fz: (u, v) => power((v/A),0.5) * cos(u),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 32,
+        name: 'steinbachScrew',
+        params: {A: 1, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => u * cos(v),
+        fy: (u, v) => u * sin(A * v),
+        fz: (u, v) => v * cos(u),
+        scale: DEFAULT_SCALE / 2
+    });
+
+    surface_types.push({
+        id: 33,
+        name: 'corkscrew',
+        params: {A: 1, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => cos(u) * cos(v),
+        fy: (u, v) => sin(u) * cos(v),
+        fz: (u, v) => sin(v) + A * u,
         scale: DEFAULT_SCALE
     });
 
@@ -477,6 +489,7 @@ var parametricalSurfaces = (function () {
             A = surface.params.A;
             B = surface.params.B;
             C = surface.params.C;
+            D = surface.params.D || null;
             SCALE = surface.scale;
             FX = surface.fx;
             FY = surface.fy;
@@ -497,6 +510,7 @@ var parametricalSurfaces = (function () {
             A: A,
             B: B,
             C: C,
+            D: D,
             scale: SCALE
         }
     }
@@ -510,46 +524,46 @@ var parametricalSurfaces = (function () {
     }
 
     /**
-     * Experimental function (not finalized)
+     * curvesInMesh
+     * @param render_mode (1=draw one facet on two; 2=draw all facets)
+     * @returns {{polygons: Array, edges: Array, points: Array}}
      */
-    function curvesInMesh() {
+    function curvesInMesh(render_mode=1) {
         let surface = surface_types[current_surface_type];
-
-        let uMin = surface.u.begin;
-        let uMax = surface.u.end;
-        let uCount = (uMax - uMin) / surface.u.dist;
-
-        let vMin = surface.u.begin;
-        let vMax = surface.v.end;
-        let vCount = (vMax - vMin) / surface.v.dist;
-
-        if (vCount > uCount) {
-            uCount = vCount;
-        } else {
-            vCount = uCount;
-        }
-
-        let tmpPoints = [];
-        for (let iv = 0; iv <= vCount; iv++) {
-            tmpPoints[iv] = [];
-            for (let iu = 0; iu <= uCount; iu++) {
-                let u = map(iu, 0, uCount, uMin, uMax);
-                let v = map(iv, 0, vCount, vMin, vMax);
-
-                let x = FX(u, v);
-                let y = FY(u, v);
-                let z = FZ(u, v);
-
-                tmpPoints[iv][iu] = {adr: -1, coords: {x: x, y: y, z: z}};
-            }
-        }
 
         points = [];
         edges = [];
         polys = [];
 
-        for (let iv = 0; iv <= vCount; iv++) {
-            for (let iu = 0; iu <= uCount; iu++) {
+        let tmpPoints = [];
+
+        // first step : precalculation of coordinates and storage in a temporary array (with two entries)
+        let v = surface.v.begin;
+        let vmax = surface.v.end + (surface.v.dist/2);
+        let umax = surface.u.end + (surface.u.dist/2);
+        let iv = 0;
+        while (v <= vmax) {
+            tmpPoints[iv] = [];
+            let u = surface.u.begin;
+            let iu = 0;
+            while (u <= umax) {
+                let x = FX(u, v);
+                let y = FY(u, v);
+                let z = FZ(u, v);
+                tmpPoints[iv][iu] = {adr: -1, coords: {x: x, y: y, z: z}};
+                u += surface.u.dist;
+                iu++;
+            }
+            v += surface.v.dist;
+            iv++;
+        }
+
+        let vCount = tmpPoints.length;
+        let uCount = tmpPoints[0].length;
+
+        // second step : feed the "points" array with property "adr" (address) for linking points in the third step
+        for (let iv = 0; iv < vCount; iv++) {
+            for (let iu = 0; iu < uCount; iu++) {
                 let point = tmpPoints[iv][iu];
 
                 let numpoint = points.length;
@@ -558,21 +572,19 @@ var parametricalSurfaces = (function () {
             }
         }
 
-        for (let iv = 0; iv < vCount; iv++) {
-            for (let iu = 0; iu < uCount; iu++) {
+        // third step : feed the "polygons" array
+        for (let iv = 0, ivmax = vCount-1, iumax = uCount-1; iv < ivmax; iv++) {
+            for (let iu = 0; iu < iumax; iu++) {
                 let point_a = tmpPoints[iv][iu];
                 let point_b = tmpPoints[iv + 1][iu];
 
                 let point_c = tmpPoints[iv + 1][iu + 1];
                 let point_d = tmpPoints[iv][iu + 1];
 
-                //  edges.push({a: point_a.adr, b: point_b.adr});
-                //  edges.push({a: point_b.adr, b: point_c.adr});
-                //  edges.push({a: point_c.adr, b: point_d.adr});
-                //  edges.push({a: point_a.adr, b: point_d.adr});
-
                 polys.push([point_a.adr, point_c.adr, point_b.adr, point_a.adr]);
-                //polys.push([point_a.adr, point_d.adr, point_c.adr, point_a.adr]);
+                if (render_mode == 2) {
+                    polys.push([point_a.adr, point_d.adr, point_c.adr, point_a.adr]);
+                }
             }
         }
 
