@@ -9,7 +9,7 @@
     var draw_mode_default = draw_modes[0];
     var list_shapes = ['cube', 'diamond', 'dodecahedron', 'gem', 'humanoid', 'icosahedron', 'icosphere',
                         'magnolia', 'shuttle', 'skyscraper',
-                        'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus'];
+                        'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus', 'head'];
     var current_shape = list_shapes[0];
     var isSpinning = true;
     var illo, mainshape;

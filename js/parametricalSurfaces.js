@@ -50,6 +50,7 @@ var parametricalSurfaces = (function () {
     let FX = (u, v) => false;
     let FY = (u, v) => false;
     let FZ = (u, v) => false;
+    let FXYZ = (u, v) => false;
     let SCALE = DEFAULT_SCALE;
 
     let last_point = 0;
@@ -233,7 +234,7 @@ var parametricalSurfaces = (function () {
         fz: (u, v) => cos(C) * u + sin(C) * v,
         scale: DEFAULT_SCALE / 2
     });
-
+/*
     surface_types.push({
         id: 15,
         name: 'Plücker\'s conoid',
@@ -245,9 +246,9 @@ var parametricalSurfaces = (function () {
         fz: (u, v) => C * cos(4 * v),
         scale: DEFAULT_SCALE / 2
     });
-
+*/
     surface_types.push({
-        id: 16,
+        id: 15,
         name: 'Milk carton (in french "Berlingot")',
         params: {A: 1.0, B: 2, C: 0.0},
         u: {begin: -PI, end: PI, dist: 0.2},
@@ -259,8 +260,8 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 17,
-        name: 'Möbius surface',
+        id: 16,
+        name: 'Möbius ribbon v1',
         params: {A: 6.0, B: 6.0, C: 0.0},
         u: {begin: -PI, end: PI, dist: 0.2},
         v: {begin: -PI, end: PI, dist: 0.2},
@@ -269,6 +270,19 @@ var parametricalSurfaces = (function () {
         fz: (u, v) => (C + u * sin(v / 2)),
         scale: DEFAULT_SCALE / 2
     });
+
+    surface_types.push({
+        id: 17,
+        name: 'Möbius ribbon v2',
+        params: {A: 1, B: 0, C: 0},
+        u: {begin: 0, end: 8*PI, dist: .2},
+        v: {begin: -2, end: 2, dist: .2},
+        fx: (u, v) => sin(u)*(-2+v*sin(u/2)),
+        fy: (u, v) => cos(u)*(-2+v*sin(u/2)),
+        fz: (u, v) => v*cos(u/2),
+        scale: DEFAULT_SCALE
+    });
+
 
     // https://blender.stackexchange.com/questions/18955/modelling-a-klein-bottle
     surface_types.push({
@@ -450,8 +464,20 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 32,
-        name: 'steinbachScrew',
+        id: 320,
+        name: 'steinbachScrew(1)',
+        params: {A: 1, B: 0, C: 0},
+        u: {begin: -3, end: 3, dist: .5},
+        v: {begin: -PI, end: PI, dist: .1},
+        fx: (u, v) => u * cos(v),
+        fy: (u, v) => u * sin(A * v),
+        fz: (u, v) => v * cos(u),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 321,
+        name: 'steinbachScrew(2)',
         params: {A: 1, B: 0, C: 0},
         u: {begin: -10, end: 10, dist: .5},
         v: {begin: -10, end: 10, dist: .5},
@@ -473,6 +499,81 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE
     });
 
+    surface_types.push({
+        id: 34,
+        name: 'trianguloid',
+        params: {A: .5, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => 0.75 * (sin(3*u) * 2 / (2 + cos(v))),
+        fy: (u, v) => 0.75 * ((sin(u) + 2 * A * sin(2*u)) * 2 / (2 + cos(v + TAU))),
+        fz: (u, v) => 0.75 * ((cos(u) - 2 * A * cos(2*u)) * (2 + cos(v)) * ((2 + cos(v + TAU/3))*0.25)),
+        scale: DEFAULT_SCALE * 2
+    });
+
+    surface_types.push({
+        id: 35,
+        name: 'kidney',
+        params: {A: .1, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fxyz: (u, v) => {
+            u /= 2;
+            let x = cos(u) * (A * 3 * cos(v) - cos(3 * v));
+            let y = sin(u) * (A * 3 * cos(v) - cos(3 * v));
+            let z = 3 * sin(v) - sin(3 * v);
+            return {x:x, y:y, z:z};
+        },
+        scale: DEFAULT_SCALE * 2
+    });
+
+    surface_types.push({
+        id: 36,
+        name: 'maeders owl',
+        params: {A: .1, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},
+        v: {begin: -10, end: 10, dist: .5},
+        fx: (u, v) => 0.4 * (v * cos(u) - 0.5*A * power(v,2) * cos(2 * u)),
+        fy: (u, v) => 0.4 * (-v * sin(u) - 0.5*A * power(v,2) * sin(2 * u)),
+        fz: (u, v) => 0.4 * (4 * power(v,1.5) * cos(3 * u / 2) / 3),
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 37,
+        name: 'astroidal ellipsoid',
+        params: {A: .5, B: 0, C: 0},
+        u: {begin: -10, end: 10, dist: .5},  // begin: -1, end: 1, dist: .1
+        v: {begin: -10, end: 10, dist: .5},  // begin: -1, end: 1, dist: .1
+        fxyz: (u, v) => {
+            u /= 2;
+            let x = 3 * power(cos(u)*cos(v),3*A);
+            let y = 3 * power(sin(u)*cos(v),3*A);
+            let z = 3 * power(sin(v),3*A);
+            return {x:x, y:y, z:z};
+        },
+        scale: DEFAULT_SCALE
+    });
+
+    surface_types.push({
+        id: 38,
+        name: 'lemniscate',
+        params: {A: 1.5, B: 0, C: 0},
+        u: {begin: -PI, end: PI, dist: .1},  // begin: -1, end: 1, dist: .1
+        v: {begin: -PI, end: PI, dist: .1},  // begin: -1, end: 1, dist: .1
+        fxyz: (u, v) => {
+            u /= 2;
+            let cosvSqrtAbsSin2u = cos(v) * sqrt(abs(sin(2 * A * u)));
+            let x = cosvSqrtAbsSin2u * sin(u);
+            let y = cosvSqrtAbsSin2u * sin(u);
+            let z = 3 * (power(x,2) - power(y,2) + 2 * x * y * power(tan(v),2));
+            x *= 3;
+            y *= 3;
+            return {x:x, y:y, z:z};
+        },
+        scale: DEFAULT_SCALE
+    });
+
     function setSurface(shape_name) {
         var current_type = -1;
         for (let i = 0, imax = surface_types.length; i < imax; i++) {
@@ -483,6 +584,10 @@ var parametricalSurfaces = (function () {
             }
         }
         if (current_type != -1) {
+            FX = null;
+            FY = null;
+            FZ = null;
+            FXYZ = null;
             let surface = surface_types[current_type];
             current_surface_type = current_type;
             current_surface_name = surface.name;
@@ -491,9 +596,13 @@ var parametricalSurfaces = (function () {
             C = surface.params.C;
             D = surface.params.D || null;
             SCALE = surface.scale;
-            FX = surface.fx;
-            FY = surface.fy;
-            FZ = surface.fz;
+            if (typeof surface.fxyz === 'function') {
+                FXYZ = surface.fxyz;
+            } else {
+                FX = surface.fx;
+                FY = surface.fy;
+                FZ = surface.fz;
+            }
         } else {
             console.warn(`surface ID (${current_type}) not found - ignored`);
         }
@@ -504,9 +613,10 @@ var parametricalSurfaces = (function () {
         return {
             id: current_surface_type,
             name: current_surface_name,
-            fx: FX.toString(),
-            fy: FY.toString(),
-            fz: FZ.toString(),
+            fx: (typeof FX === "function") ? FX.toString() : null,
+            fy: (typeof FY === "function") ? FY.toString() : null,
+            fz: (typeof FZ === "function") ? FZ.toString() : null,
+            fxyz: (typeof FXYZ === "function") ? FXYZ.toString() : null,
             A: A,
             B: B,
             C: C,
@@ -547,9 +657,17 @@ var parametricalSurfaces = (function () {
             let u = surface.u.begin;
             let iu = 0;
             while (u <= umax) {
-                let x = FX(u, v);
-                let y = FY(u, v);
-                let z = FZ(u, v);
+                let x, y, z;
+                if (typeof FXYZ === "function") {
+                    let res = FXYZ(u, v);
+                    x = res.x;
+                    y = res.y;
+                    z = res.z;
+                } else {
+                    x = FX(u, v);
+                    y = FY(u, v);
+                    z = FZ(u, v);
+                }
                 tmpPoints[iv][iu] = {adr: -1, coords: {x: x, y: y, z: z}};
                 u += surface.u.dist;
                 iu++;
@@ -605,15 +723,29 @@ var parametricalSurfaces = (function () {
         let u = surface.u.begin;
         while (u <= surface.u.end) {
             let v = surface.v.begin;
-            x = FX(u, v);
-            y = FY(u, v);
-            z = FZ(u, v);
 
-            moveXYZ(x, y, z);
-            while (v <= surface.v.end) {
+            if (typeof FXYZ === "function") {
+                let res = FXYZ(u, v);
+                x = res.x;
+                y = res.y;
+                z = res.z;
+            } else {
                 x = FX(u, v);
                 y = FY(u, v);
                 z = FZ(u, v);
+            }
+            moveXYZ(x, y, z);
+            while (v <= surface.v.end) {
+                if (typeof FXYZ === "function") {
+                    let res = FXYZ(u, v);
+                    x = res.x;
+                    y = res.y;
+                    z = res.z;
+                } else {
+                    x = FX(u, v);
+                    y = FY(u, v);
+                    z = FZ(u, v);
+                }
                 drawXYZ(x, y, z);
                 v = v + surface.v.dist;
             }
@@ -637,15 +769,28 @@ var parametricalSurfaces = (function () {
         let v = surface.v.begin;
         while (v <= surface.v.end) {
             let u = surface.u.begin;
-            x = FX(u, v);
-            y = FY(u, v);
-            z = FZ(u, v);
-
-            moveXYZ(x, y, z);
-            while (u <= surface.u.end) {
+            if (typeof FXYZ === "function") {
+                let res = FXYZ(u, v);
+                x = res.x;
+                y = res.y;
+                z = res.z;
+            } else {
                 x = FX(u, v);
                 y = FY(u, v);
                 z = FZ(u, v);
+            }
+            moveXYZ(x, y, z);
+            while (u <= surface.u.end) {
+                if (typeof FXYZ === "function") {
+                    let res = FXYZ(u, v);
+                    x = res.x;
+                    y = res.y;
+                    z = res.z;
+                } else {
+                    x = FX(u, v);
+                    y = FY(u, v);
+                    z = FZ(u, v);
+                }
                 drawXYZ(x, y, z);
                 u = u + surface.u.dist;
             }

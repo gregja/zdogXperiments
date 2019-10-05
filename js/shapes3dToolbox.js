@@ -1571,9 +1571,6 @@ var shapes3dToolbox = (function () {
                                 }
                             }
                             faces.push(vertices);
-                            if (uvcoords.length !== 0) {
-                                poly.uvs = uvcoords
-                            }
                             break
                     }
                 }
