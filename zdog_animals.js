@@ -1,8 +1,7 @@
 /**
  * Largely inspired by this pen of Hankuro :
  *   https://codepen.io/hankuro/pen/QMVLJZ
- * Temporary version with only the "points mode"
- * TODO : to finalize with the "paint mode"
+ * rewritten for Zdog 
  */
 {
   "use strict";
@@ -20,13 +19,13 @@
     var scale_init = 5;
     var illo = undefined; // pointer to the main object (for refreshing)
     var mainshape = undefined;  // pointer to the wireframe shape (when it's activated)
-    const draw_modes = ['Points', 'Wireframe', 'Faces'];
-    var draw_mode_current = 0;
+    const draw_modes = ['Points', 'Wireframe', 'Paint'];
+    var draw_mode_current = 2;
     var zoom_factor = 0.03;
     const DEG_TO_RAD = Math.PI / 180;
     var current_morphing = 0;
     var max_morphing = -1;
-    var is_moving = true;
+    var is_moving = false;
 
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
@@ -42,9 +41,16 @@
     }
 
     // Wireframe shape
-    function genShape1() {
+    function genShape1(movie_index=-1) {
         console.log('Wireframe mode');
-        var obj3d = shape_params;
+
+        var obj3d = {};
+        if (movie_index != -1) {
+          let points = shape_params.morphings[movie_index];
+          shape_params.points = points;
+        }
+        obj3d = shape_params;
+
         var datas = [];
 
         obj3d.polygons.forEach(vertices => {
@@ -65,10 +71,15 @@
         return datas;
     }
 
-    function genShape2(ref, gradient_color=1) {
+    function genShape2(ref, movie_index=-1, gradient_color=1) {
         console.log('Paint mode');
 
-        var obj3d = shape_params;
+        var obj3d = {};
+        if (movie_index != -1) {
+          let points = shape_params.morphings[movie_index];
+          shape_params.points = points;
+        }
+        obj3d = shape_params;
 
         if (shape_params.hasOwnProperty('gradient_color')) {
             gradient_color = Number(shape_params.gradient_color);
@@ -84,7 +95,7 @@
         var colors = [];
         if (gradient_color == 1) {
             // each polygon has a unique color
-            colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(nb_colors)
+            colors = chroma.scale(['#d8b48d','#5f4121']).mode('lch').colors(nb_colors)
         } else {
             // generate a first set of unique colors (from darkest to brightest) for the first half
             // of the polygons, then reverse that color series for the second half of the polygons
@@ -131,11 +142,6 @@
         var obj3d = {};
         if (movie_index != -1) {
           let points = shape_params.morphings[movie_index];
-//          let morphings = datas.morphTargets.map(item => makeVertices(item.vertices));
-//          max_morphing = morphings.length;
-          //let vertices = makeVertices(datas.morphTargets[0].vertices);
-//          let polygons = makeFaces(datas.faces);
-
           shape_params.points = points;
         }
         obj3d = shape_params;
@@ -218,7 +224,27 @@
             current_morphing = 0;
           }
           illo.children = []; // drop all children before regeneration
-          genShape3(illo, current_morphing);
+          if (draw_mode_current == 1 ) {
+              // Wireframe mode
+              mainshape = new Zdog.Shape({
+                  addTo: illo,
+                  path: genShape1(current_morphing),
+                  color: default_color,
+                  closed: false,
+                  stroke: stroke_value,
+                  fill: false,
+              });
+              mainshape.updatePath();
+          } else {
+            if (draw_mode_current == 2 ) {
+              // Faces mode
+              genShape2(illo, current_morphing);
+            } else {
+              // Points mode
+              genShape3(illo, current_morphing);
+            }
+          }
+
           illo.updateRenderGraph();
 
           current_morphing++;
@@ -331,7 +357,11 @@
     function prepareEnvironment() {
         var draw_mode_btn = document.getElementById('drawmode');
         if (draw_mode_btn) {
-            draw_mode_btn.innerHTML = draw_modes[draw_mode_current+1];
+            let tmp_mode = draw_mode_current + 1;
+            if (tmp_mode >= draw_modes.length) {
+              tmp_mode = 0;
+            }
+            draw_mode_btn.innerHTML = draw_modes[tmp_mode];
             draw_mode_btn.addEventListener('click', function(evt) {
                 draw_mode_current++;
                 if (draw_mode_current > draw_modes.length - 1) {
@@ -345,6 +375,26 @@
                 }
                 draw_mode_btn.innerHTML = other_mode;
                 generateGraph();
+            }, false);
+        } else {
+            console.warn('draw mode button not found');
+        }
+
+        var anime_mode_btn = document.getElementById('anime');
+        if (anime_mode_btn) {
+            if (is_moving) {
+              anime_mode_btn.innerHTML = "stop anime";
+            } else {
+              anime_mode_btn.innerHTML = "start anime";
+            }
+            anime_mode_btn.addEventListener('click', function(evt) {
+              is_moving = !is_moving;
+              if (is_moving) {
+                anime_mode_btn.innerHTML = "stop anime";
+              } else {
+                anime_mode_btn.innerHTML = "start anime";
+              }
+              generateGraph();
             }, false);
         } else {
             console.warn('draw mode button not found');
@@ -407,18 +457,6 @@
         document.addEventListener('keydown', keyPressed, false);
         document.addEventListener('keyup', keyReleased, false);
     }
-/*
-      function rotateVertex(angle, v){
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        let x = cos * v.x  - sin * v.z;
-        let y = v.y;
-        let z =  cos * v.z  + sin * v.x;
-        v.x = x;
-        v.y = y;
-        v.z = z;
-      }
-*/
 
       function makeVertices(vertices){
         let _vertices = [];
@@ -439,16 +477,14 @@
           let size = faces.length;
         	let offset = 0;
           while (offset < size){
+            let type = faces[offset++];
               let face = [];
               face[0] = faces[offset++];
               face[1] = faces[offset++];
               face[2] = faces[offset++];
 
               offset++;
-            //  console.log('xxx1')
               for (var i = 0; i < 3; i++) offset++;
-
-            //    console.log('xxx4')
               offset++;
 
               _faces.push(face);
@@ -465,11 +501,10 @@
           let points = makeVertices(datas.vertices);
           let morphings = datas.morphTargets.map(item => makeVertices(item.vertices));
           max_morphing = morphings.length;
-          //let vertices = makeVertices(datas.morphTargets[0].vertices);
           let polygons = makeFaces(datas.faces);
 
           shape_params = {points: points, polygons: polygons, morphings:morphings};
-            console.log(shape_params);
+
           onload();
       }).catch(err => {
         console.error(err);
