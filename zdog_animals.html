@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>3D animals animated with Zdog</title>
+		<style>
+			html { height: 100%; }
+			body {
+			  min-height: 100%;
+			  margin: 0;
+			/*  background: #FD0; */
+			background: white;
+			  font-family: sans-serif;
+			  text-align: center;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+			canvas {
+			  display: block;
+			  margin: 0px auto 20px;
+			  cursor: move;
+			}
+		</style>
+	</head>
+ <body>
+	 <div class="container">
+	   <canvas class="zdog-canvas" width="1000" height="800"></canvas>
+		 <input id="colorpicker" type="color">
+		 <select id="objselector"></select>
+		 <button id="drawmode" disabled></button>
+		 <button id="zoom1">Zoom-</button>
+		 <button id="zoom2">Zoom+</button>
+		 <p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
+
+	 </div>
+	<script src="js/zdog.dist.js"></script>
+	<script src="js/chroma.min.js"></script>
+	<script src="zdog_animals.js"></script>
+</body>
+</html>

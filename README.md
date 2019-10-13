@@ -42,6 +42,8 @@ The content of the project :
 
 - Complex 3D object created with 3 primitives (*3)
 
+- Wolf and Elk running (*4)
+
 -------------------
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
@@ -50,6 +52,9 @@ The content of the project :
 https://codepen.io/ncodefun/pen/aggZKP
 
 (*3) recreation with zdog of : https://library.fridoverweij.com/codelab/3d_wireframe/
+
+(*4) recreation with zdog of : https://codepen.io/hankuro/pen/QMVLJZ
+
 
 ------------------
 

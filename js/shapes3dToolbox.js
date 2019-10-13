@@ -1838,6 +1838,24 @@ var shapes3dToolbox = (function () {
         }
     }
 
+    function loadImage (asset) {
+      return new Promise((resolve) => {
+        let img = new Image();
+        img.setAttribute('data-name', asset.name);
+        img.crossOrigin = "Anonymous";
+        img.onload = () => resolve(img);
+        img.src = asset.path;
+      })
+    }
+
+    function loadImages (assets) {
+        let pics = [];
+        assets.forEach((item) => {
+            pics.push(loadImage(item));
+        });
+        return Promise.all(pics);
+    }
+
     /**
      * getGeneratorsList - get the list of shapes available
      * @returns {*[]}
@@ -1906,6 +1924,8 @@ var shapes3dToolbox = (function () {
         rotateX3D: rotateX3D,
         rotateY3D: rotateY3D,
         rotateZ3D: rotateZ3D,
+        loadImages: loadImages,
+        loadImage: loadImage,
         getAssemblyObject01:getAssemblyObject01
     };
 })();

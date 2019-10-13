@@ -78,8 +78,8 @@
         obj3d.polygons.forEach(vertices => {
             let points = [];
 
-            vertices.forEach((item, idx) => {
-                points.push({point:obj3d.points[vertices[idx]]});
+            vertices.forEach(item => {
+                points.push({point:obj3d.points[item]});
             })
 
             points.forEach(item => {
@@ -122,17 +122,13 @@
         }
 
         obj3d.polygons.forEach((vertices, idx) => {
-            let points = [];
-            vertices.forEach((item, idx) => {
-                points.push({point:obj3d.points[vertices[idx]]});
-            })
-
             let shape = [];
-
-            points.forEach(item => {
-                shape.push({x:item.point.x, y:item.point.y, z:item.point.z});
-            })
-
+            vertices.forEach(item => {
+                if (item != undefined && obj3d.points[item] != undefined) {
+                  let point = obj3d.points[item];
+                    shape.push({x:point.x, y:point.y, z:point.z});
+                }
+            });
             new Zdog.Shape({
                 addTo: ref,
                 path: shape,
