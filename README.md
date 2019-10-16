@@ -42,7 +42,7 @@ The content of the project :
 
 - Complex 3D object created with 3 primitives (*3)
 
-- Wolf and Elk running (*4)
+- 3D animals running (*4)
 
 -------------------
 

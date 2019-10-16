@@ -14,7 +14,7 @@
     var shape_params = {};
 
 	// path for codepen
-  //   var path = "https://rawcdn.githack.com/gregja/zdogXperiments/9a162d3e00984bec88ecc545ff26dea2b9f8021c/assets/";
+  //   var path = "https://raw.githack.com/gregja/zdogXperiments/master/assets/";
 	// path for local environment
 	var path = "assets/";
 
