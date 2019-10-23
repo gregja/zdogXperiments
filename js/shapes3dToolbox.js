@@ -26,6 +26,9 @@ var shapes3dToolbox = (function () {
     const TAU = PI * 2;
     const DEG_TO_RAD = PI / 180;
 
+    const degToRad = angle => angle * DEG_TO_RAD;
+    const radToDeg = angle => angle * ( 180 / PI );
+
     /**
      * Cube generator
      * @param config.scale
@@ -1738,6 +1741,171 @@ var shapes3dToolbox = (function () {
     }
 
     /**
+     * Grid generator with Triangle strip algorithm
+     */
+    function gridTriangleStrip(config) {
+        var cols = config.cols || 4;
+        var rows = config.rows || 3;
+        var RCvertices = 2*cols*(rows-1);
+        var TSvertices = 2*cols*(rows-1)+2*(rows-2);
+        var j=0;
+        var trianglestrip = [];
+        for(let i = 1; i <= RCvertices; i += 2){
+            trianglestrip[ j ] = (1 + i)/2;
+            trianglestrip[ j+1 ] = (cols*2 + i + 1) / 2;
+            if( trianglestrip[ j+1 ] % cols == 0) {
+                if( trianglestrip[ j+1 ] != cols && trianglestrip[ j+1 ] != cols*rows ){
+                    trianglestrip[ j+2 ] = trianglestrip[ j+1 ];
+                    trianglestrip[ j+3 ] = (1 + i + 2) / 2;
+                    j += 2;
+                }
+            }
+            j += 2;
+        }
+        return trianglestrip;
+    }
+
+    /**
+     * Custom shape
+     * @param config
+     * @returns {{polygons: Array, edges: {a: *, b: *}[], points: {x: *, y: *, z: *}[]}}
+     */
+    function customShape(config) {
+        var scale = config.scale || 1;
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+        var rendrMode = config.rendrMode || 1;   // 1=triangle strip standard ; 2=triangle strip buggy but pretty
+        var rendrParts = config.rendrParts || 3;  // 1=Top ; 2=Bottom ; 3=Both
+
+        var count = config.pjs_count || 5;
+        var radius = config.pjs_radius || 5;
+        var twist = config.pjs_twist || 2;
+        var hcount = config.pjs_hcount || 1.5;
+        var phase = config.pjs_phase || 2;
+        var hradius = config.pjs_hradius || 5;
+
+        var max_tri_strips = config.max_tri_strips || 30;
+        var max_vertices = config.max_vertices || 72;
+
+        var nodes = [];
+        var edges = [];
+        var faces = [];
+
+        var vertx = [];
+        var verty = [];
+
+        var topShape = [];
+
+        function getR( a, h) {
+            return  radius * sin( degToRad(a) * count + ( h / 15 )* twist)
+                + sin(degToRad(3.6 * h) * hcount + phase)
+                * hradius + 40;
+        }
+
+        for ( let h = 0; h < max_tri_strips; h++) {
+            vertx[h] = [];
+            verty[h] = [];
+            for ( let a = 0; a < max_vertices; a++) {
+                let r = getR( a * 5.0, h * 5.0 );
+                vertx[h][a] = cos( degToRad( a * 5.0 )) * r;
+                verty[h][a] = sin( degToRad( a * 5.0 )) * r;
+            }
+        }
+        let coef_h = 3.2;
+        if (rendrMode == 1) {
+            coef_h = 2.65;
+        }
+        for ( let h = 1, hmax = max_tri_strips-1; h < hmax; h++) {
+            for ( let a = 0; a <= max_vertices; a++ ) {
+                let aa = a % max_vertices;
+                topShape.push({x:vertx[h][aa], y:h*5.0*coef_h, z:verty[h][aa]});
+                topShape.push({x:vertx[h-1][aa], y:(h-1)*5.0*coef_h, z:verty[h-1][aa]});
+                if (rendrMode == 1) {
+                  topShape.push({x:vertx[h+1][aa], y:(h+1)*5.0*coef_h, z:verty[h+1][aa]});
+                }
+            }
+        }
+
+        //console.log("topShape.length => ",topShape.length, topShape);
+
+        // generate the top part only, or both parts
+        if (rendrParts == 1 || rendrParts == 3) {
+            if (rendrMode == 2) {
+                let grid = gridTriangleStrip({cols: 1, rows: topShape.length / 3.0});
+                //console.log("grid.length => ", grid.length, grid);
+
+                let tmpfaces = chunk(grid, 3, false);
+                //console.log(tmpfaces);
+
+                tmpfaces.forEach(tmpface => {
+                    let node0 = topShape[tmpface[0]];
+                    nodes.push({x: node0.x, y: node0.y, z: node0.z});
+                    let id0 = nodes.length - 1;
+
+                    let node1 = topShape[tmpface[1]];
+                    nodes.push({x: node1.x, y: node1.y, z: node1.z});
+                    let id1 = nodes.length - 1;
+
+                    let node2 = topShape[tmpface[2]];
+                    let id2 = 0;
+                    if (node2 != undefined) {
+                        nodes.push({x: node2.x, y: node2.y, z: node2.z});
+                        id2 = nodes.length - 1;
+                    }
+                    let face = [id0, id1, id2];
+                    faces.push(face);
+                });
+            } else {
+                let grid = gridTriangleStrip({cols: max_vertices, rows: max_tri_strips});
+                //console.log("grid.length => ", grid.length, grid);
+
+                let face = [];
+                grid.forEach(item => {
+                    let node = topShape[item];
+                    nodes.push({x: node.x, y: node.y, z: node.z});
+                    let id = nodes.length - 1;
+                    face.push(id);
+                    if (face.length == 3) {
+                        faces.push(face);
+                        face = [];
+                    }
+                });
+            }
+        }
+
+        // generate the bottom part only, or both parts
+        if (rendrParts == 2 || rendrParts == 3) {
+            // bottom of the shape (grid triangle fan algorithm)
+            let h = max_tri_strips - 1;
+            nodes.push({x: 0, y: h * 5, z: 0});
+            let pos_bottom_ref = nodes.length - 1;
+            let pos_bottom_inc = pos_bottom_ref;
+
+            for (let a = 0; a <= max_vertices; a++) {
+                let aa = a % max_vertices;
+                pos_bottom_inc++;
+                nodes[pos_bottom_inc] = {x: vertx[h][aa], y: h * 5, z: verty[h][aa]};
+                //edges.push([pos_bottom_ref, pos_bottom_inc]);
+                if (a > 0) {
+                    faces.push([pos_bottom_ref, pos_bottom_inc, pos_bottom_inc - 1]);
+                }
+            }
+        }
+
+        //console.log(faces);
+
+        //  rotateZ3D(zRot, nodes);
+        //  rotateY3D(yRot, nodes);
+        //  rotateX3D(xRot, nodes);
+
+        return {
+            points: nodes.map(item => { return { x: item.x, y: item.y, z:item.z }}),
+            edges: edges.map(item => { return { a: item[0], b: item[1] }}),
+            polygons: faces
+        }
+    }
+    /**
      * Rotate shape around the z-axis
      *  If parameter xyz == true
      *     Then work with explicit x, y and z properties of each node
@@ -1839,13 +2007,13 @@ var shapes3dToolbox = (function () {
     }
 
     function loadImage (asset) {
-      return new Promise((resolve) => {
-        let img = new Image();
-        img.setAttribute('data-name', asset.name);
-        img.crossOrigin = "Anonymous";
-        img.onload = () => resolve(img);
-        img.src = asset.path;
-      })
+        return new Promise((resolve) => {
+            let img = new Image();
+            img.setAttribute('data-name', asset.name);
+            img.crossOrigin = "Anonymous";
+            img.onload = () => resolve(img);
+            img.src = asset.path;
+        })
     }
 
     function loadImages (assets) {
@@ -1926,6 +2094,7 @@ var shapes3dToolbox = (function () {
         rotateZ3D: rotateZ3D,
         loadImages: loadImages,
         loadImage: loadImage,
-        getAssemblyObject01:getAssemblyObject01
+        getAssemblyObject01:getAssemblyObject01,
+        customShape: customShape
     };
 })();

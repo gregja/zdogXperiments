@@ -27,6 +27,7 @@ function addSlider( fieldname, domtarget, start, end, value, step, label, callba
   xlabel.append(xinput);
   domtarget.append(xlabel);
   xinput.addEventListener('change', function(evt) {
+    //evt.preventDefault();
     let output = evt.target.parentNode.querySelector('output');
     let substition = callback(this);
     if (substition) {

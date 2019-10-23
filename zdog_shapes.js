@@ -168,8 +168,6 @@
         }
     }
 
-    generateGraph();
-
     function draw (){
         if (isSpinning) {
             illo.rotate.z += 0.003;
@@ -279,6 +277,7 @@
     if (draw_mode_btn) {
         draw_mode_btn.innerHTML = draw_modes[1];
         draw_mode_btn.addEventListener('click', function(evt) {
+          evt.preventDefault();
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
                 draw_mode_default = draw_modes[1];
@@ -300,6 +299,7 @@
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
         spin_mode_btn.addEventListener('click', function(evt) {
+          evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
                 spin_mode_default = spin_modes[1];
@@ -322,6 +322,7 @@
 
     document.addEventListener("DOMContentLoaded", function(event) {
         console.log("DOM fully loaded and parsed");
+        generateGraph();
         animate();
     });
 

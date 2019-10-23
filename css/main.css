@@ -1,4 +1,9 @@
-
+body {
+  margin-left: 20px;
+}
+.zdog_list {
+  list-style-type:square;
+}
 .slidecontainer {
   width: 10%;
 }
