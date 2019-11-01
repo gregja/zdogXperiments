@@ -3,6 +3,8 @@
  *    => http://www.kevs3d.co.uk/dev/phoria/
  * Cone, Cylinder2, Sphere2, Cuboid2 are largely inspired by algorithms of Frido Verweij
  *    => https://librayRot.fridoverweij.com/codelab/
+ * Mollusc shell, great creature, great sphere and a beautiful rose
+ *    => https://echarts.apache.org/examples/en/editor.html
  * Functions rotateX3D, rotateXYD and rotateZ3D largely inspired by the tutorial of Peter Collingridge
  *    https://petercollingridge.appspot.com/3D-tutorial/rotating-objects
  */

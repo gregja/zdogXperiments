@@ -21,7 +21,7 @@ var parametricalSurfaces = (function () {
     "use strict";
 
     const {
-        cos, sin, PI, tan, tanh, cosh, sinh, sqrt, pow, abs, sign, max, floor, log
+        cos, sin, PI, tan, tanh, cosh, sinh, sqrt, pow, abs, sign, max, floor, log, exp
     } = Math;
 
     const TAU = PI * 2;
@@ -39,6 +39,15 @@ var parametricalSurfaces = (function () {
             return -pow(-b, e);
         }
     };
+
+    const square = function (x) {
+        return x*x;
+    }
+
+    const mod2 = function (a, b) {
+        var c = a % b;
+        return c > 0 ? c : (c + b);
+    }
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -559,8 +568,8 @@ var parametricalSurfaces = (function () {
         id: 38,
         name: 'lemniscate',
         params: {A: 1.5, B: 0, C: 0},
-        u: {begin: -PI, end: PI, dist: .1},  // begin: -1, end: 1, dist: .1
-        v: {begin: -PI, end: PI, dist: .1},  // begin: -1, end: 1, dist: .1
+        u: {begin: -PI, end: PI, dist: .1},
+        v: {begin: -PI, end: PI, dist: .1},
         fxyz: (u, v) => {
             u /= 2;
             let cosvSqrtAbsSin2u = cos(v) * sqrt(abs(sin(2 * A * u)));
@@ -573,8 +582,115 @@ var parametricalSurfaces = (function () {
         },
         scale: DEFAULT_SCALE
     });
+    
+    // https://echarts.apache.org/examples/en/editor.html?c=surface-mollusc-shell&gl=1
+    surface_types.push({
+        id: 39,
+        name: 'mollusc-shell',
+        params: {A: 1.16, B: 1, C: 2},
+        u: {begin: -PI, end: PI, dist: PI / 40},
+        v: {begin: -15, end: 6, dist: .21},
+        fxyz: (u, v) => {
+            let x = pow(A, v) * cos(v) * (B + cos(u));
+            let y = -pow(A, v) * sin(v) * (B + cos(u));
+            let z = -C * pow(A, v) * (B + sin(u));
+            return {x:x, y:y, z:z};
+        },
+        scale: DEFAULT_SCALE
+    });
 
-    function setSurface(shape_name) {
+    // https://echarts.apache.org/examples/en/editor.html?c=line3d-orthographic&gl=1
+    surface_types.push({
+        id: 40,
+        name: 'great spring',
+        params: {A: 0.25, B: 75, C: 2.0},
+        u: {begin: 0, end: 1, dist: 1},
+        v: {begin: 0, end: 25, dist: 0.001},
+        fxyz: (u, v) => {
+            let x = (1 + A * cos(B * v)) * cos(v);
+            // let x = (1 + A * cos(B * u)) * cos(u);  résultats intéressants avec (u) au lieu de (v), à étudier
+            let y = (1 + A * cos(B * v)) * sin(v);
+            let z = v + C * sin(B * v);
+            return {x:x, y:y, z:z};
+        },
+        scale: DEFAULT_SCALE
+    });
+
+    // https://echarts.apache.org/examples/en/editor.html?c=sphere-parametric-surface&gl=1
+    surface_types.push({
+      id: 41,
+      name: 'great sphere',
+      params: {A: 0, B: 0, C: 0},
+      u: {begin: -PI, end: PI, dist: PI / 40},
+      v: {begin: 0, end: PI, dist: PI / 40},
+      fxyz: (u, v) => {
+          let x = sin(v) * sin(u);
+          let y = sin(v) * cos(u);
+          let z = cos(v);
+          return {x:x, y:y, z:z};
+      },
+      scale: DEFAULT_SCALE * 4
+  });
+
+  // https://echarts.apache.org/examples/en/editor.html?c=metal-surface&gl=1
+  surface_types.push({
+      id: 42,
+      name: 'great creature',
+      params: {A: 0.4, B: 0, C: 0},
+      u: {begin: -13.2, end: 13.2, dist: 0.4},  // begin: -1, end: 1, dist: .1
+      v: {begin: -37.4, end: 37.4, dist: 0.4},  // begin: -1, end: 1, dist: .1
+      fxyz: (u, v) => {
+          let r = 1 - A * A;
+          let w = sqrt(r);
+          let x_denom = A * (pow(w * cosh(A * u), 2) + A * pow(sin(w * v), 2))
+          let x = -u + (2 * r * cosh(A * u) * sinh(A * u) / x_denom);
+          let y_denom = A * (pow(w * cosh(A * u), 2) + A * pow(sin(w * v), 2))
+          let y = 2 * w * cosh(A * u) * (-(w * cos(v) * cos(w * v)) - (sin(v) * sin(w * v))) / y_denom;
+          let z_denom = A * (pow(w * cosh(A * u), 2) + A * pow(sin(w * v), 2))
+          let z = 2 * w * cosh(A * u) * (-(w * sin(v) * cos(w * v)) + (cos(v) * sin(w * v))) / z_denom
+          return {x:x, y:y, z:z};
+      },
+      scale: DEFAULT_SCALE
+    });
+
+    // https://echarts.apache.org/examples/en/editor.html?c=parametric-surface-rose&gl=1
+    surface_types.push({
+      id: 43,
+      name: 'Rose',
+      params: {A: 0, B: 0, C: 0},
+      u: {begin: 0, end: 1, dist: 1 / 24},
+      v: {begin: -(20/9) * PI, end: 15 * PI, dist: ((15 * PI)- (-(20/9) * PI)) / 575},
+      fxyz: (u, v, x1=0) => {
+          let x = ((x1, theta) => {
+              let phi = (PI/2)*exp(-theta/(8*PI));
+              let y1 = 1.9565284531299512*square(x1)*square(1.2768869870150188*x1-1)*sin(phi);
+              let X = 1-square(1.25*square(1-mod2((3.6*theta),(2*PI))/PI)-0.25)/2;
+              let r = X*(x1*sin(phi)+y1*cos(phi));
+              return r * sin(theta);
+          })(u, v);
+          let y = ((x1, theta) => {
+              let phi = (PI/2)*exp(-theta/(8*PI));
+              let y1 = 1.9565284531299512*square(x1)*square(1.2768869870150188*x1-1)*sin(phi);
+              let X = 1-square(1.25*square(1-mod2((3.6*theta),(2*PI))/PI)-0.25)/2;
+              let r = X*(x1*sin(phi)+y1*cos(phi));
+              return r * cos(theta);
+          })(u, v);
+          let z = ((x1, theta) => {
+              let phi = (PI/2)*exp(-theta/(8*PI));
+              let y1 = 1.9565284531299512*square(x1)*square(1.2768869870150188*x1-1)*sin(phi);
+              let X = 1-square(1.25*square(1-mod2((3.6*theta),(2*PI))/PI)-0.25)/2;
+              let r = X*(x1*sin(phi)+y1*cos(phi));
+              return X*(x1*cos(phi)-y1*sin(phi));
+          })(u, v);
+          if (x1 == 0) {
+            x1 = x;
+          }
+          return {x:x, y:y, z:z};
+      },
+      scale: DEFAULT_SCALE * 4
+  });
+
+  function setSurface(shape_name) {
         var current_type = -1;
         for (let i = 0, imax = surface_types.length; i < imax; i++) {
             let item = surface_types[i];
@@ -713,6 +829,9 @@ var parametricalSurfaces = (function () {
         }
     }
 
+    /**
+     * Draw the family of curves in U
+     */
     function curvesInU() {
         let surface = surface_types[current_surface_type];
         points = [];
@@ -758,6 +877,9 @@ var parametricalSurfaces = (function () {
         }
     }
 
+    /**
+     * Draw the family of curves in V
+     */
     function curvesInV() {
         let surface = surface_types[current_surface_type];
         points = [];

@@ -192,6 +192,7 @@
                 });
             });
         }
+        console.log('shape generated, everything is OK ;)');
     }
 
     generateGraph();
@@ -220,6 +221,7 @@
         if (changes) {
             if (newshape) {
                 let infos = parametricalSurfaces.setSurface(settings.type);
+                console.log("new shape selected : " + infos.name);
                 illo.scale.x = infos.scale;
                 illo.scale.y = infos.scale;
                 illo.scale.z = infos.scale;
