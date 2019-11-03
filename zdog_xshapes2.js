@@ -5,7 +5,7 @@
 {
     "use strict";
 
-    var list_shapes = shapes3dToolbox.getAssemblyObject01();
+    var list_shapes = shapes3dToolbox.getEightCubesLinked();
     var id_shapes = Object.keys(list_shapes);
 
     var default_color = "#000000";  // color picker : https://www.w3schools.com/colors/colors_picker.asp
@@ -17,7 +17,7 @@
     var draw_mode_default = draw_modes[1];
     var spin_modes = ['Spinning', 'Static'];
     var spin_mode_default = spin_modes[0];
-    var scale_def = 1;
+    var scale_def = 2;
 
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {

@@ -27,9 +27,10 @@ var shapes3dToolbox = (function () {
 
     const TAU = PI * 2;
     const DEG_TO_RAD = PI / 180;
+    const RAD_TO_DEG = 180 / PI;
 
     const degToRad = angle => angle * DEG_TO_RAD;
-    const radToDeg = angle => angle * ( 180 / PI );
+    const radToDeg = angle => angle * RAD_TO_DEG;
 
     /**
      * Cube generator
@@ -616,6 +617,111 @@ var shapes3dToolbox = (function () {
     }
 
     /**
+     * Balance generator
+     * @param config.scale
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateEquilibrium(config) {
+        var s = config.scale || 1;
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var tmpnodes = [{ x: 5, y: 10, z: 0},
+          { x: 7, y: 10, z: 3},
+          { x: 5, y: 12, z: 3},
+          { x: 3, y: 10, z: 3},
+          { x: 5, y: 8, z: 3},
+          { x: 5, y: 10, z: 5.6},
+          { x: 6, y: 1, z: 3.8},
+          { x: 6, y: 22, z: 8},
+          { x: 4, y: 22, z: 8},
+          { x: 4, y: 1, z: 3.8},
+          { x: 5, y: 2, z: 4},
+          { x: 7, y: 2, z: 9},
+          { x: 5, y: 4, z: 9},
+          { x: 3, y: 2, z: 9},
+          { x: 5, y: 0, z: 9},
+          { x: 7, y: 21, z: 8},
+          { x: 7, y: 23, z: 8},
+          { x: 3, y: 23, z: 8},
+          { x: 3, y: 21, z: 8},
+          { x: 7, y: 21, z: 12},
+          { x: 7, y: 23, z: 12},
+          { x: 3, y: 23, z: 12},
+          { x: 3, y: 21, z: 12},
+          { x: 8, y: 7, z: 0},
+          { x: 8, y: 13, z: 0},
+          { x: 2, y: 13, z: 0},
+          { x: 2, y: 7, z: 0}
+      ];
+
+      var nodes = tmpnodes.map(item=> {
+         return {x: item.x * s, y: item.y * s, z: item.z * s}
+      });
+
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        var tmppolygons = [];
+        tmppolygons[0] = [[1, 5, 4],
+                        [4, 3, 1],
+                        [2, 5, 1],
+                        [1, 3, 2],
+                        [6, 5, 2],
+                        [2, 3, 6],
+                        [6, 3, 4],
+                        [4, 5, 6]];
+        tmppolygons[1] = [[7, 8, 9, 10],
+                        [10, 9, 8, 7],
+                        [12, 13, 14, 15]];
+        tmppolygons[2] = [[11, 12, 15],
+                        [11, 13, 12],
+                        [11, 14, 13],
+                        [11, 15, 14]];
+        tmppolygons[3] = [[16, 17, 21, 20],
+                        [20, 23, 19, 16],
+                        [16, 19, 18, 17],
+                        [17, 18, 22, 21],
+                        [21, 22, 23, 20],
+                        [23, 22, 18, 19],
+                        [24, 25, 26, 27],
+                        [27, 26, 25, 24]];
+
+        var polygons = [];
+        var edges = [];
+        tmppolygons.forEach(series=>{
+
+          series.forEach(items=>{
+            let poly = [];
+            items.forEach(item => {
+              poly.push(item - 1);
+            })
+            polygons.push(poly);
+          });
+
+          for (let i=0, imax=polygons.length; i<imax; i++) {
+            let a = polygons[i];
+            let b = polygons[i+1];
+            edges.push({a:a, b:b });
+          }
+        });
+ console.log({
+     points: nodes,
+     edges: edges,
+     polygons: polygons
+ })
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
+        }
+    }
+    /**
      * Cylinder generator version 1
      * @param config.radius
      * @param config.length
@@ -924,6 +1030,150 @@ var shapes3dToolbox = (function () {
             points: nodes.map(item => { return { x: item[0], y: item[1], z:item[2] }}),
             edges: edges.map(item => { return { a: item[0], b: item[1] }}),
             polygons: mesh
+        }
+    }
+
+    /**
+     * Cuboid generator version 3
+     * @param config.scale
+     * @param config.size
+     * @param config.xTranslate
+     * @param config.yTranslate
+     * @param config.zTranslate
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateCuboid3(config) {
+        var size = config.size || 1,
+            scale = config.scale || 1,
+            xTranslate = config.xTranslate || 0,
+            yTranslate = config.yTranslate || 0,
+            zTranslate = config.zTranslate || 0;
+
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var tmpnodes = [{
+            x: size * scale,
+            y: 0 * scale,
+            z: size  * scale
+        }, {
+            x: size * scale,
+            y: size * scale,
+            z: size * scale
+        }, {
+            x: 0 * scale,
+            y: size * scale,
+            z: size * scale
+        }, {
+            x: 0 * scale,
+            y: 0 * scale,
+            z: size * scale
+        }, {
+            x: size * scale,
+            y: 0 * scale,
+            z: 0 * scale
+        }, {
+            x: size * scale,
+            y: size * scale,
+            z: 0 * scale
+        }, {
+            x: 0 * scale,
+            y: size * scale,
+            z: 0 * scale
+        }, {
+            x: 0 * scale,
+            y: 0 * scale,
+            z: 0 * scale
+        }];
+
+        var nodes = [];
+        if (xTranslate != 0 || yTranslate != 0 || zTranslate != 0) {
+          nodes = tmpnodes.map(item => {
+            return {x: item.x + xTranslate, y: item.y + yTranslate, z:item.z + zTranslate};
+          });
+        } else {
+          nodes = tmpnodes;
+        }
+
+        var polygons = [];
+        polygons.push([0,1,2,3]);
+        polygons.push([0,4,5,1]);
+        polygons.push([1,5,6,2]);
+        polygons.push([2,6,7,3]);
+        polygons.push([3,7,4,0]);
+        polygons.push([7,6,5,4]);
+
+        var edges = [];
+        for (let i=0, imax=polygons.length; i<imax; i++) {
+          let a = polygons[i];
+          let b = polygons[i+1];
+          edges.push({a:a, b:b });
+        }
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
+        }
+    }
+
+    /**
+     * Cuboid generator version 4
+     * @param config.nodes
+     * @param config.scale
+     * @param config.xTranslate
+     * @param config.yTranslate
+     * @param config.zTranslate
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateCuboid4(config) {
+        var scale = config.scale || 1,
+            xTranslate = config.xTranslate || 0,
+            yTranslate = config.yTranslate || 0,
+            zTranslate = config.zTranslate || 0;
+
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var nodes = config.nodes.map(node => {
+          return {x: node.x * scale + xTranslate * scale,
+              y: node.y * scale + yTranslate * scale,
+              z: node.z * scale + zTranslate * scale
+        }});
+
+        var polygons = [];
+        polygons.push([0,1,2,3]);
+        polygons.push([0,4,5,1]);
+        polygons.push([1,5,6,2]);
+        polygons.push([2,6,7,3]);
+        polygons.push([3,7,4,0]);
+        polygons.push([7,6,5,4]);
+
+        var edges = [];
+        for (let i=0, imax=polygons.length; i<imax; i++) {
+          let a = polygons[i];
+          let b = polygons[i+1];
+          edges.push({a:a, b:b });
+        }
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
         }
     }
 
@@ -2041,6 +2291,7 @@ var shapes3dToolbox = (function () {
             {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10, gradient_color:2}},
             {name: "cuboid1", fn:"generateCuboid1", default:{xScale:100, yScale:30, zScale:50, xRot:50, yRot:40, zRot:45}},
             {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10, crossing:true}},
+            {name: "cuboid3", fn:"generateCuboid3", default:{size:3, scale:10}},
             {name: "cone1", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:1}},
             {name: "cone2", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:2}},
             {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
@@ -2052,6 +2303,7 @@ var shapes3dToolbox = (function () {
             {name: "calyx2", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
             {name: "strangeFruit1", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:false}},
             {name: "strangeFruit2", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:true}},
+            {name: "equilibrium", fn:"generateEquilibrium", default:{xRot:50, yRot:40, zRot:10, scale:20}},
         ]
     }
 
@@ -2069,6 +2321,107 @@ var shapes3dToolbox = (function () {
             {name: "cuboid2b", fn:"generateCuboid2", default:{xCenter:210, yCenter:-150, zCenter:0, xLength:10, yLength:160, zLength:100, xRot:0, yRot:0, zRot:0, crossing:true}},
         ]
     }
+
+    /**
+     * Example with 8 cubes linked by 12 bars
+     * largely inspired by : https://library.fridoverweij.com/codelab/3d_wireframe/index.html
+     * @returns {*[]}
+     */
+    function getEightCubesLinked() {
+      var size = 3;
+      var scale = 10;
+      var trans = 80;
+      var mesh = [
+            {name: "cuboid3-1", fn:"generateCuboid3", default:{size:size, scale:scale}},
+            {name: "cuboid3-2", fn:"generateCuboid3", default:{size:size, scale:scale, yTranslate:trans}},
+            {name: "cuboid3-3", fn:"generateCuboid3", default:{size:size, scale:scale, xTranslate:trans, yTranslate:trans}},
+            {name: "cuboid3-4", fn:"generateCuboid3", default:{size:size, scale:scale, xTranslate:trans}},
+            {name: "cuboid3-5", fn:"generateCuboid3", default:{size:size, scale:scale, zTranslate:trans}},
+            {name: "cuboid3-6", fn:"generateCuboid3", default:{size:size, scale:scale, yTranslate:trans, zTranslate:trans}},
+            {name: "cuboid3-7", fn:"generateCuboid3", default:{size:size, scale:scale, xTranslate:trans, yTranslate:trans, zTranslate:trans}},
+            {name: "cuboid3-8", fn:"generateCuboid3", default:{size:size, scale:scale, xTranslate:trans, zTranslate:trans}},
+        ];
+
+        var decalage = 8;
+
+        /* 4 bars on first direction */
+
+        let data1 = [{x:1, y:3, z:1}, {x:2, y:3, z:1}, {x:2, y:3, z:2}, {x:1, y:3, z:2},
+          {x:1, y:8, z:1}, {x:2, y:8, z:1}, {x:2, y:8, z:2}, {x:1, y:8, z:2}];
+
+        mesh.push({name: "cuboid4-1-1", fn:"generateCuboid4", default:{nodes:data1, scale:scale}});
+
+        let data2 = data1.map(item => {
+          return {x: item.x+decalage, y: item.y, z:item.z};
+        })
+
+        mesh.push({name: "cuboid4-1-2", fn:"generateCuboid4", default:{nodes:data2, scale:scale}});
+
+        let data3 = data1.map(item => {
+          return {x: item.x, y: item.y, z:item.z+decalage};
+        })
+
+        mesh.push({name: "cuboid4-1-3", fn:"generateCuboid4", default:{nodes:data3, scale:scale}});
+
+        let data4 = data1.map(item => {
+          return {x: item.x+decalage, y: item.y, z:item.z+decalage};
+        })
+
+        mesh.push({name: "cuboid4-1-4", fn:"generateCuboid4", default:{nodes:data4, scale:scale}});
+
+        /* 4 bars on second direction */
+
+        let data5 = [{x:8, y:1, z:1}, {x:8, y:2, z:1}, {x:8, y:2, z:2}, {x:8, y:1, z:2},
+          {x:3, y:1, z:1}, {x:3, y:2, z:1}, {x:3, y:2, z:2}, {x:3, y:1, z:2}];
+
+        mesh.push({name: "cuboid4-2-1", fn:"generateCuboid4", default:{nodes:data5, scale:scale}});
+
+        let data6 = data5.map(item => {
+          return {x: item.x, y: item.y+decalage, z:item.z};
+        })
+
+        mesh.push({name: "cuboid4-2-2", fn:"generateCuboid4", default:{nodes:data6, scale:scale}});
+
+        let data7 = data5.map(item => {
+          return {x: item.x, y: item.y, z:item.z+decalage};
+        })
+
+        mesh.push({name: "cuboid4-2-3", fn:"generateCuboid4", default:{nodes:data7, scale:scale}});
+
+        let data8 = data5.map(item => {
+          return {x: item.x, y: item.y+decalage, z:item.z+decalage};
+        })
+
+        mesh.push({name: "cuboid4-2-4", fn:"generateCuboid4", default:{nodes:data8, scale:scale}});
+
+        /* 4 bars on third direction */
+
+        let data9 = [{x:10, y:1, z:3}, {x:10, y:2, z:3}, {x:9, y:2, z:3}, {x:9, y:1, z:3},
+          {x:10, y:1, z:8}, {x:10, y:2, z:8}, {x:9, y:2, z:8}, {x:9, y:1, z:8}];
+
+        mesh.push({name: "cuboid4-3-1", fn:"generateCuboid4", default:{nodes:data9, scale:scale}});
+
+        let data10 = data9.map(item => {
+          return {x: item.x-decalage, y: item.y, z:item.z};
+        })
+
+        mesh.push({name: "cuboid4-3-2", fn:"generateCuboid4", default:{nodes:data10, scale:scale}});
+
+        let data11 = data9.map(item => {
+          return {x: item.x-decalage, y: item.y+decalage, z:item.z};
+        })
+
+        mesh.push({name: "cuboid4-3-3", fn:"generateCuboid4", default:{nodes:data11, scale:scale}});
+
+        let data12 = data9.map(item => {
+          return {x: item.x, y: item.y+decalage, z:item.z};
+        })
+
+        mesh.push({name: "cuboid4-3-4", fn:"generateCuboid4", default:{nodes:data12, scale:scale}});
+
+        return mesh;
+    }
+
     // public functions and constants (items not declared here are private)
     return {
         generateCube: generateCube,
@@ -2086,6 +2439,7 @@ var shapes3dToolbox = (function () {
         generateSphere2: generateSphere2,
         generateCylinder2: generateCylinder2,
         generateCuboid2: generateCuboid2,
+        generateCuboid3: generateCuboid3,
         generateCone: generateCone,
         generateTetrahedron: generateTetrahedron,
         generateConicalFrustum: generateConicalFrustum,
@@ -2097,6 +2451,9 @@ var shapes3dToolbox = (function () {
         loadImages: loadImages,
         loadImage: loadImage,
         getAssemblyObject01:getAssemblyObject01,
-        customShape: customShape
+        customShape: customShape,
+        generateEquilibrium: generateEquilibrium,
+        getEightCubesLinked: getEightCubesLinked,
+        generateCuboid4: generateCuboid4
     };
 })();
