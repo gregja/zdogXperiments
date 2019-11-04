@@ -3,17 +3,6 @@
     var default_color = "#000000";  // color picker : https://www.w3schools.com/colors/colors_picker.asp
     var stroke_value = 1;
 
-    var colpicker = document.getElementById("colorpicker");
-    if (colpicker) {
-        colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
-            default_color = this.value;
-            mainshape.color = default_color;
-        }, false);
-    } else {
-        console.warn('color picker not found');
-    }
-
     var constrain = function(n, low, high) {
         return Math.max(Math.min(n, high), low);
     };

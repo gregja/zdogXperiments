@@ -14,7 +14,7 @@
     var illo = undefined; // pointer to the main object (for refreshing)
     var mainshape = undefined;  // pointer to the wireframe shape (when it's activated)
     var draw_modes = ['Wireframe', 'Paint'];
-    var draw_mode_default = draw_modes[0];
+    var draw_mode_default = draw_modes[1];
     var zoom_factor = 0.03;
 
     var colpicker = document.getElementById("colorpicker");
@@ -29,7 +29,7 @@
     } else {
         console.warn('color picker not found');
     }
-
+/*
     var objselector = document.getElementById("objselector");
     if (objselector) {
       objselector.setAttribute("value", "p0");
@@ -69,7 +69,7 @@
     } else {
         console.warn('obj selector not found');
     }
-
+*/
     // Wireframe shape
     function genShape1(obj3d) {
         var datas = [];
@@ -258,7 +258,11 @@
 
     var draw_mode_btn = document.getElementById('drawmode');
     if (draw_mode_btn) {
-        draw_mode_btn.innerHTML = draw_modes[1];
+        if (draw_mode_default == draw_modes[1]) {
+          draw_mode_btn.innerHTML = draw_modes[0];
+        } else {
+          draw_mode_btn.innerHTML = draw_modes[1];
+        }
         draw_mode_btn.addEventListener('click', function(evt) {
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
