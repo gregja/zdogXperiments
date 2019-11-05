@@ -51,6 +51,8 @@ The content of the project :
 
 - 3D shape generator (*5)
 
+- Boxman, a robot walking (*6)
+
 -------------------
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
@@ -64,6 +66,7 @@ https://codepen.io/ncodefun/pen/aggZKP
 
 (*5) inspired by an example excerpt of the book of Nikolaus Gradwohl : "Processing 2: Creative Programming Hotshot", Packt Publishing 2013
 
+(*6) inspired by a pen of Hankuro : https://codepen.io/hankuro/pen/LrbVrx
 
 ------------------
 

@@ -14,8 +14,8 @@
     var roboto;
     var cycle = 0 , angle = 0;
     var character = {};
-    var spin_modes = ['Walking', 'Spinning', 'Static'];
-    var spin_mode_default = spin_modes[2];
+    var moving_modes = ['Walking', 'Static'];
+    var moving_mode_default = 0;
 
     const {
         cos, sin, PI
@@ -312,32 +312,43 @@
 
       document.addEventListener('keydown', keyPressed, false);
       document.addEventListener('keyup', keyReleased, false);
-/*
-      var spin_mode_btn = document.getElementById('spinning');
-      if (spin_mode_btn) {
-          spin_mode_btn.innerHTML = spin_modes[1];
-          spin_mode_btn.addEventListener('click', function(evt) {
-              let other_mode;
-              if (spin_mode_default == spin_modes[0]) {
-                  spin_mode_default = spin_modes[1];
-                  other_mode = spin_modes[0];
-                  isSpinning = false;
-              } else {
-                  if (spin_mode_default == spin_modes[1]) {
 
-                  } else {
-                    spin_mode_default = spin_modes[0];
-                    other_mode = spin_modes[1];
-                    isSpinning = true;
+      var moving_mode_default_btn = document.getElementById('moving');
+      if (moving_mode_default_btn) {
+          let max_modes = moving_modes.length;
+          if (moving_mode_default >= max_modes) {
+            moving_mode_default = 0;
+          }
+          let other_mode = moving_mode_default + 1;
+          if (other_mode >= max_modes) {
+            other_mode = 0;
+          }
+          moving_mode_default_btn.innerHTML = moving_modes[other_mode];
+          moving_mode_default_btn.addEventListener('click', function(evt) {
+            moving_mode_default += 1;
+            if (moving_mode_default >= max_modes) {
+              moving_mode_default = 0;
+            }
+            let other_mode = moving_mode_default + 1;
+            if (other_mode >= max_modes) {
+              other_mode = 0;
+            }
+            moving_mode_default_btn.innerHTML = moving_modes[other_mode];
+              if (moving_mode_default == 0) { // walking
+                  isSpinning = false;
+                  isMoving = true;
+              } else {
+                  if (moving_mode_default == 1) {  // static
+                    isSpinning = false;
+                    isMoving = false;
                   }
               }
-              spin_mode_btn.innerHTML = other_mode;
-              generateGraph();
+              //generateGraph();
           }, false);
       } else {
           console.warn('spin mode button not found');
       }
-*/
+
     document.addEventListener("DOMContentLoaded", function(event) {
         console.log("DOM fully loaded and parsed");
         genRoboto();
