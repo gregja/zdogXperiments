@@ -660,7 +660,7 @@ var parametricalSurfaces = (function () {
       params: {A: 0, B: 0, C: 0},
       u: {begin: 0, end: 1, dist: 1 / 24},
       v: {begin: -(20/9) * PI, end: 15 * PI, dist: ((15 * PI)- (-(20/9) * PI)) / 575},
-      fxyz: (u, v, x1=0) => {
+      fxyz: (u, v) => {
           let x = ((x1, theta) => {
               let phi = (PI/2)*exp(-theta/(8*PI));
               let y1 = 1.9565284531299512*square(x1)*square(1.2768869870150188*x1-1)*sin(phi);
@@ -682,9 +682,10 @@ var parametricalSurfaces = (function () {
               let r = X*(x1*sin(phi)+y1*cos(phi));
               return X*(x1*cos(phi)-y1*sin(phi));
           })(u, v);
+          /*
           if (x1 == 0) {
             x1 = x;
-          }
+          }*/
           return {x:x, y:y, z:z};
       },
       scale: DEFAULT_SCALE * 4
