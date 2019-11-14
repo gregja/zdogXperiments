@@ -57,6 +57,7 @@ The content of the project :
 
 - Calabi-Yau manifold (*7)
 
+- Segments - 3 examples (*8)
 
 -------------------
 
@@ -74,6 +75,8 @@ https://codepen.io/ncodefun/pen/aggZKP
 (*6) inspired by a pen of Hankuro : https://codepen.io/hankuro/pen/LrbVrx
 
 (*7) inspired by this tutorial : https://observablehq.com/@sw1227/calabi-yau-manifold-3d
+
+(*8) inspired by the book : "Foundation HTML5 Animation with JavaScript" of Billy Lamberta and Keith Peters (ed. Apress), http://lamberta.github.io/html5-animation/
 
 ------------------
 
