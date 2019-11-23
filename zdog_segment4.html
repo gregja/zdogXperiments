@@ -21,6 +21,11 @@
 			  margin: 0px auto 20px;
 			  cursor: move;
 			}
+			table {
+				border-style: dashed;
+				border-color: blueviolet;
+				text-align: left;
+			}
 		</style>
 	</head>
  <body>
@@ -29,7 +34,87 @@
 		 <p>Click &amp; drag to rotate</p>
 		 <canvas id="zdog-canvas" width="800" height="800"></canvas>
 		 <canvas id="canvas-slider" with="200" height="400"></canvas>
+
+		 <table>
+			 <thead>
+					<tr>
+						<th>Curseur</th>
+						<th>Description (french version)</th>
+					</tr>
+			 </thead>
+			 <tbody>
+				 <tr>
+					 <td>1</td>
+					 <td>contrôle la vitesse à laquelle le système se déplace</td>
+				 </tr>
+				 <tr>
+					 <td>2</td>
+					 <td>contrôle la distance entre les cuisses</td>
+				 </tr>
+				 <tr>
+					 <td>3</td>
+					 <td>contrôle l'angle de base des cuisses</td>
+				 </tr>
+				 <tr>
+					 <td>4</td>
+					 <td>contrôle l'amplitude de mouvement des mollets</td>
+				 </tr>
+				 <tr>
+					 <td>5</td>
+					 <td>contrôle la valeur de décalage (avec -PI / 2)</td>
+				 </tr>
+				 <tr>
+					 <td>6</td>
+					 <td>contrôle l'épaisseur des membres et l'écartement des jambes</td>
+				 </tr>
+				 <tr>
+					 <td>7</td>
+					 <td>joue sur les couleurs des membres (4 choix possibles)</td>
+				 </tr>
+			 </tbody>
+		 </table>
+		 <br>
+		 <table>
+			 <thead>
+					<tr>
+						<th>Slider</th>
+						<th>Description (english version)</th>
+					</tr>
+			 </thead>
+			 <tbody>
+				 <tr>
+					 <td>1</td>
+					 <td>controls the speed at which the system moves</td>
+				 </tr>
+				 <tr>
+					 <td>2</td>
+					 <td>controls how far back and forth the thighs</td>
+				 </tr>
+				 <tr>
+					 <td>3</td>
+					 <td>controls the base angle of the thighs</td>
+				 </tr>
+				 <tr>
+					 <td>4</td>
+					 <td>controls how much range of motion the calves have</td>
+				 </tr>
+				 <tr>
+					 <td>5</td>
+					 <td>controls the offset value (using -PI/2)</td>
+				 </tr>
+				 <tr>
+					 <td>6</td>
+					 <td>controls the thickness of the limbs and the spacing of the legs</td>
+				 </tr>
+				 <tr>
+					 <td>7</td>
+					 <td>plays on the colors of the limbs (4 choices)</td>
+				 </tr>
+			 </tbody>
+		 </table>
+		 <br>
 		 <p>Inspired by the chapter 13 of the book : <a href="http://lamberta.github.io/html5-animation/" target="_blank">Foundation HTML5 Animation with JavaScript</a></p>
+		 <br>
 	 </div>
 	<script src="js/zdog.dist.js"></script>
 	<script src="js/segment.js"></script>

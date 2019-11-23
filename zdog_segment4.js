@@ -27,17 +27,27 @@
             dragRotate: true,
         });
 
-        var thickness = 20;
-        segment[0] = new Segment({width: 100, height: 30, color: "red", lineWidth: thickness});
-        segment[1] = new Segment({width: 100, height: 20, color: "red", lineWidth: thickness});
-        segment[2] = new Segment({width: 100, height: 30, color: "red", lineWidth: thickness});
-        segment[3] = new Segment({width: 100, height: 20, color: "red", lineWidth: thickness});
+        var colors = [];
+        colors.push(["blue", "red", "green", "silver"]);
+        colors.push(["red", "red", "green", "green"]);
+        colors.push(["green", "silver", "green", "silver"]);
+        colors.push(["green", "green", "green", "green"]);
+        var color = 0;
+
+        var thickness = 10;
+        segment[0] = new Segment({width: 100, height: 30, color: colors[color][0], lineWidth: thickness});
+        segment[1] = new Segment({width: 100, height: 20, color: colors[color][1], lineWidth: thickness});
+        segment[2] = new Segment({width: 100, height: 30, color: colors[color][2], lineWidth: thickness, offset:1.1});
+        segment[3] = new Segment({width: 100, height: 20, color: colors[color][3], lineWidth: thickness, offset:1.1});
 
         slider.speed = new Slider(0, 0.2, 0.08);
         slider.thighRange = new Slider(0, 90, 45);
         slider.thighBase = new Slider(0, 180, 90);
         slider.calfRange = new Slider(0, 90, 45);
         slider.calfOffset = new Slider(-3.14, 3.14, -1.57);
+        slider.thickness = new Slider(1, 20, thickness);
+        slider.colors = new Slider(1, 4, 1);
+
 
         segment[0].x = -10;
         segment[0].y = -10;
@@ -86,6 +96,30 @@
           top_change = true;
         };
 
+        slider.thickness.x = 110;
+        slider.thickness.y = 10;
+        slider.thickness.captureMouse(canvas2);
+        slider.thickness.onchange = function() {
+          top_change = true;
+          let value = Math.round(slider.thickness.value)
+          segment[0].lineWidth = value;
+          segment[1].lineWidth = value;
+          segment[2].lineWidth = value;
+          segment[3].lineWidth = value;
+        };
+
+        slider.colors.x = 130;
+        slider.colors.y = 10;
+        slider.colors.captureMouse(canvas2);
+        slider.colors.onchange = function() {
+          top_change = true;
+          let choice = Math.round(slider.colors.value) - 1;
+          segment[0].color = colors[choice][0];
+          segment[1].color = colors[choice][1];
+          segment[2].color = colors[choice][2];
+          segment[3].color = colors[choice][3];
+        };
+
         top_change = true;
     }
 
@@ -96,6 +130,8 @@
       slider.thighBase.draw(context2);
       slider.calfRange.draw(context2);
       slider.calfOffset.draw(context2);
+      slider.thickness.draw(context2);
+      slider.colors.draw(context2);
     }
 
     function walk (segA, segB, cyc) {

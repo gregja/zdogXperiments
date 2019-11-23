@@ -57,7 +57,7 @@ The content of the project :
 
 - Calabi-Yau manifold (*7)
 
-- Segments - 3 examples (*8)
+- Segments for puppets - 4 examples (*8)
 
 -------------------
 

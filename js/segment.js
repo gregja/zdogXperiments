@@ -8,6 +8,8 @@ class Segment {
     constructor(params) {
         this.x = params.x || 0;
         this.y = params.y || 0;
+        this.z = params.z || 0;
+        this.offset = params.offset || 0;
         this.width = params.width || 100;
         this.height = params.height || 20;
         this.vx = params.vx || 0;
@@ -89,9 +91,10 @@ class Segment {
             cr = h / 2,         //corner radius
             depth = this.depth;  // depth (z position)
 
+        let zoffset = this.z + this.offset * this.lineWidth;
         let seg = new Zdog.Shape({
             addTo: context,
-            translate: {x:this.x, y:this.y},
+            translate: {x:this.x, y:this.y, z:zoffset},
             rotate: {z:this.rotation},
             scale: {x: this.scaleX, y:this.scaleY}
         });
