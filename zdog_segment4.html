@@ -35,11 +35,11 @@
 		 <canvas id="zdog-canvas" width="800" height="800"></canvas>
 		 <canvas id="canvas-slider" with="200" height="400"></canvas>
 
-		 <table>
+		 <table id="legend_fr">
 			 <thead>
 					<tr>
 						<th>Curseur</th>
-						<th>Description (french version)</th>
+						<th>Description <a href="#" id="switch_legend_en">english version</a></th>
 					</tr>
 			 </thead>
 			 <tbody>
@@ -74,11 +74,11 @@
 			 </tbody>
 		 </table>
 		 <br>
-		 <table>
+		 <table id="legend_en">
 			 <thead>
 					<tr>
 						<th>Slider</th>
-						<th>Description (english version)</th>
+						<th>Description <a href="#" id="switch_legend_fr">french version</a></th>
 					</tr>
 			 </thead>
 			 <tbody>
@@ -121,5 +121,32 @@
 	<script src="js/slider.js"></script>
 	<script src="js/utils.js"></script>
 	<script src="zdog_segment4.js"></script>
+	<script>
+		{
+			let legend_en = document.getElementById('legend_en');
+			let legend_fr = document.getElementById('legend_fr');
+			let button_en = document.getElementById('switch_legend_en');
+			let button_fr = document.getElementById('switch_legend_fr');
+			let locale = navigator.language || 'en';
+			if (locale != 'en' && locale != 'fr') locale = 'en';
+			if (locale == 'en') {
+				legend_en.style = 'display:block';
+				legend_fr.style = 'display:none';
+			} else {
+				legend_en.style = 'display:none';
+				legend_fr.style = 'display:block';
+			}
+			button_en.addEventListener('click', (evt)=>{
+					evt.preventDefault();
+					legend_en.style = 'display:block';
+					legend_fr.style = 'display:none';
+			}, false);
+			button_fr.addEventListener('click', (evt)=>{
+					evt.preventDefault();
+					legend_fr.style = 'display:block';
+					legend_en.style = 'display:none';
+			}, false);
+		}
+	</script>
 </body>
 </html>

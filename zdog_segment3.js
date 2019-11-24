@@ -29,7 +29,7 @@
         segment0.y = -10;
         segment0.draw(illo);
 
-        segment1 = new Segment({width: 100, height: 20, color: "red", lineWidth: 2});
+        segment1 = new Segment({width: 100, height: 20, color: "green", lineWidth: 2});
         segment1.draw(illo);
 
         slider0 = new Slider(-90, 90, 0);
