@@ -1,0 +1,209 @@
+Michel Blay, coauteur de "Neuropédagogie. Le cerveau au centre de l’école" (Tschann, 2019).
+Il critique une vision de l’apprentissage qui le réduit à un entraînement individuel du cerveau, négligeant le poids de l’Histoire, des échanges et des interactions entre élèves.
+
+
+Robert Castel
+https://fr.shopping.rakuten.com/s/metamorphoses+de+la+question+sociale
+https://fr.shopping.rakuten.com/mfp/3047785/la-montee-des-incertitudes-travail-protections-statut-de-l-robert-castel?pid=77145504
+
+
+L’Utopie déchue. Une contre-histoire d’Internet, du sociologue et hacktiviste Félix Tréguer
+
+
+à chercher à la médiathèque :
+Mauricio Kagel
+György Ligeti
+Karlheinz Stockhausen
+David Tudor
+Pierre Barbaud
+
+https://fr.wikipedia.org/wiki/Musique_algorithmique
+https://www.soundhelix.com/audio-examples
+http://ehess.modelisationsavoirs.fr/seminaire/seminaire16-17/02-30nov2016/CR-30nov2016-PaulFleury.pdf
+http://forumnet.ircam.fr/fr/produit/omax/
+http://digitaljazz.fr/research/
+
+
+https://www.apress.com/us/book/9781484244265#otherversion=9781484244272
+http://www.realtimerendering.com/raytracinggems/
+http://povray.org/
+
+
+---
+
+excellent plugin pour firefox
+Worldwide Radio
+
+
+--
+Le startupisme : Le fantasme technologique et économique de la startup nation, par Antoine Gouritin
+(Editions Fyp, 176 pages, 20 euros)
+
+voir aussi :
+https://fr.wikipedia.org/wiki/Evgeny_Morozov
+
+Le solutionnisme que dénonce Morozov consiste à proposer les technologies numériques et internet pour fournir des solutions à des problèmes qui ne se posent pas
+
+Pour tout résoudre cliquez ici : L'aberration du solutionnisme technologique,
+    FYP éditions, 2014, 352 p. (ISBN 978-2364051157)
+Le mirage numérique : Pour une politique des big data, Les Prairies Ordinaires, 2015 (ISBN 978-2350961132)
+
+---
+
+grid generation
+
+http://servidor.demec.ufpr.br/CFD/bibliografia/Basic_Structured_Grid_Generati.pdf
+
+
+http://www.hpcc-space.de/publications/documents/Modern_Introduction_to_Grid-Generation.pdf
+
+http://inis.jinr.ru/sl/Simulation/Tannehill,_CFM_and_Heat_Transfer,2_ed/chap10.pdf
+http://inis.jinr.ru/sl/Simulation/Tannehill,_CFM_and_Heat_Transfer,2_ed/
+http://inis.jinr.ru/sl/Simulation/
+
+https://graphics.stanford.edu/papers/meshing-sig03/meshing.pdf
+
+http://overtureframework.org/publications/autoGrid.pdf
+
+https://mathoverflow.net/questions/50935/simple-algorithm-to-generate-a-mondrian-random-grid
+
+https://web.stanford.edu/class/me469b/handouts/geoandgrid.pdf
+
+https://www.crcpress.com/Fundamentals-of-Grid-Generation/Steinberg/p/book/9780849389870
+
+---
+
+http://campus.cerimes.fr/maieutique/UE-obstetrique/perinee/site/html/cours.pdf
+--
+https://www.franceculture.fr/emissions/lexperience/soramimi-lillusion-sonore-0
+https://www.franceculture.fr/emissions/les-chemins-de-la-philosophie/algorithmes-44-serons-nous-bientot-juges-par-des-ordinateurs
+
+--
+
+https://github.com/wethegit/wtc-vector
+https://codepen.io/shubniggurath/pen/BaBQGZQ
+
+--
+
+publié en 1938, le Banquet en Blithuanie de l’écrivain croate Miroslav Krleža semble parler de l’Europe de 2019.
+
+---
+https://v8.dev/features/promise-combinators#promise.allsettled
+
+--
+https://www.webaudioweekly.com/
+
+--
+https://vimeo.com/lisaaanimation
+
+---
+
+traité de contrepoint de Salomon Jadassohn à rechercher (BNF ?)
+
+---
+
+Mathematics: Its Content, Methods and Meaning : Three Volumes Bound As One Broché – 7 juillet 1999
+de A. D. Aleksandrov (Auteur), A. N. Kolmogorov  (Auteur), M. A. Lavrent'ev (Auteur)
+
+The Princeton Companion to Mathematics Relié – 21 octobre 2008
+de Timothy Gowers (Auteur), June Barrow–green (Auteur), Imre Leader (Auteur)
+
+Applied Geometry for Computer Graphics and CAD: Second Edition Broché – 1 mars 2005
+de Duncan Marsh
+
+--
+
+http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+
+https://fr.khanacademy.org/computing/computer-programming/programming-games-visualizations/programming-3d-shapes/a/rotating-3d-shapes
+
+https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
+
+--
+
+https://amigastore.eu/en/14-other-systems-
+
+https://boutique.ed-diamond.com/numeros-deja-parus/1307-hackable-magazine-23.html
+
+--
+https://cdn.rawgit.com/bradley/Blotter/master/build/blotter.js
+--
+
+https://github.com/Apress/js-data-structures-and-algorithms
+https://github.com/Apress/practical-shader-dev
+
+---
+https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
+https://webglfundamentals.org/webgl/lessons/webgl-2d-matrices.html
+https://webglfundamentals.org/webgl/lessons/webgl-2d-drawimage.html
+
+----
+piston :
+https://www.openprocessing.org/sketch/155138
+
+---
+https://tel.archives-ouvertes.fr/search/index
+---
+Mapping the sphere
+https://math.rice.edu/~polking/cartography/cart.pdf
+
+--
+Game Development with Ren'Py
+Introduction to Visual Novel Games Using Ren'Py, TyranoBuilder, and Twine
+https://www.apress.com/us/book/9781484249192
+https://github.com/Apress/game-development-with-ren-py
+
+
+https://github.com/Apress/make-a-2d-rpg-in-a-weekend-15
+
+
+livre sur la 3D à rechercher :
+Practical Algorithms for 3D Computer Graphics
+De R. Stuart Ferguson
+https://books.google.fr/books?id=6o7NBQAAQBAJ&pg=PA129#v=onepage&q&f=false
+https://www.crcpress.com/Practical-Algorithms-for-3D-Computer-Graphics/Ferguson/p/book/9781466582521
+PDF => https://doc.lagout.org/science/0_Computer%20Science/2_Algorithms/Practical%20Algorithms%20for%203D%20Computer%20Graphics%20%282nd%20ed.%29%20%5BFerguson%202013-12-19%5D.pdf
+
+
+Introduction to Computer Graphics, David J Eck
+http://math.hws.edu/eck/cs424/downloads/graphicsbook-linked.pdf
+
+
+La géométrie 3D des halos de matière noire par les disques d’hydrogène atomique Hi
+https://hal.archives-ouvertes.fr/tel-02154083/document
+
+
+
+3D Visibility
+PDF => https://tel.archives-ouvertes.fr/tel-00529138/PDF/vo.pdf
+VF => https://tel.archives-ouvertes.fr/tel-00529138/document
+
+
+
+EnvyMyCar
+http://www.envymycarbook.com
+https://www.crcpress.com/Introduction-to-Computer-Graphics-A-Practical-Learning-Approach/Ganovelli-Corsini-Pattanaik-Benedetto/p/book/9781498759632
+
+
+Isosurfaces: Geometry, Topology, and Algorithms
+1st Edition
+Rephael Wenger
+https://www.crcpress.com/Isosurfaces-Geometry-Topology-and-Algorithms/Wenger/p/book/9781466570979?source=igodigital
+
+
+3D Game Engine Design: A Practical Approach to Real-Time Computer Graphics
+2nd Edition
+David H. Eberly
+https://www.crcpress.com/3D-Game-Engine-Design-A-Practical-Approach-to-Real-Time-Computer-Graphics/Eberly/p/book/9780122290633
+
+
+Computer Graphics: From Pixels to Programmable Graphics Hardware
+1st Edition
+Alexey Boreskov, Evgeniy Shikin
+https://www.crcpress.com/Computer-Graphics-From-Pixels-to-Programmable-Graphics-Hardware/Boreskov-Shikin/p/book/9781439867303
+
+
+Foundations of Physically Based Modeling and Animation
+1st Edition
+Donald House, John C. Keyser
+https://www.crcpress.com/Foundations-of-Physically-Based-Modeling-and-Animation/House-Keyser/p/book/9781482234602?source=igodigital

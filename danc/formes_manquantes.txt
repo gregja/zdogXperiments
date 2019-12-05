@@ -1,0 +1,20 @@
+cone Frustum
+pyramid frustum
+tetrahedron Frustum
+paraboloid
+prism
+ellipsoid
+sphere cap
+sphere slice
+
+https://www.geometrictools.com/Documentation/IntersectionBoxCone.pdf
+
+https://en.wikipedia.org/wiki/Frustum
+
+https://www.vcalc.com/wiki/vCalc/Geometry%283D%29
+
+https://www.geometrictools.com/Documentation/IntersectionBoxCone.pdf
+
+https://people.inf.ethz.ch/gaertner/subdir/software/miniball.html
+
+https://stackoverflow.com/questions/2194812/finding-a-minimum-bounding-sphere-for-a-frustum

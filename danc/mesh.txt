@@ -1,0 +1,163 @@
+
+// http://www.generative-gestaltung.de/2/
+
+
+
+  function Tube(u, v) {
+    x = (sin(u));
+    y = params[0] * v;
+    z = (cos(u));
+
+    return new function(x, y, z);
+  }
+
+  function Torus(u, v) {
+    x = 1 * ((params[1] + 1 + params[0] * cos(v)) * sin(u));
+    y = 1 * (params[0] * sin(v));
+    z = 1 * ((params[1] + 1 + params[0] * cos(v)) * cos(u));
+
+    return new function(x, y, z);
+  }
+
+  function Sine(u, v) {
+    x = 2 * sin(u);
+    y = 2 * sin(params[0] * v);
+    z = 2 * sin(u+v);
+
+    return new function(x, y, z);
+  }
+
+  function Figure8Torus(u, v) {
+    x = 1.5 * cos(u) * (params[0] + sin(v) * cos(u) - sin(2*v) * sin(u) / 2);
+    y = 1.5 * sin(u) * (params[0] + sin(v) * cos(u) - sin(2*v) * sin(u) / 2) ;
+    z = 1.5 * sin(u) * sin(v) + cos(u) * sin(2*v) / 2;
+
+    return new function(x, y, z);
+  }
+
+  function EllipticTorus(u, v) {
+    x = 1.5 * (params[0] + cos(v)) * cos(u);
+    y = 1.5 * (params[0] + cos(v)) * sin(u) ;
+    z = 1.5 * sin(v) + cos(v);
+
+    return new function(x, y, z);
+  }
+
+
+  function BohemianDome(u, v) {
+    x = 2 * cos(u);
+    y = 2 * sin(u) + params[0] * cos(v);
+    z = 2 * sin(v);
+
+    return new function(x, y, z);
+  }
+
+  function Bow(u, v) {
+    u /= TAU;
+    v /= TAU;
+    x = (2 + params[0] * sin(TAU * u)) * sin(2 * TAU * v);
+    y = (2 + params[0] * sin(TAU * u)) * cos(2 * TAU * v);
+    z = params[0] * cos(TAU * u) + 3 * cos(TAU * v);
+
+    return new function(x, y, z);
+  }
+
+  function MaedersOwl(u, v) {
+    x = 0.4 * (v * cos(u) - 0.5*params[0] * power(v,2) * cos(2 * u));
+    y = 0.4 * (-v * sin(u) - 0.5*params[0] * power(v,2) * sin(2 * u));
+    z = 0.4 * (4 * power(v,1.5) * cos(3 * u / 2) / 3);
+
+    return new function(x, y, z);
+  }
+
+  function AstroidalEllipsoid(u, v) {
+    u /= 2;
+    x = 3 * power(cos(u)*cos(v),3*params[0]);
+    y = 3 * power(sin(u)*cos(v),3*params[0]);
+    z = 3 * power(sin(v),3*params[0]);
+
+    return new function(x, y, z);
+  }
+
+  function TriaxialTritorus(u, v) {
+    x = 1.5 * sin(u) * (1 + cos(v));
+    y = 1.5 * sin(u + TAU / 3 * params[0]) * (1 + cos(v + TAU / 3 * params[0]));
+    z = 1.5 * sin(u + 2*TAU / 3 * params[0]) * (1 + cos(v + 2*TAU / 3 * params[0]));
+
+    return new function(x, y, z);
+  }
+
+  function LimpetTorus(u, v) {
+    x = 1.5 * params[0] * cos(u) / (sqrt(2) + sin(v));
+    y = 1.5 * params[0] * sin(u) / (sqrt(2) + sin(v));
+    z = 1.5 * 1 / (sqrt(2) + cos(v));
+
+    return new function(x, y, z);
+  }
+
+  function Horn(u, v) {
+    u /= PI;
+    //v /= PI;
+    x = (2*params[0] + u * cos(v)) * sin(TAU * u);
+    y = (2*params[0] + u * cos(v)) * cos(TAU * u) + 2 * u;
+    z = u * sin(v);
+
+    return new function(x, y, z);
+  }
+
+
+  function Kidney(u, v) {
+    u /= 2;
+    x = cos(u) * (params[0]*3*cos(v) - cos(3*v));
+    y = sin(u) * (params[0]*3*cos(v) - cos(3*v));
+    z = 3 * sin(v) - sin(3*v);
+
+    return new function(x, y, z);
+  }
+
+  function Lemniscape(u, v) {
+    u /= 2;
+    cosvSqrtAbsSin2u = cos(v)*sqrt(abs(sin(2*params[0]*u)));
+    x = cosvSqrtAbsSin2u*cos(u);
+    y = cosvSqrtAbsSin2u*sin(u);
+    z = 3 * (power(x,2) - power(y,2) + 2 * x * y * power(tan(v),2));
+    x *= 3;
+    y *= 3;
+    return new function(x, y, z);
+  }
+
+  function Trianguloid(u, v) {
+    x = 0.75 * (sin(3*u) * 2 / (2 + cos(v)));
+    y = 0.75 * ((sin(u) + 2 * params[0] * sin(2*u)) * 2 / (2 + cos(v + TAU)));
+    z = 0.75 * ((cos(u) - 2 * params[0] * cos(2*u)) * (2 + cos(v)) * ((2 + cos(v + TAU/3))*0.25));
+
+    return new function(x, y, z);
+  }
+
+  function Superformula(u, v) {
+    v /= 2;
+
+    // Superformel 1
+    a = params[0];
+    b = params[1];
+    m = (params[2]);
+    n1 = (params[3]);
+    n2 = (params[4]);
+    n3 = (params[5]);
+    r1 = pow(pow(abs(cos(m*u/4)/a), n2) + pow(abs(sin(m*u/4)/b), n3), -1/n1);
+
+    // Superformel 2
+    a = params[6];
+    b = params[7];
+    m = (params[8]);
+    n1 = (params[9]);
+    n2 = (params[10]);
+    n3 = (params[11]);
+    r2 = pow(pow(abs(cos(m*v/4)/a), n2) + pow(abs(sin(m*v/4)/b), n3), -1/n1);
+
+    x = 2 * (r1*sin(u) * r2*cos(v));
+    y = 2 * (r2*sin(v));
+    z = 2 * (r1*cos(u) * r2*cos(v));
+
+    return new function(x, y, z);
+  }

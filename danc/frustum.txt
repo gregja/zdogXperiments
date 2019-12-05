@@ -1,0 +1,41 @@
+// https://www.gamedev.net/forums/topic/512123-fast--and-correct-frustum---aabb-intersection/
+
+// Returns: INTERSECT : 0 
+//          INSIDE : 1
+//          OUTSIDE : 2
+int FrustumAABBIntersect(Plane *planes, Vector &mins, Vector &maxs) {
+   int    ret = INSIDE;
+   Vector vmin, vmax;
+
+   for(int i = 0; i < 6; ++i) {
+      // X axis
+      if(planes.normal.x > 0) {
+         vmin.x = mins.x;
+         vmax.x = maxs.x;
+      } else {
+         vmin.x = maxs.x;
+         vmax.x = mins.x;
+      }
+      // Y axis
+      if(planes.normal.y > 0) {
+         vmin.y = mins.y;
+         vmax.y = maxs.y;
+      } else {
+         vmin.y = maxs.y;
+         vmax.y = mins.y;
+      }
+      // Z axis
+      if(planes.normal.z > 0) {
+         vmin.z = mins.z;
+         vmax.z = maxs.z;
+      } else {
+         vmin.z = maxs.z;
+         vmax.z = mins.z;
+      }
+      if(Vector::DotProduct(planes.normal, vmin) + planes.d > 0)
+         return OUTSIDE;
+      if(Vector::DotProduct(planes.normal, vmax) + planes.d >= 0)
+         ret = INTERSECT;
+   }
+   return ret;
+}
