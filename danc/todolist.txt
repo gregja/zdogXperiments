@@ -1,6 +1,0 @@
-
-// Strandbeest walk
-https://codepen.io/2Mogs/pen/gJBQwR
-
-morphing de triangles (d'un cerf vers un lapin et inversement)
-https://codepen.io/ainalem/pen/VWJRav
