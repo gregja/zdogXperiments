@@ -57,7 +57,9 @@ The content of the project :
 
 - Calabi-Yau manifold (*7)
 
-- Segments for puppets - 4 examples (*8)
+- Segments for puppets - 5 examples (*8)
+
+- Leap Motion with Zdog - draw hands (*9)
 
 -------------------
 
@@ -77,6 +79,8 @@ https://codepen.io/ncodefun/pen/aggZKP
 (*7) inspired by this tutorial : https://observablehq.com/@sw1227/calabi-yau-manifold-3d
 
 (*8) inspired by the book : "Foundation HTML5 Animation with JavaScript" of Billy Lamberta and Keith Peters (ed. Apress), http://lamberta.github.io/html5-animation/
+
+(*9) you'll find different links (docs and tutorials) in the beginning of the JS code
 
 ------------------
 
