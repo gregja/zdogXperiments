@@ -17,13 +17,11 @@
 
     const width = canvas.width;
     const height = canvas.height;
-    const round = Math.round;
-    const mid_height = round(height / 2);
 
     let illo = new Zdog.Illustration({
         element: canvas,
         dragRotate: true,
-        translate:{x:-width/2, y:-height/2},
+        //   translate:{x:-width/2, y:-height/2},  // not apply translation here, because we need to know the version of the leap controller
     });
 
     const size_palm = 30;
@@ -32,20 +30,33 @@
     const size_inch = 15;
 
     var boxes = [];
+    var illo_translate = true;  // flag to apply the translation on illo only once
 
     function getCoords(leapPoint, frame) {
-        const iBox = frame.interactionBox;
-        const normalizedPoint = iBox.normalizePoint(leapPoint, true);
-        const mult = 1000;
-        return {
-            x : normalizedPoint[0]*mult,
-            y : (1 - normalizedPoint[1])*mult,
-            z : normalizedPoint[2]*mult
-        };
+        let mult = 0;
+        if (frame.hasOwnProperty('interactionBox')) {
+            // for older version of the leap motion controller
+            let iBox = frame.interactionBox;
+            let normalizedPoint = iBox.normalizePoint(leapPoint, true);
+            mult = 1000;
+            return {
+                x: normalizedPoint[0] * mult,
+                y: (1 - normalizedPoint[1]) * mult,
+                z: normalizedPoint[2] * mult
+            };
+        } else {
+            // for lastest version of the leap motion controller
+            mult = 3;
+            return {
+                x: leapPoint[0] * mult,
+                y: -leapPoint[1] * mult,
+                z: leapPoint[2] * mult
+            };
+        }
     }
 
     function generateBox(digits, x, y, z, width, height, depth) {
-        digits.push({width:width, height:height, depth:depth, coords:{x:x, y:y, z:z}});
+        digits.push({width: width, height: height, depth: depth, coords: {x: x, y: y, z: z}});
     }
 
     function leapmotion() {
@@ -55,94 +66,110 @@
 
         controller.on('frame', (frame) => {
 
-          let digits = [];
+            if (illo_translate) {
+                // apply the translation once only
+                illo_translate = false;
+                if (frame.hasOwnProperty('interactionBox')) {
+                    // for older version of the leap motion controller
+                    illo.translate = {
+                        x:(-width / 2), y:(-height / 2)
+                    }
+                } else {
+                    // for lastest version of the leap motion controller
+                    illo.translate = {
+                        x:(width / 10) ,  y:(height / 2)
+                    }
+                }
+            }
 
-          // for each hand
-          frame.hands.forEach( hand => {
+            let digits = [];
 
-            // for drawing the palm
-            var palmPos = getCoords(hand.palmPosition, frame);
-            generateBox(digits, palmPos.x, palmPos.y, palmPos.z, size_palm, size_palm, size_palm);
+            // for each hand
+            frame.hands.forEach(hand => {
 
-            // For each finger
-            hand.fingers.forEach( (finger, id) => {
-/*
-               for( var j = 0, jmax=finger.bones.length; j < jmax; j++ ){
-                  let bone = finger.bones[j];
+                // for drawing the palm
+                var palmPos = getCoords(hand.palmPosition, frame);
+                generateBox(digits, palmPos.x, palmPos.y, palmPos.z, size_palm, size_palm, size_palm);
 
-                  let pos = getCoords(bone.center(), frame);
-                  generateBox(digits, pos.x, pos.y, pos.z, size_bone, size_bone, size_bone);
-               }
-*/
-              let size_item = size_bone;
-               if (id == 0) {
-                 size_item = size_inch;
-               }
-               var carpPos = getCoords(finger.carpPosition, frame); // carpal
-               generateBox(digits, carpPos.x, carpPos.y, carpPos.z, size_finger, size_finger, size_finger);
+                // For each finger
+                hand.fingers.forEach((finger, id) => {
+                    /*
+                                   for( var j = 0, jmax=finger.bones.length; j < jmax; j++ ){
+                                      let bone = finger.bones[j];
 
-               var mcpPos = getCoords(finger.mcpPosition, frame); // metacarpal
-               generateBox(digits, mcpPos.x, mcpPos.y, mcpPos.z, size_item, size_item, size_item);
+                                      let pos = getCoords(bone.center(), frame);
+                                      generateBox(digits, pos.x, pos.y, pos.z, size_bone, size_bone, size_bone);
+                                   }
+                    */
+                    let size_item = size_bone;
+                    if (id == 0) {
+                        size_item = size_inch;
+                    }
+                    var carpPos = getCoords(finger.carpPosition, frame); // carpal
+                    generateBox(digits, carpPos.x, carpPos.y, carpPos.z, size_finger, size_finger, size_finger);
 
-               var pipPos = getCoords(finger.pipPosition, frame); // proximal
-               generateBox(digits, pipPos.x, pipPos.y, pipPos.z, size_item, size_item, size_item);
+                    var mcpPos = getCoords(finger.mcpPosition, frame); // metacarpal
+                    generateBox(digits, mcpPos.x, mcpPos.y, mcpPos.z, size_item, size_item, size_item);
 
-               var dipPos = getCoords(finger.dipPosition, frame); // intermediate phalange
-               generateBox(digits, dipPos.x, dipPos.y, dipPos.z, size_item, size_item, size_item);
+                    var pipPos = getCoords(finger.pipPosition, frame); // proximal
+                    generateBox(digits, pipPos.x, pipPos.y, pipPos.z, size_item, size_item, size_item);
 
-               var tipPos = getCoords(finger.tipPosition, frame); // distal phalange
-               generateBox(digits, tipPos.x, tipPos.y, tipPos.z, size_item, size_item, size_item);
+                    var dipPos = getCoords(finger.dipPosition, frame); // intermediate phalange
+                    generateBox(digits, dipPos.x, dipPos.y, dipPos.z, size_item, size_item, size_item);
 
-             });
+                    var tipPos = getCoords(finger.tipPosition, frame); // distal phalange
+                    generateBox(digits, tipPos.x, tipPos.y, tipPos.z, size_item, size_item, size_item);
 
-          });
-          boxes.push(digits);
+                });
+
+            });
+            boxes.push(digits);
 
         });
 
-      }
+    }
 
-      function draw (){
+    function draw() {
 
-          let digits = [];
-          if (boxes.length > 1) {
+        let digits = [];
+        if (boxes.length > 1) {
             digits = boxes.shift();
-          } else {
+        } else {
             if (boxes.length == 1) {
-              digits = boxes[0];
+                digits = boxes[0];
             } else {
-              digits = [];
+                digits = [];
             }
-          }
+        }
 
-          illo.children = [];
+        illo.children = [];
 
-          digits.forEach(item => {
-              new Zdog.Box({
-                  addTo: illo,
-                  width: item.width,
-                  height: item.height,
-                  depth: item.depth,
-                  translate: item.coords,
-                  rotate: {x: 0.7, y:0.7},
-                  stroke: false,
-                  color: '#C25', // default face color
-                  leftFace: '#EA0',
-                  rightFace: '#E62',
-                  topFace: '#ED0',
-                  bottomFace: '#636',
-              });
-          })
+        digits.forEach(item => {
+            new Zdog.Box({
+                addTo: illo,
+                width: item.width,
+                height: item.height,
+                depth: item.depth,
+                translate: item.coords,
+                rotate: {x: 0.7, y: 0.7},
+                stroke: false,
+                color: '#C25', // default face color
+                leftFace: '#EA0',
+                rightFace: '#E62',
+                topFace: '#ED0',
+                bottomFace: '#636',
+            });
+        });
 
-          illo.updateRenderGraph();
-      }
+        illo.updateRenderGraph();
+    }
 
-      function animate() {
-          draw();
-          requestAnimationFrame( animate );
-      }
+    function animate() {
+        draw();
+        requestAnimationFrame(animate);
+    }
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         leapmotion();
         animate();
