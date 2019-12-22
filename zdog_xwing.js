@@ -17,6 +17,11 @@
     var draw_mode_default = draw_modes[1];
     var zoom_factor = 0.03;
 
+    var spin_modes = ['Spinning', 'Static'];
+    var spin_mode_default = spin_modes[0];
+
+    var isSpinning = true;
+
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
@@ -121,14 +126,12 @@
         });
     }
 
-    var isSpinning = true;
-
     illo = new Zdog.Illustration({
         element: '.zdog-canvas',
         dragRotate: true,
         // pause spinning while dragging
-        onDragStart: () => isSpinning = false,
-        onDragEnd: () => isSpinning = true
+        //onDragStart: () => isSpinning = false,
+        //onDragEnd: () => isSpinning = true
     });
 
     function generateGraph() {
@@ -305,6 +308,28 @@
       }, false);
     } else {
       console.warn('zoom+ button not found');
+    }
+
+    var spin_mode_btn = document.getElementById('spinning');
+    if (spin_mode_btn) {
+        spin_mode_btn.innerHTML = spin_modes[1];
+        spin_mode_btn.addEventListener('click', function(evt) {
+            evt.preventDefault();
+            let other_mode;
+            if (spin_mode_default == spin_modes[0]) {
+                spin_mode_default = spin_modes[1];
+                other_mode = spin_modes[0];
+                isSpinning = false;
+            } else {
+                spin_mode_default = spin_modes[0];
+                other_mode = spin_modes[1];
+                isSpinning = true;
+            }
+            spin_mode_btn.innerHTML = other_mode;
+            generateGraph();
+        }, false);
+    } else {
+        console.warn('spin mode button not found');
     }
 
     document.addEventListener('keydown', keyPressed, false);

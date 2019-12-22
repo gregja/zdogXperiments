@@ -8,6 +8,8 @@
     var list_shapes = ['cube', 'diamond', 'dodecahedron', 'gem', 'humanoid', 'icosahedron', 'icosphere',
                         'magnolia', 'shuttle', 'skyscraper',
                         'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus'];
+    var spin_modes = ['Spinning', 'Static'];
+    var spin_mode_default = spin_modes[0];
 
     var isSpinning = true;
     var illo, mainshape;
@@ -16,8 +18,8 @@
         element: '.zdog-canvas',
         dragRotate: true,
         // pause spinning while dragging
-        onDragStart: () => isSpinning = false,
-        onDragEnd: () => isSpinning = true
+        //onDragStart: () => isSpinning = false,
+        //onDragEnd: () => isSpinning = true
     });
 
     function start() {
@@ -220,6 +222,28 @@
         }, false);
     } else {
         console.warn('fill switcher not found');
+    }
+
+    var spin_mode_btn = document.getElementById('spinning');
+    if (spin_mode_btn) {
+        spin_mode_btn.innerHTML = spin_modes[1];
+        spin_mode_btn.addEventListener('click', function(evt) {
+            evt.preventDefault();
+            let other_mode;
+            if (spin_mode_default == spin_modes[0]) {
+                spin_mode_default = spin_modes[1];
+                other_mode = spin_modes[0];
+                isSpinning = false;
+            } else {
+                spin_mode_default = spin_modes[0];
+                other_mode = spin_modes[1];
+                isSpinning = true;
+            }
+            spin_mode_btn.innerHTML = other_mode;
+            generateGraph();
+        }, false);
+    } else {
+        console.warn('spin mode button not found');
     }
 
     document.addEventListener('keydown', keyPressed, false);
