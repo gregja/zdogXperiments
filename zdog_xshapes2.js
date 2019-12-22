@@ -54,7 +54,9 @@
 
     // filled shape
     function genShape2(ref, shape) {
+        console.log(shape);
         let generateShape = shapes3dToolbox[shape.fn];
+        console.log(generateShape);
         let shape_params = shape.default;
         let obj3d = generateShape(shape_params);
         var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
