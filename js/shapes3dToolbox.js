@@ -1072,6 +1072,192 @@ var shapes3dToolbox = (function () {
     }
 
     /**
+     * Cuboid generator version 5
+     * @param config.nodes
+     * @param config.scale
+     * @param config.xTranslate
+     * @param config.yTranslate
+     * @param config.zTranslate
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     * @param config.triangleSize
+     */
+    function generateCuboid5(config) {
+        var scale = config.scale || 1,
+            xTranslate = config.xTranslate || 0,
+            yTranslate = config.yTranslate || 0,
+            zTranslate = config.zTranslate || 0;
+
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var triangleSize = (config.hasOwnProperty('triangleSize') ? Number(config.triangleSize) : 10);
+
+        var nodes = config.nodes.map(node => {
+            return {x: node.x * scale + xTranslate * scale,
+                y: node.y * scale + yTranslate * scale,
+                z: node.z * scale + zTranslate * scale
+            }});
+
+        var polygons = [];
+        polygons.push([0,1,2,3]); // same Y dimension
+        polygons.push([7,6,5,4]); // same Y dimension
+        polygons.push([0,4,5,1]); // same Z dimension
+        polygons.push([1,5,6,2]); // same Z dimension
+        polygons.push([3,7,4,0]); // same X dimension
+        polygons.push([2,6,7,3]); // same X dimension
+
+        var edges = [];
+
+        var new_nodes = [];
+        var new_polygons = [];
+
+        function triangulateFace(coords, context) {
+            let xmin = Infinity;
+            let xmax = -Infinity;
+            let ymin = Infinity;
+            let ymax = -Infinity;
+            let vertices = [];
+
+            //console.log(coords);
+            coords.forEach(node => {
+                //let node = nodes[poly[num]];
+                if (node.x > xmax) xmax = node.x;
+                if (node.x < xmin) xmin = node.x;
+                if (node.y > ymax) ymax = node.y;
+                if (node.y < ymin) ymin = node.y;
+            });
+
+            let stepx = (xmax - xmin) / triangleSize;
+            let stepy = (ymax - ymin) / triangleSize;
+            console.log(context);
+            console.log(xmin, ymin, xmax, ymax);
+            console.log(stepx, stepy);
+            //vertices.push([xmin, ymin]);
+            for (let xi=xmin, ximax = xmax+stepx; xi<ximax; xi+=stepx ) {
+                for (let yi=ymin, yimax = ymax+stepy; yi<yimax; yi+=stepy ) {
+                    vertices.push([xi, yi]);
+                }
+            }
+            return {vertices:vertices, triangles: Delaunay.triangulate(vertices)};
+        }
+
+        for (let i = 0, imax = polygons.length; i < imax; i++) {
+            let poly = polygons[i];
+            let same = {x:true, y:true, z:true}; // array of booleans : detectors of same values on X, Y or Z
+            let vals = {x:null, y:null, z:null}; // array of coordinates : store last value of X, Y or Z
+
+            poly.forEach((item, num) => {
+                let node = nodes[poly[num]];
+                if (vals.x != null && vals.x != node.x) {
+                    same.x = false;
+                } else {
+                    vals.x = node.x;
+                }
+                if (vals.y != null && vals.y != node.y) {
+                    same.y = false;
+                } else {
+                    vals.y = node.y;
+                }
+                if (vals.z != null && vals.z != node.z) {
+                    same.z = false;
+                } else {
+                    vals.z = node.z;
+                }
+            });
+
+            if (same.z) {
+                // cancel temporarily the Z dimension
+                let coords = [];
+                poly.forEach((item, num) => {
+                    let node = nodes[poly[num]];
+                    coords.push({x:node.x, y:node.y});
+                });
+
+                let works = triangulateFace(coords, "same Z "+vals.z);
+                let triangles = works.triangles;
+                let vertices = works.vertices;
+
+                for (let i=0, imax=triangles.length; i<imax; i+=3) {
+                    let tpoly = [];
+                    new_nodes.push({x:vertices[triangles[i]][0], y:vertices[triangles[i]][1], z:vals.z });
+                    tpoly.push(new_nodes.length-1);
+                    new_nodes.push({x:vertices[triangles[i+1]][0], y:vertices[triangles[i+1]][1], z:vals.z});
+                    tpoly.push(new_nodes.length-1);
+                    new_nodes.push({x:vertices[triangles[i+2]][0], y:vertices[triangles[i+2]][1], z:vals.z});
+                    tpoly.push(new_nodes.length-1);
+                    new_polygons.push(tpoly);
+                }
+            } else {
+                if (same.x) {
+                    // cancel temporarily the X dimension
+                    let coords = [];
+                    poly.forEach((item, num) => {
+                        let node = nodes[poly[num]];
+                        coords.push({x:node.y, y:node.z});
+                    });
+
+                    let works = triangulateFace(coords, "same X "+vals.x);
+                    let triangles = works.triangles;
+                    let vertices = works.vertices;
+
+                    for (let i=0, imax=triangles.length; i<imax; i+=3) {
+                        let tpoly = [];
+                        new_nodes.push({x:vals.x, y:vertices[triangles[i]][0], z:vertices[triangles[i]][1]});
+                        tpoly.push(new_nodes.length-1);
+                        new_nodes.push({x:vals.x, y:vertices[triangles[i+1]][0], z:vertices[triangles[i+1]][1]});
+                        tpoly.push(new_nodes.length-1);
+                        new_nodes.push({x:vals.x, y:vertices[triangles[i+2]][0], z:vertices[triangles[i+2]][1]});
+                        tpoly.push(new_nodes.length-1);
+                        new_polygons.push(tpoly);
+                    }
+
+                } else {
+                    if (same.y) {
+                        // cancel temporarily the Y dimension
+                        let coords = [];
+                        poly.forEach((item, num) => {
+                            let node = nodes[poly[num]];
+                            coords.push({x:node.x, y:node.z});
+                        });
+
+                        let works = triangulateFace(coords, "same Y "+vals.y);
+                        let triangles = works.triangles;
+                        let vertices = works.vertices;
+
+                        for (let i=0, imax=triangles.length; i<imax; i+=3) {
+                            let tpoly = [];
+                            new_nodes.push({x:vertices[triangles[i]][0], y:vals.y, z:vertices[triangles[i]][1]});
+                            tpoly.push(new_nodes.length-1);
+                            new_nodes.push({x:vertices[triangles[i+1]][0], y:vals.y, z:vertices[triangles[i+1]][1]});
+                            tpoly.push(new_nodes.length-1);
+                            new_nodes.push({x:vertices[triangles[i+2]][0], y:vals.y, z:vertices[triangles[i+2]][1]});
+                            tpoly.push(new_nodes.length-1);
+                            new_polygons.push(tpoly);
+                        }
+
+                    }
+                }
+            }
+        }
+
+        nodes = new_nodes;
+        polygons = new_polygons;
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
+        }
+    }
+
+    /**
      * Generate a mesh from an array of edges
      * @param edges
      * @returns {Array}
@@ -2441,6 +2627,7 @@ var shapes3dToolbox = (function () {
         generateCuboid2: generateCuboid2,
         generateCuboid3: generateCuboid3,
         generateCuboid4: generateCuboid4,
+        generateCuboid5: generateCuboid5,
         generateCone: generateCone,
         generateTetrahedron: generateTetrahedron,
         generateConicalFrustum: generateConicalFrustum,

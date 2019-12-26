@@ -2,7 +2,7 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
-		<title>8 cubes linked in a mesh</title>
+		<title>Cuboid with Delaunay Triangulation</title>
 		<style>
 			html { height: 100%; }
 			body {
@@ -28,6 +28,7 @@
 		 <input id="colorpicker" type="color">
 		 <button id="drawmode"></button>
 		 <button id="spinning"></button>
+		 <label>Subdivide<select id="trisize"></select></label>
 		 <p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
 		 <canvas class="zdog-canvas" width="800" height="600"></canvas>
 
@@ -35,6 +36,7 @@
 	<script src="js/zdog.dist.js"></script>
 	<script src="js/chroma.min.js"></script>
 	<script src="js/shapes3dToolbox.js"></script>
-	<script src="zdog_xshapes2.js"></script>
+	 <script src="js/delaunay.js"></script>
+	<script src="zdog_cuboid_delaunay.js"></script>
 </body>
 </html>
