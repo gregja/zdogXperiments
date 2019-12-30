@@ -1072,6 +1072,186 @@ var shapes3dToolbox = (function () {
     }
 
     /**
+     * Rescale coordinates of a mesh
+     * @param nodes
+     * @param scale
+     */
+    function rescale(nodes, scale) {
+        if (scale == 1) return;
+        for (let i=0, imax=nodes.length; i<imax ; i++) {
+            let node = nodes[i];
+            node.x = node.x * scale;
+            node.y = node.y * scale;
+            node.z = node.z * scale;
+        }
+    }
+
+    /**
+     * Icosahedron generator 2
+     * @param config.scale (default: 1)
+     * @param config.side (default : 10)
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     */
+    function generateIcosahedron2(config) {
+        var scale = config.scale || 1;
+
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var nb_vertices = 12;
+
+        var side = config.side || 10;
+        var h = side / sqrt(5);
+        var co = cos(TAU / 5);
+        var si = sin(TAU / 5);
+
+        var nodes = [];
+        nodes.push({x: 0, y:0, z:-side});
+        nodes.push({x: 2*h, y:0, z:-h});
+
+        for (let i=nodes.length; i<6 ; i++) {
+            let x = co * nodes[i-1].x - si * nodes[i-1].y;
+            let y = si * nodes[i-1].x + co * nodes[i-1].y;
+            let z = -h;
+            nodes[i] = {x:x, y:y, z:z};
+        }
+
+        for (let i=nodes.length; i<=nb_vertices ; i++) {
+            let x = -nodes[i-6].x;
+            let y = -nodes[i-6].y;
+            let z = -nodes[i-6].z;
+            nodes[i] = {x:x, y:y, z:z};
+        }
+
+        if (scale != 1) {
+            rescale(nodes, scale);
+        }
+
+        // 20 faces
+        var polygons = [];
+        polygons.push([2, 1, 0]);
+        polygons.push([3, 2, 0]);
+        polygons.push([4, 3, 0]);
+        polygons.push([5, 4, 0]);
+        polygons.push([1, 5, 0]);
+        polygons.push([1, 2, 10]);
+        polygons.push([2, 3, 11]);
+        polygons.push([3, 4, 7]);
+        polygons.push([4, 5, 8]);
+        polygons.push([5,1,9]);
+        polygons.push([10,9,1]);
+        polygons.push([11,10,2]);
+        polygons.push([7,11,3]);
+        polygons.push([8,7,4]);
+        polygons.push([9,8,5]);
+        polygons.push([9,10,6]);
+        polygons.push([10,11,6]);
+        polygons.push([11,7,6]);
+        polygons.push([7,8,6]);
+        polygons.push([8,9,6]);
+
+        var edges = [];
+        for (let i=0, imax=polygons.length; i<imax; i++) {
+            let a = polygons[i];
+            let b = polygons[i+1];
+            edges.push({a:a, b:b });
+        }
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
+        }
+    }
+
+    /**
+     * Dodecahedron generator
+     * Warning : algorithm slightly buggy, but result interesting
+     * @param config.scale (default: 1)
+     * @param config.xRot
+     * @param config.yRot
+     * @param config.zRot
+     * @returns {{polygons: [], edges: [], points: []}}
+     */
+    function generateDodecahedron(config) {
+        var scale = config.scale || 1;
+
+        var xRot = config.xRot || null;
+        var yRot = config.yRot || null;
+        var zRot = config.zRot || null;
+
+        var nb_vertices = 20;
+
+        var co = cos(TAU / 5);
+        var si = sin(TAU / 5);
+
+        var nodes = [];
+        nodes.push({x: 3.9027346442, y:-2.8355026945, z:-6.3147573033});
+
+        for (let step = 5, j=0, jmax=step*2; j<jmax; j+= step) {
+            for (let i = j + 1, imax = j + 5; i < imax; i++) {
+                let x = co * nodes[i - 1].x - si * nodes[i - 1].y;
+                let y = si * nodes[i - 1].x + co * nodes[i - 1].y;
+                let z = nodes[i - 1].z;
+                nodes[i] = {x: x, y: y, z: z};
+            }
+            if (j == 0) {
+                nodes.push({x: 6.3147573033, y: 4.5879397349, z: -1.4907119850});
+            }
+        }
+
+        for (let i=nodes.length; i<nb_vertices ; i++) {
+            let t = nb_vertices - i - 1;
+            let x = -nodes[t].x;
+            let y = -nodes[t].y;
+            let z = -nodes[t].z;
+            nodes[i] = {x:x, y:y, z:z};
+        }
+
+        if (scale != 1) {
+            rescale(nodes, scale);
+        }
+
+        var polygons = [];
+        polygons.push([4, 3, 2, 1, 0]);
+        polygons.push([0, 1, 6, 11, 5]);
+        polygons.push([1, 2, 7, 10, 6]);
+        polygons.push([2, 3, 8, 14, 7]);
+        polygons.push([3, 4, 9, 13, 8]);
+        polygons.push([4, 0, 5, 12, 9]);
+        polygons.push([5, 11, 16, 17, 12]);
+        polygons.push([6, 10, 15, 16, 11]);
+        polygons.push([7, 14, 19, 15, 10]);
+        polygons.push([8, 13, 18, 19, 14]);
+        polygons.push([9, 12, 17, 18, 13]);
+        polygons.push([19, 18, 17, 16, 15]);
+
+        var edges = [];
+        for (let i=0, imax=polygons.length; i<imax; i++) {
+            let a = polygons[i];
+            let b = polygons[i+1];
+            edges.push({a:a, b:b });
+        }
+
+        rotateZ3D(zRot, nodes, true);
+        rotateY3D(yRot, nodes, true);
+        rotateX3D(xRot, nodes, true);
+
+        return {
+            points: nodes,
+            edges: edges,
+            polygons: polygons
+        }
+    }
+
+    /**
      * Cuboid generator version 5
      * @param config.nodes
      * @param config.scale
@@ -2365,7 +2545,9 @@ var shapes3dToolbox = (function () {
             {name: "cube", fn:"generateCube", default:{scale:100}},
             {name: "sphere1", fn:"generateSphere1", default:{scale:200, lats:20, longs:20}},
             {name: "sphere2", fn:"generateSphere2", default:{radius:200}},
-            {name: "icosahedron", fn:"generateIcosahedron", default:{scale:100}},
+            {name: "icosahedron", fn:"generateIcosahedron", default:{scale:200}},
+            {name: "icosahedron2", fn:"generateIcosahedron2", default:{scale:30}},
+            {name: "dodecahedron (pretty bug)", fn:"generateDodecahedron", default:{scale:30}},
             {name: "pyramid", fn:"generatePyramid", default:{scale:100}},
             {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30, gradient_color:1}},
             {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10, gradient_color:2}},
@@ -2641,6 +2823,8 @@ var shapes3dToolbox = (function () {
         getAssemblyObject01:getAssemblyObject01,
         customShape: customShape,
         getEightCubesLinked: getEightCubesLinked,
-        generateEquilibrium: generateEquilibrium
+        generateEquilibrium: generateEquilibrium,
+        generateIcosahedron2: generateIcosahedron2,
+        generateDodecahedron: generateDodecahedron
     };
 })();
