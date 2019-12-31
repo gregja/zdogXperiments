@@ -61,6 +61,11 @@ The content of the project :
 
 - Leap Motion with Zdog - draw hands (*9)
 
+- Cuboid generated with Delaunay Triangulation (NEW) (*10)
+
+- 3D Objects excavated (new) (*11)
+
+
 -------------------
 
 (*) Note that the import OBJ algorithm is largely inspired by a similar algorithm found on Phoria.js, of Kevin Roast : http://www.kevs3d.co.uk/dev/phoria/
@@ -81,6 +86,12 @@ https://codepen.io/ncodefun/pen/aggZKP
 (*8) inspired by the book : "Foundation HTML5 Animation with JavaScript" of Billy Lamberta and Keith Peters (ed. Apress), http://lamberta.github.io/html5-animation/
 
 (*9) you'll find different links (docs and tutorials) in the beginning of the JS code
+
+(*10) Source of the Delaunay algorithm : https://github.com/ironwallaby/delaunay.git
+
+(*11) Adaptation for Javascript of an algorithm excerpt from the book :
+      "Graphisme 3D en Turbo Pascal", Gérald Grandpierre and Richard Cotté, édiTests 1988
+
 
 ------------------
 

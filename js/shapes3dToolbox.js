@@ -1459,6 +1459,157 @@ var shapes3dToolbox = (function () {
         return polys;
     }
 
+
+    /**
+     * Adaptation for Javascript of an algorithm excerpt from the book
+     *  "Graphisme 3D en Turbo Pascal", Gérald Grandpierre and Richard Cotté, édiTests 1988
+     * @param original.points
+     * @param original.polygons
+     * @param params.thickness_ratio (default 8)
+     * @param params.bridge_mode (default 1)
+     * @returns {{polygons: [], edges: {a: *, b: *}[], points: []}}
+     */
+    function excavateShape(original, params={}) {
+
+        var ori_nodes = original.points || [];
+        var ori_polys = original.polygons || [];
+
+        var thickness_ratio = params.thickness_ratio || 8;
+        var bridge_mode = params.bridge_mode || 1;
+
+        var nb_faces = ori_polys.length;     // face
+
+        var new_edges = [];
+        var new_nodes = [];
+        var new_polygons = [];
+
+        // arbitrary precision for calculus
+        var dec = 0.001;
+
+        // calculus of thickness : will be calculated with the length of the first edge as reference
+        var thickness = 0;
+
+        var xg, yg, zg;
+
+        if (nb_faces > 0) {
+            let first = ori_nodes[ori_polys[0][0]];
+            let second = ori_nodes[ori_polys[0][1]];
+
+            let nn = sqrt(pow((first.x - second.x),2)
+                        + pow((first.y - second.y),2)
+                        + pow((first.z - second.z),2)) ;
+            thickness = nn / thickness_ratio;
+        }
+
+        var u = 0;
+
+        ori_polys.forEach((vertices) => {
+
+            // isolate the points of the face to work just on it
+            let points = [];
+            vertices.forEach((item) => {
+                points.push(ori_nodes[item]);
+            });
+
+            xg = .0;
+            yg = .0;
+            zg = .0;
+
+            // determine the gravity point of the face (or polygon)
+            let tmp = 1;
+            points.forEach((point) => {
+                xg += point.x;
+                yg += point.y;
+                zg += point.z;
+                tmp++;
+            });
+            xg = xg / tmp;
+            yg = yg / tmp;
+            zg = zg / tmp;
+
+            let u1 = points[0].x;
+            let u2 = points[0].y;
+            let u3 = points[0].z;
+
+            // duplicate the first point at the last position of the points array, to "loop the loop" and generate a complete structure
+            let last = points.length;
+            points[last] = {};
+            points[last].x = points[0].x;
+            points[last].y = points[0].y;
+            points[last].z = points[0].z;
+
+            for (let j=1, jmax=points.length; j<jmax; j++) {
+                let v1 = points[j].x;
+                let v2 = points[j].y;
+                let v3 = points[j].z;
+
+                u1 += dec * (v1 - u1);
+                u2 += dec * (v2 - u2);
+                u3 += dec * (v3 - u3);
+
+                v1 += dec * (u1 - v1);
+                v2 += dec * (u2 - v2);
+                v3 += dec * (u3 - v3);
+
+                new_nodes[u] = {};
+                new_nodes[u].x = u1 + dec * (xg - u1);
+                new_nodes[u].y = u2 + dec * (yg - u2);
+                new_nodes[u].z = u3 + dec * (zg - u3);
+
+                new_nodes[u+1] = {};
+                new_nodes[u+1].x = v1 + dec * (xg - v1);
+                new_nodes[u+1].y = v2 + dec * (yg - v2);
+                new_nodes[u+1].z = v3 + dec * (zg - v3);
+
+                let nn = sqrt(pow((new_nodes[u].x - xg), 2)
+                            + pow((new_nodes[u].y - yg), 2)
+                            + pow((new_nodes[u].z - zg), 2));
+
+                new_nodes[u+3] = {};
+                new_nodes[u+3].x = new_nodes[u].x + thickness * (xg - new_nodes[u].x) / nn;
+                new_nodes[u+3].y = new_nodes[u].y + thickness * (yg - new_nodes[u].y) / nn;
+                new_nodes[u+3].z = new_nodes[u].z + thickness * (zg - new_nodes[u].z) / nn;
+
+                let ref_u1 = u+1;
+                nn = sqrt(pow((new_nodes[ref_u1].x - xg), 2)
+                            + pow((new_nodes[ref_u1].y - yg), 2)
+                            + pow((new_nodes[ref_u1].z - zg), 2));
+
+                let ref_u2 = u+2;
+                new_nodes[ref_u2] = {};
+                new_nodes[ref_u2].x = new_nodes[ref_u1].x + thickness * (xg - new_nodes[ref_u1].x) / nn;
+                new_nodes[ref_u2].y = new_nodes[ref_u1].y + thickness * (yg - new_nodes[ref_u1].y) / nn;
+                new_nodes[ref_u2].z = new_nodes[ref_u1].z + thickness * (zg - new_nodes[ref_u1].z) / nn;
+
+                new_edges.push([u, u+1]);
+                new_edges.push([u+3, u]);
+                new_edges.push([u+2, u+1]);
+                new_edges.push([u+3, u+2]);
+
+                if (bridge_mode == 3) {
+                    new_polygons.push([u, u+3, u+1, u+2]);
+                } else {
+                    if (bridge_mode == 2) {
+                        new_polygons.push([u, u+2, u+3, u+1]);
+                    } else {
+                        new_polygons.push([u, u+1, u+2, u+3]);
+                    }
+                }
+
+                u1 = v1;
+                u2 = v2;
+                u3 = v3;
+                u += 4;
+            }
+        });
+
+        return {
+            points: new_nodes,
+            edges: new_edges.map(item => { return { a: item[0], b: item[1] }}),
+            polygons: new_polygons
+        };
+    }
+
     /**
      * Sphere generator version 1
      * @param scale (default value : 100)
@@ -2542,20 +2693,20 @@ var shapes3dToolbox = (function () {
      */
     function getGeneratorsList() {
         return [
-            {name: "cube", fn:"generateCube", default:{scale:100}},
+            {name: "cube", fn:"generateCube", default:{scale:200, xRot:50, yRot:40, zRot:45}},
             {name: "sphere1", fn:"generateSphere1", default:{scale:200, lats:20, longs:20}},
             {name: "sphere2", fn:"generateSphere2", default:{radius:200}},
             {name: "icosahedron", fn:"generateIcosahedron", default:{scale:200}},
             {name: "icosahedron2", fn:"generateIcosahedron2", default:{scale:30}},
             {name: "dodecahedron (pretty bug)", fn:"generateDodecahedron", default:{scale:30}},
-            {name: "pyramid", fn:"generatePyramid", default:{scale:100}},
+            {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:200, xRot:50, yRot:40, zRot:10}},
+            {name: "pyramid", fn:"generatePyramid", default:{scale:200}},
             {name: "cylinder1", fn:"generateCylinder1", default:{radius:50, length:200, strips:30, gradient_color:1}},
             {name: "cylinder2", fn:"generateCylinder2", default:{radius:50, length:200, xRot:50, yRot:40, zRot:10, gradient_color:2}},
-            {name: "cuboid1", fn:"generateCuboid1", default:{xScale:100, yScale:30, zScale:50, xRot:50, yRot:40, zRot:45}},
-            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:100, yLength:30, zLength:50, xRot:50, yRot:40, zRot:10, crossing:true}},
+            {name: "cuboid1", fn:"generateCuboid1", default:{xScale:200, yScale:60, zScale:100, xRot:50, yRot:40, zRot:45}},
+            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:200, yLength:60, zLength:100, xRot:50, yRot:40, zRot:10, crossing:true}},
             {name: "cone1", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:1}},
             {name: "cone2", fn:"generateCone", default:{radius:100, height:200, xRot:50, yRot:40, zRot:10, scale:1, gradient_color:2}},
-            {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:100, xRot:50, yRot:40, zRot:10}},
             {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:1, crossing:false, gradient_color:2}},
             {name: "tube", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 40, z:40}]}},
             {name: "diamond", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}]}},
@@ -2564,6 +2715,31 @@ var shapes3dToolbox = (function () {
             {name: "calyx2", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
             {name: "strangeFruit1", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:false}},
             {name: "strangeFruit2", fn:"generateStrangeFruit", default:{xRot:50, yRot:40, zRot:10, scale:5, crossing:true}},
+            {name: "equilibrium", fn:"generateEquilibrium", default:{xRot:50, yRot:40, zRot:10, scale:20}},
+
+        ]
+    }
+
+    /**
+     * getGeneratorsList2 - get the list of shapes available (more interesting with
+     * @returns {*[]}
+     */
+    function getGeneratorsList2() {
+        return [
+            {name: "cube", fn:"generateCube", default:{scale:200, xRot:50, yRot:40, zRot:45}},
+            {name: "icosahedron", fn:"generateIcosahedron", default:{scale:200}},
+            {name: "icosahedron2", fn:"generateIcosahedron2", default:{scale:30}},
+            {name: "dodecahedron (pretty bug)", fn:"generateDodecahedron", default:{scale:30}},
+            {name: "tetrahedron", fn:"generateTetrahedron", default:{scale:200, xRot:50, yRot:40, zRot:10}},
+            {name: "pyramid", fn:"generatePyramid", default:{scale:200}},
+            {name: "cuboid1", fn:"generateCuboid1", default:{xScale:200, yScale:60, zScale:100, xRot:50, yRot:40, zRot:45}},
+            {name: "cuboid2", fn:"generateCuboid2", default:{xLength:200, yLength:60, zLength:100, xRot:50, yRot:40, zRot:10, crossing:true}},
+            {name: "conicalFrustum", fn:"generateConicalFrustum", default:{xRot:50, yRot:40, zRot:10, scale:3, crossing:false, gradient_color:2}},
+            {name: "tube", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:4, facets:40, datas:[{r: 30, z:0}, {r: 40, z:40}]}},
+            {name: "diamond", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}]}},
+            {name: "doubleDiamond", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:5, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 45, z:60}, {r: 20, z:80}]}},
+            {name: "calyx", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
+            {name: "calyx2", fn:"generateTube", default:{xRot:50, yRot:40, zRot:10, scale:3, facets:40, datas:[{r: 30, z:0}, {r: 45, z:20}, {r: 30, z:40}, {r: 20, z:50}, {r: 10, z:60}, {r: 10, z:100}, {r: 45, z:110}]}},
             {name: "equilibrium", fn:"generateEquilibrium", default:{xRot:50, yRot:40, zRot:10, scale:20}},
 
         ]
@@ -2802,6 +2978,7 @@ var shapes3dToolbox = (function () {
         import3dObjSync: import3dObjSync,
         import3dObjAsync: import3dObjAsync,
         getGeneratorsList: getGeneratorsList,
+        getGeneratorsList2: getGeneratorsList2,
         spongeGenerator: spongeGenerator,
         flakeGenerator: flakeGenerator,
         generateSphere2: generateSphere2,
@@ -2825,6 +3002,7 @@ var shapes3dToolbox = (function () {
         getEightCubesLinked: getEightCubesLinked,
         generateEquilibrium: generateEquilibrium,
         generateIcosahedron2: generateIcosahedron2,
-        generateDodecahedron: generateDodecahedron
+        generateDodecahedron: generateDodecahedron,
+        excavateShape: excavateShape
     };
 })();
