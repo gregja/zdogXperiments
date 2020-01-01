@@ -98,15 +98,9 @@
     function generatePath(obj3d) {
         var path = [];
         obj3d.polygons.forEach(vertices => {
-            let points = [];
-
             vertices.forEach(vertix => {
-                points.push({point:obj3d.points[vertix]});
-            })
-
-            points.forEach(item => {
-                if (item.point.x) {
-                    path.push({x:item.point.x, y:item.point.y, z:item.point.z});
+                if (obj3d.points[vertix]) {
+                    path.push(obj3d.points[vertix]);
                 }
             });
         });

@@ -21,12 +21,7 @@
         segment0.x = 100;
         segment0.y = 50;
         segment0.draw(illo);
-/*
-        var segment0b = new Segment({width: 100, height: 20, color: "red", engine: "zdog", lineWidth: 2, depth: 8});
-        segment0b.x = 100;
-        segment0b.y = 50;
-        segment0b.draw(illo);
-*/
+
         var segment1 = new Segment({width: 200, height: 10, color: "blue", context: illo});
         segment1.x = 100;
         segment1.y = 80;
@@ -56,7 +51,6 @@
         segment2.y = 120;
         segment2.draw();
     }
-
 
     function draw (){
         if (isSpinning) {

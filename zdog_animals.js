@@ -104,7 +104,7 @@
                 }
             })
 
-            points.forEach((item, idx) => {
+            points.forEach(item => {
                 if (item.point != undefined && item.point.x != undefined) {
                     datas.push({x: item.point.x, y: item.point.y, z: item.point.z});
                 }

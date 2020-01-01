@@ -85,16 +85,11 @@
         var colors = genColors(obj3d.polygons.length, gradient_color); //  chroma.scale(['#9cdf7c', '#2A4858']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
-            let points = [];
-            vertices.forEach((item, idx) => {
-                points.push({point: obj3d.points[vertices[idx]]});
-            })
-
             let shape = [];
 
-            points.forEach(item => {
-                shape.push({x: item.point.x, y: item.point.y, z: item.point.z});
-            })
+            vertices.forEach(item => {
+                shape.push(obj3d.points[item]);
+            });
 
             new Zdog.Shape({
                 addTo: ref,

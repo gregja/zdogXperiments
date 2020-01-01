@@ -43,16 +43,11 @@
             });
 
             mesh.polygons.forEach(vertices => {
-                let points = [];
                 let datas = [];
 
-                vertices.forEach((item, idx) => {
-                    points.push({point: mesh.points[vertices[idx]]});
-                });
-
-                points.forEach(item => {
-                    if (item.point != undefined && item.point.x != undefined) {
-                        datas.push({x: item.point.x, y: item.point.y, z: item.point.z});
+                vertices.forEach(item => {
+                    if (mesh.points[item]) {
+                        datas.push(mesh.points[item]);
                     }
                 });
 
@@ -105,15 +100,9 @@
             }
 
             obj3d.polygons.forEach((vertices, idx) => {
-                let points = [];
-                vertices.forEach((item, idx) => {
-                    points.push({point:obj3d.points[vertices[idx]]});
-                })
-
                 let shape = [];
-
-                points.forEach(item => {
-                    shape.push({x:item.point.x, y:item.point.y, z:item.point.z});
+                vertices.forEach(item => {
+                    shape.push(obj3d.points[item]);
                 })
 
                 new Zdog.Shape({
@@ -136,16 +125,11 @@
             });
 
             shapeU.polygons.forEach(vertices => {
-                let points = [];
                 let datas = [];
 
-                vertices.forEach((item, idx) => {
-                    points.push({point: shapeU.points[vertices[idx]]});
-                });
-
-                points.forEach(item => {
-                    if (item.point != undefined && item.point.x != undefined) {
-                        datas.push({x: item.point.x, y: item.point.y, z: item.point.z});
+                vertices.forEach(item => {
+                    if (shapeU.points[item]) {
+                        datas.push(shapeU.points[item]);
                     }
                 });
 
@@ -169,16 +153,11 @@
             });
 
             shapeV.polygons.forEach(vertices => {
-                let points = [];
                 let datas = [];
 
-                vertices.forEach((item, idx) => {
-                    points.push({point: shapeV.points[vertices[idx]]});
-                });
-
-                points.forEach(item => {
-                    if (item.point != undefined && item.point.x != undefined) {
-                        datas.push({x: item.point.x, y: item.point.y, z: item.point.z});
+                vertices.forEach(item => {
+                    if (shapeV.points[item]) {
+                        datas.push(shapeV.points[item]);
                     }
                 });
 

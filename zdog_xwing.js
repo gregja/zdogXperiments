@@ -34,63 +34,17 @@
     } else {
         console.warn('color picker not found');
     }
-/*
-    var objselector = document.getElementById("objselector");
-    if (objselector) {
-      objselector.setAttribute("value", "p0");
-        list_shapes.forEach((item, idx) => {
-            let option = document.createElement('option');
-            option.setAttribute('value', 'p' + String(idx));
-            option.innerHTML = item.name;
-            objselector.append(option);
-            if (idx == 0) {
-              option.setAttribute("selected", "selected");
-            }
-        });
-        objselector.blur();
-        objselector.addEventListener('change', function(evt) {
-          evt.preventDefault();
-          this.blur();
-          var current_id = Number(String(this.value).replace('p', ''));
-          generateShape = shapes3dToolbox[list_shapes[current_id].fn];
-          shape_params = list_shapes[current_id].default;
-          if (draw_mode_default == 'Wireframe') {
-              mainshape = new Zdog.Shape({
-                  addTo: illo,
-                  path: genShape1(generateShape(shape_params)),
-                  color: default_color,
-                  closed: false,
-                  stroke: stroke_value,
-                  fill: false,
-              });
-              mainshape.updatePath();
-          } else {
-              mainshape = null;
-              genShape2(illo);
-          }
-          resetScale();
-          generateGraph();
-        }, false);
-    } else {
-        console.warn('obj selector not found');
-    }
-*/
+
     // Wireframe shape
     function genShape1(obj3d) {
         var datas = [];
 
         obj3d.polygons.forEach(vertices => {
-            let points = [];
-
-            vertices.forEach(item => {
-                points.push({point:obj3d.points[item]});
-            })
-
-            points.forEach((item, idx) => {
-                if (item.point != undefined && item.point.x != undefined) {
-                    datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
+            vertices.forEach((item) => {
+                if (obj3d.points && obj3d.points[item]) {
+                    datas.push(obj3d.points[item]);
                 }
-            })
+            });
         });
         return datas;
     }
@@ -102,18 +56,13 @@
         var colors = chroma.scale(['#f8f4ec','#4c3a1a']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
-            let points = [];
-            vertices.forEach((item, idx) => {
-                points.push({point:obj3d.points[vertices[idx]]});
-            })
-
             let shape = [];
 
-            points.forEach((item, idx) => {
-                if (item.point != undefined && item.point.x != undefined) {
-                    shape.push({x:item.point.x, y:item.point.y, z:item.point.z});
+            vertices.forEach((item) => {
+                if (obj3d.points && obj3d.points[item]) {
+                    shape.push(obj3d.points[item]);
                 }
-            })
+            });
 
             new Zdog.Shape({
                 addTo: ref,

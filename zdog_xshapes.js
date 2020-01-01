@@ -39,15 +39,11 @@
         var datas = [];
 
         obj3d.polygons.forEach(vertices => {
-            let points = [];
 
-            vertices.forEach((item, idx) => {
-                points.push({point:obj3d.points[vertices[idx]]});
-            })
+            vertices.forEach(item => {
+                datas.push(obj3d.points[item]);
+            });
 
-            points.forEach(item => {
-                datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
-            })
         });
         return datas;
     }
@@ -60,15 +56,9 @@
         var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
-            let points = [];
-            vertices.forEach((item, idx) => {
-                points.push({point:obj3d.points[vertices[idx]]});
-            })
-
             let shape = [];
-
-            points.forEach(item => {
-                shape.push({x:item.point.x, y:item.point.y, z:item.point.z});
+            vertices.forEach(item => {
+                shape.push(obj3d.points[item]);
             })
 
             shapes_paint.push(new Zdog.Shape({

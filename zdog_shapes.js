@@ -34,7 +34,6 @@
     if (objselector) {
         objselector.setAttribute("value", "p0");
         list_shapes.forEach((item, idx) => {
-            console.log(item)
             let option = document.createElement('option');
             option.setAttribute('value', 'p' + String(idx));
             option.innerHTML = item.name;
@@ -76,15 +75,9 @@
         var datas = [];
 
         obj3d.polygons.forEach(vertices => {
-            let points = [];
-
             vertices.forEach(item => {
-                points.push({point:obj3d.points[item]});
-            })
-
-            points.forEach(item => {
-                datas.push({x: item.point.x, y:item.point.y, z:item.point.z});
-            })
+                datas.push(obj3d.points[item]);
+            });
         });
         return datas;
     }

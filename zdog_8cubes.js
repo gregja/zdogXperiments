@@ -12,7 +12,6 @@ var mid_side = side / 2;
 var global_dist = dist * 2;
 var isSpinning = true;
 
-
 var boxes = [];
 boxes.push({x:-dist, y:-dist, z:-dist});
 boxes.push({x:dist, y:dist, z:dist});
