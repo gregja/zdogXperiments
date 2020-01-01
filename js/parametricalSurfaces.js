@@ -823,7 +823,7 @@ var parametricalSurfaces = (function () {
         link: "http://tangente-mag.com/numero.php?id=167",
         list:2,
         params: {A: .1},
-        u: {begin: -TAU, end: TAU, step: .1},
+        u: {begin: -TAU, end: TAU, step: .5},
         v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
@@ -846,7 +846,7 @@ var parametricalSurfaces = (function () {
         comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
         list:2,
         params: {A: .1},
-        u: {begin: -TAU, end: TAU, step: .1},
+        u: {begin: -TAU, end: TAU, step: .5},
         v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
@@ -869,7 +869,7 @@ var parametricalSurfaces = (function () {
         comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
         list:2,
         params: {A: .1},
-        u: {begin: -TAU, end: TAU, step: .1},
+        u: {begin: -TAU, end: TAU, step: .5},
         v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
