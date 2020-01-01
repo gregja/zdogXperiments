@@ -7,6 +7,8 @@
  *    https://petercollingridge.appspot.com/3D-tutorial/rotating-objects
  * Mollusc shell, great creature, great sphere and a beautiful rose
  *    => https://echarts.apache.org/examples/en/editor.html
+ * For the function excavateShape, I rewritten in Javascript an algorithm excerpt from the book
+ *  "Graphisme 3D en Turbo Pascal", Gérald Grandpierre and Richard Cotté, édiTests 1988
  */
 
 var shapes3dToolbox = (function () {
@@ -1461,8 +1463,8 @@ var shapes3dToolbox = (function () {
 
 
     /**
-     * Adaptation for Javascript of an algorithm excerpt from the book
-     *  "Graphisme 3D en Turbo Pascal", Gérald Grandpierre and Richard Cotté, édiTests 1988
+     * Excavate a 3D shape, drawing only the edges, playing on the thickness (2, 4, 8, 10, 12, 16)
+     *  and the drawing mode of edges (with or without crossing)
      * @param original.points
      * @param original.polygons
      * @param params.thickness_ratio (default 8)

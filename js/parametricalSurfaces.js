@@ -1,14 +1,16 @@
 /*          SURFACES OF PARAMETRIC EQUATIONS
 * ---------------------------------------------------
-* This script draws 3D surfaces deended by equations
+* This script draws 3D surfaces defined by equations like
 *     x = f(u,v), y = g(u,v), z = h(u,v)
 *
-* JS script inspired by a Pascal program excerpt from the book :
-* "Graphisme dans le plan et dans l'espace en Turbo Pascal"
-*   By R. Dony, ed. MASSON Paris 1990
+* The first version of this JS script was inspired by a program of the book :
+* "Graphisme dans le plan et dans l'espace en Turbo Pascal", by R. Dony, ed. MASSON Paris 1990
 *
-* Rewritten for Javascript by Gregory Jarrige
-*  MIT License
+* I progressively enrich it adding some new parametrical function found on internet and in other books.
+*
+* Author: Gregory Jarrige
+* Version : 2020-01-01-A
+* MIT License
 * ---------------------------------------------------
 *   Surface Types:
 *      Ellipsoid, Sphere, Torus, Hyperboloïd, Cone,
@@ -28,6 +30,11 @@ var parametricalSurfaces = (function () {
     const TWO_TAU = TAU * 2;
     const HALF_PI = PI / 2;
 
+    const DEG_TO_RAD = PI / 180;
+
+    const degToRad = angle => angle * DEG_TO_RAD;
+    const radToDeg = angle => angle * ( 180 / PI );
+
     const cos2 = (x) => pow(cos(x), 2);
 
     // function power taken on http://www.generative-gestaltung.de/2/
@@ -41,12 +48,12 @@ var parametricalSurfaces = (function () {
 
     const square = function (x) {
         return x * x;
-    }
+    };
 
     const mod2 = function (a, b) {
         var c = a % b;
         return c > 0 ? c : (c + b);
-    }
+    };
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -60,6 +67,9 @@ var parametricalSurfaces = (function () {
     let FZ = (u, v) => false;
     let FXYZ = (u, v) => false;
     let SCALE = DEFAULT_SCALE;
+    let ROTATION = {};
+    let REFER = {};
+    let LIMITS = {};
 
     let last_point = 0;
 
@@ -73,9 +83,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 0,
         name: 'Ellipsoid',
+        list:1,
         params: {A: 6.0, B: 3.0, C: 2.0},
-        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI / 2, end: PI / 2, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => A * cos(u) * cos(v),
         fy: (u, v) => B * cos(u) * sin(v),
         fz: (u, v) => C * sin(u),
@@ -84,9 +95,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 1,
         name: 'Sphere 1',
+        list:1,
         params: {A: 4.0, B: 4.0, C: 4.5},
-        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI / 2, end: PI / 2, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => A * cos(u) * cos(v),
         fy: (u, v) => B * cos(u) * sin(v),
         fz: (u, v) => C * sin(u),
@@ -95,9 +107,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 2,
         name: 'Sphere 1 (truncated)',
+        list:1,
         params: {A: 4.0, B: 4.0, C: 4.5},
-        u: {begin: -PI / 2, end: 1, dist: 0.2},
-        v: {begin: -PI, end: 1, dist: 0.2},
+        u: {begin: -PI / 2, end: 1, step: 0.2},
+        v: {begin: -PI, end: 1, step: 0.2},
         fx: (u, v) => A * cos(u) * cos(v),
         fy: (u, v) => B * cos(u) * sin(v),
         fz: (u, v) => C * sin(u),
@@ -106,9 +119,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 3,
         name: 'Sphere 2',
-        params: {A: 2.0, B: 1.0, C: 0},
-        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        list:1,
+        params: {A: 2.0, B: 1.0},
+        u: {begin: -PI / 2, end: PI / 2, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => A * (sin(v) * sin(u)),
         fy: (u, v) => A * (B * cos(v)),
         fz: (u, v) => A * (sin(v) * cos(u)),
@@ -118,9 +132,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 4,
         name: 'Torus 1',
+        list:1,
         params: {A: 6.0, B: 3.0, C: 3.0},
-        u: {begin: -PI, end: PI, dist: 0.4},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.4},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => (A + B * cos(u)) * cos(v),
         fy: (u, v) => (A + B * cos(u)) * sin(v),
         fz: (u, v) => C * sin(u),
@@ -129,9 +144,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 5,
         name: 'Torus 2 (tire)',
+        list:1,
         params: {A: 6.0, B: 3.0, C: 3.0},
-        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI / 2, end: PI / 2, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => (A + B * cos(u)) * cos(v),
         fy: (u, v) => (A + B * cos(u)) * sin(v),
         fz: (u, v) => C * sin(u),
@@ -140,9 +156,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 6,
         name: 'Torus 3 (flattened)',
+        list:1,
         params: {A: 6.0, B: 3.0, C: 3.0},
-        u: {begin: -PI, end: PI, dist: 0.4},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.4},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => (A + B * cos(u)) * cos(v),
         fy: (u, v) => (A + B * cos(u)) * sin(v),
         fz: (u, v) => B * sin(v),
@@ -151,9 +168,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 7,
         name: 'Hyperboloid',
+        list:1,
         params: {A: 1.0, B: 1.0, C: 1.0},
-        u: {begin: -PI / 2, end: PI / 2, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI / 2, end: PI / 2, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => u,
         fy: (u, v) => v,
         fz: (u, v) => u * u - v * v,
@@ -162,9 +180,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 8,
         name: 'Cone',
+        list:1,
         params: {A: PI / 6, B: 1.0, C: 1.0},
-        u: {begin: -1, end: 2.6, dist: 0.2},
-        v: {begin: -2, end: 0, dist: 0.2},
+        u: {begin: -1, end: 2.6, step: 0.2},
+        v: {begin: -2, end: 0, step: 0.2},
         fx: (u, v) => v * cos(u) * sin(A),
         fy: (u, v) => v * sin(u) * sin(A),
         fz: (u, v) => v * cos(A),
@@ -174,9 +193,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 9,
         name: 'Bi-horn',
+        list:1,
         params: {A: 1.0, B: 1.0, C: 1.0},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -PI, end: PI, dist: 0.1},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -PI, end: PI, step: 0.1},
         fx: (u, v) => (2 - cos(v)) * cos(u),
         fy: (u, v) => (2 - sin(v)) * cos(u),
         fz: (u, v) => sin(u),
@@ -186,9 +206,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 10,
         name: 'Pseudo-sphere 1',
+        list:1,
         params: {A: 1.0, B: 1.0, C: 1.0},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -3, end: 3, dist: 0.1},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -3, end: 3, step: 0.1},
         fx: (u, v) => cos(u) / cosh(v),
         fy: (u, v) => sin(u) / cosh(v),
         fz: (u, v) => v - tanh(v),
@@ -198,9 +219,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 11,
         name: 'Pseudo-sphere 2 (half)',
+        list:1,
         params: {A: 1.0, B: 1.0, C: 1.0},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: 0, end: 4, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: 0, end: 4, step: 0.2},
         fx: (u, v) => cos(u) / cosh(v),
         fy: (u, v) => sin(u) / cosh(v),
         fz: (u, v) => v - tanh(v),
@@ -210,9 +232,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 12,
         name: 'Helicoid 1',
+        list:1,
         params: {A: PI / 2, B: PI / 2, C: PI / 2},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
         fy: (u, v) => cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
         fz: (u, v) => cos(C) * u + sin(C) * v,
@@ -222,9 +245,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 13,
         name: 'Helicoid 2',
+        list:1,
         params: {A: PI / 2, B: PI, C: PI / 2},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
         fy: (u, v) => cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
         fz: (u, v) => cos(C) * u + sin(C) * v,
@@ -234,9 +258,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 14,
         name: 'Katenoid',
+        list:1,
         params: {A: 6.0, B: 6.0, C: 6.0},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => cos(A) * cos(v) * cosh(u) + sin(A) * sin(v) * sinh(u),
         fy: (u, v) => cos(B) * sin(v) * cosh(u) - sin(B) * cos(v) * sinh(u),
         fz: (u, v) => cos(C) * u + sin(C) * v,
@@ -246,9 +271,10 @@ var parametricalSurfaces = (function () {
         surface_types.push({
             id: 15,
             name: 'Plücker\'s conoid',
+            list:1,
             params: {A: 6.0, B: 6.0, C: 6.0},
-            u: {begin: -PI, end: PI, dist: 0.2},
-            v: {begin: -PI, end: PI, dist: 0.2},
+            u: {begin: -PI, end: PI, step: 0.2},
+            v: {begin: -PI, end: PI, step: 0.2},
             fx: (u, v) => A * cos(v),
             fy: (u, v) => B * sin(v),
             fz: (u, v) => C * cos(4 * v),
@@ -258,9 +284,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 15,
         name: 'Milk carton (in french "Berlingot")',
-        params: {A: 1.0, B: 2, C: 0.0},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        list:1,
+        params: {A: 1.0, B: 2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => B * A * (1 + u) * cos(v),
         fy: (u, v) => B * A * (1 - u) * sin(v),
         fz: (u, v) => A * u,
@@ -270,9 +297,10 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 16,
         name: 'Möbius ribbon v1',
+        list:2,
         params: {A: 6.0, B: 6.0, C: 0.0},
-        u: {begin: -PI, end: PI, dist: 0.2},
-        v: {begin: -PI, end: PI, dist: 0.2},
+        u: {begin: -PI, end: PI, step: 0.2},
+        v: {begin: -PI, end: PI, step: 0.2},
         fx: (u, v) => (A + u * cos(v / 2)) * cos(v),
         fy: (u, v) => (B + u * cos(v / 2)) * sin(v),
         fz: (u, v) => (C + u * sin(v / 2)),
@@ -282,117 +310,131 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 17,
         name: 'Möbius ribbon v2',
-        params: {A: 1, B: 0, C: 0},
-        u: {begin: 0, end: 8 * PI, dist: .2},
-        v: {begin: -2, end: 2, dist: .2},
+        list:2,
+        params: {},
+        u: {begin: 0, end: 8 * PI, step: .2},
+        v: {begin: -2, end: 2, step: .2},
         fx: (u, v) => sin(u) * (-2 + v * sin(u / 2)),
         fy: (u, v) => cos(u) * (-2 + v * sin(u / 2)),
         fz: (u, v) => v * cos(u / 2),
         scale: DEFAULT_SCALE
     });
 
-
-    // https://blender.stackexchange.com/questions/18955/modelling-a-klein-bottle
     surface_types.push({
         id: 18,
         name: 'Klein bottle',
-        params: {A: 0.0, B: 0.0, C: 0.0},
-        u: {begin: 0, end: PI, dist: 0.05},
-        v: {begin: 0, end: TAU, dist: 0.1},
-        fx: (u, v) => -2 / 15 * cos(u) * (3 * cos(v) - 30 * sin(u) + 90 * cos(u) ** 4 * sin(u) - 60 * cos(u) ** 6 * sin(u) + 5 * cos(u) * cos(v) * sin(u)),
-        fy: (u, v) => -1 / 15 * sin(u) * (3 * cos(v) - 3 * cos(u) ** 2 * cos(v) - 48 * cos(u) ** 4 * cos(v) + 48 * cos(u) ** 6 * cos(v) - 60 * sin(u) + 5 * cos(u) * cos(v) * sin(u) - 5 * cos(u) ** 3 * cos(v) * sin(u) - 80 * cos(u) ** 5 * cos(v) * sin(u) + 80 * cos(u) ** 7 * cos(v) * sin(u)),
+        link: "https://blender.stackexchange.com/questions/18955/modelling-a-klein-bottle",
+        list:2,
+        params: {},
+        u: {begin: 0, end: PI, step: 0.05},
+        v: {begin: 0, end: TAU, step: 0.1},
+        fx: (u, v) => -2 / 15 * cos(u) * (3 * cos(v) - 30 * sin(u) +
+            90 * cos(u) ** 4 * sin(u) - 60 * cos(u) ** 6 * sin(u) +
+            5 * cos(u) * cos(v) * sin(u)),
+        fy: (u, v) => -1 / 15 * sin(u) * (3 * cos(v) - 3 * cos(u) ** 2
+            * cos(v) - 48 * cos(u) ** 4 * cos(v) + 48 * cos(u) ** 6
+            * cos(v) - 60 * sin(u) + 5 * cos(u) * cos(v) * sin(u) - 5
+            * cos(u) ** 3 * cos(v) * sin(u) - 80 * cos(u) ** 5 * cos(v)
+            * sin(u) + 80 * cos(u) ** 7 * cos(v) * sin(u)),
         fz: (u, v) => 2 / 15 * (3 + 5 * cos(u) * sin(u)) * sin(v),
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 19,
         name: 'Limpet Torus',
-        params: {A: 2.0, B: 0.0, C: 0.0},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -PI, end: PI, dist: 0.1},
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: 2.0},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -PI, end: PI, step: 0.1},
         fx: (u, v) => cos(u) / (sqrt(A) + sin(v)),
         fy: (u, v) => sin(u) / (sqrt(A) + sin(v)),
         fz: (u, v) => 1 / (sqrt(A) + cos(v)),
         scale: DEFAULT_SCALE * 1.5
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 20,
-        name: 'Figure 8 Torus by Paul Bourke',
-        params: {A: 0, B: 0, C: pow(2, 1 / 4)},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -PI, end: PI, dist: 0.1},
-        fx: (u, v) => cos(u) * (C + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
-        fy: (u, v) => sin(u) * (C + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
+        name: 'Torus Figure 8 by Paul Bourke',
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: pow(2, 1 / 4)},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -PI, end: PI, step: 0.1},
+        fx: (u, v) => cos(u) * (A + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
+        fy: (u, v) => sin(u) * (A + sin(v) * cos(u) - sin(2 * v) * sin(u) / 2),
         fz: (u, v) => sin(u) * sin(v) + cos(u) * sin(2 * v) / 2,
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 21,
         name: 'Torus by Roger Bagula',
-        params: {A: pow(2, 1 / 4), B: 0, C: 0},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -PI, end: PI, dist: 0.1},
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: pow(2, 1 / 4)},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -PI, end: PI, step: 0.1},
         fx: (u, v) => cos(u) * (A + cos(v)),
         fy: (u, v) => sin(u) * (A + sin(v)),
         fz: (u, v) => sqrt(pow((u / PI), 2) + pow((v / PI), 2)),
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 22,
         name: 'Saddle torus by Roger Bagula',
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
         params: {
             A: 2, B: 3,
             C: (s) => 1 - cos2(s) - cos2(s + TAU / B)
         },
-        u: {begin: 0, end: TAU, dist: 0.1},
-        v: {begin: 0, end: TAU, dist: 0.1},
+        u: {begin: 0, end: TAU, step: 0.1},
+        v: {begin: 0, end: TAU, step: 0.1},
         fx: (u, v) => (A + cos(u)) * cos(v),
         fy: (u, v) => (A + cos(u + TAU / B)) * cos(v + TAU / B),
         fz: (u, v) => (A + sign(C(u)) * sqrt(abs(C(u)))) * sign(C(v)) * sqrt(abs(C(v))),
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 23,
         name: 'Triaxial Hexatorus',
-        params: {A: 2, B: 3, C: 0},
-        u: {begin: 0, end: TAU, dist: 0.1},
-        v: {begin: 0, end: TAU, dist: 0.1},
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: 2, B: 3},
+        u: {begin: 0, end: TAU, step: 0.1},
+        v: {begin: 0, end: TAU, step: 0.1},
         fx: (u, v) => sin(u) / (sqrt(A) + cos(v)),
         fy: (u, v) => sin(u + TAU / B) / (sqrt(2) + cos(v + TAU / B)),
         fz: (u, v) => cos(u - TAU / B) / (sqrt(2) + cos(v - TAU / B)),
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 24,
         name: 'Triaxial Tritorus',
-        params: {A: 1, B: 3, C: 0},
-        u: {begin: -PI, end: PI, dist: 0.1},
-        v: {begin: -PI, end: PI, dist: 0.1},
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: 1, B: 3},
+        u: {begin: -PI, end: PI, step: 0.1},
+        v: {begin: -PI, end: PI, step: 0.1},
         fx: (u, v) => sin(u) * (A + cos(v)),
         fy: (u, v) => sin(u + TAU / B) * (1 + cos(v + TAU / B)),
         fz: (u, v) => sin(u + TWO_TAU / B) * (1 + cos(v + TWO_TAU / B)),
         scale: DEFAULT_SCALE * 2
     });
 
-    // http://paulbourke.net/geometry/toroidal/
     surface_types.push({
         id: 25,
         name: 'Bow Curve By Paul Bourke',
-        params: {A: .7, B: 0, C: 0},
-        u: {begin: 0, end: 1, dist: 0.05},
-        v: {begin: 0, end: 1, dist: 0.01},
+        link: "http://paulbourke.net/geometry/toroidal/",
+        list:2,
+        params: {A: .7},
+        u: {begin: 0, end: 1, step: 0.05},
+        v: {begin: 0, end: 1, step: 0.01},
         fx: (u, v) => (2 + A * sin(TAU * u)) * sin(TWO_TAU * v),
         fy: (u, v) => (2 + A * sin(TAU * u)) * cos(TWO_TAU * v),
         fz: (u, v) => A * cos(TAU * u) + 3 * cos(TAU * v),
@@ -401,22 +443,25 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 26,
-        name: 'grid',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Simple grid',
+        list:3,
+        params: {},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => u,
         fy: (u, v) => v,
         fz: (u, v) => 0,
-        scale: DEFAULT_SCALE
+        scale: DEFAULT_SCALE,
+        rotation: {y: TAU/8 }
     });
 
     surface_types.push({
         id: 27,
-        name: 'wave',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Wave',
+        list:3,
+        params: {},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => u,
         fy: (u, v) => v,
         fz: (u, v) => cos(sqrt(u * u + v * v)),
@@ -425,10 +470,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 28,
-        name: 'complex wave',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Weird wave',
+        list:3,
+        params: {},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => .75 * v,
         fy: (u, v) => sin(u) * v,
         fz: (u, v) => cos(u) * cos(v),
@@ -437,10 +483,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 29,
-        name: 'shell(1)',
+        name: 'Shell(1)',
+        list:2,
         params: {A: .5, B: 1, C: 2, D: 3},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => B * (1 - (u / TAU)) * cos(A * u) * (1 + cos(v)) + C * cos(A * u),
         fy: (u, v) => B * (1 - (u / TAU)) * sin(A * u) * (1 + cos(v)) + C * sin(A * u),
         fz: (u, v) => D * (u / TAU) + A * (1 - (u / TAU)) * sin(v),
@@ -449,10 +496,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 30,
-        name: 'shell(2)',
+        name: 'Shell(2)',
+        list:2,
         params: {A: 2, B: 0.5, C: .1, D: 1.5},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => B * (1 - (u / TAU)) * cos(A * u) * (1 + cos(v)) + C * cos(A * u),
         fy: (u, v) => B * (1 - (u / TAU)) * sin(A * u) * (1 + cos(v)) + C * sin(A * u),
         fz: (u, v) => D * (u / TAU) + A * (1 - (u / TAU)) * sin(v),
@@ -461,10 +509,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 31,
-        name: 'paraboloid',
-        params: {A: PI, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Paraboloid',
+        list:2,
+        params: {A: PI},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => power((v / A), 0.5) * sin(u),
         fy: (u, v) => v,
         fz: (u, v) => power((v / A), 0.5) * cos(u),
@@ -473,10 +522,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 320,
-        name: 'steinbachScrew(1)',
-        params: {A: 1, B: 0, C: 0},
-        u: {begin: -3, end: 3, dist: .5},
-        v: {begin: -PI, end: PI, dist: .1},
+        name: 'SteinbachScrew(1)',
+        list:2,
+        params: {A: .9},
+        u: {begin: -3, end: 3, step: .5},
+        v: {begin: -PI, end: PI, step: .1},
         fx: (u, v) => u * cos(v),
         fy: (u, v) => u * sin(A * v),
         fz: (u, v) => v * cos(u),
@@ -485,34 +535,37 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 321,
-        name: 'steinbachScrew(2)',
-        params: {A: 1, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'SteinbachScrew(2)',
+        list:2,
+        params: {},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => u * cos(v),
-        fy: (u, v) => u * sin(A * v),
+        fy: (u, v) => u * sin(v),
         fz: (u, v) => v * cos(u),
         scale: DEFAULT_SCALE / 2
     });
 
     surface_types.push({
         id: 33,
-        name: 'corkscrew',
-        params: {A: 1, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Corkscrew',
+        list:2,
+        params: {},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => cos(u) * cos(v),
         fy: (u, v) => sin(u) * cos(v),
-        fz: (u, v) => sin(v) + A * u,
+        fz: (u, v) => sin(v) + u,
         scale: DEFAULT_SCALE
     });
 
     surface_types.push({
         id: 34,
-        name: 'trianguloid',
-        params: {A: .5, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Trianguloid',
+        list:2,
+        params: {A: .5},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => 0.75 * (sin(3 * u) * 2 / (2 + cos(v))),
         fy: (u, v) => 0.75 * ((sin(u) + 2 * A * sin(2 * u)) * 2 / (2 + cos(v + TAU))),
         fz: (u, v) => 0.75 * ((cos(u) - 2 * A * cos(2 * u)) * (2 + cos(v)) * ((2 + cos(v + TAU / 3)) * 0.25)),
@@ -521,10 +574,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 35,
-        name: 'kidney',
-        params: {A: .1, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Kidney',
+        list:2,
+        params: {A: .1},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fxyz: (u, v) => {
             u /= 2;
             let x = cos(u) * (A * 3 * cos(v) - cos(3 * v));
@@ -537,10 +591,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 36,
-        name: 'maeders owl',
-        params: {A: .1, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},
-        v: {begin: -10, end: 10, dist: .5},
+        name: 'Maeders Owl',
+        list:2,
+        params: {A: .1},
+        u: {begin: -10, end: 10, step: .5},
+        v: {begin: -10, end: 10, step: .5},
         fx: (u, v) => 0.4 * (v * cos(u) - 0.5 * A * power(v, 2) * cos(2 * u)),
         fy: (u, v) => 0.4 * (-v * sin(u) - 0.5 * A * power(v, 2) * sin(2 * u)),
         fz: (u, v) => 0.4 * (4 * power(v, 1.5) * cos(3 * u / 2) / 3),
@@ -549,10 +604,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 37,
-        name: 'astroidal ellipsoid',
-        params: {A: .5, B: 0, C: 0},
-        u: {begin: -10, end: 10, dist: .5},  // begin: -1, end: 1, dist: .1
-        v: {begin: -10, end: 10, dist: .5},  // begin: -1, end: 1, dist: .1
+        name: 'Astroidal ellipsoid',
+        list:2,
+        params: {A: .5},
+        u: {begin: -10, end: 10, step: .5},  // begin: -1, end: 1, step: .1
+        v: {begin: -10, end: 10, step: .5},  // begin: -1, end: 1, step: .1
         fxyz: (u, v) => {
             u /= 2;
             let x = 3 * power(cos(u) * cos(v), 3 * A);
@@ -565,10 +621,11 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 38,
-        name: 'lemniscate',
-        params: {A: 1.5, B: 0, C: 0},
-        u: {begin: -PI, end: PI, dist: .1},
-        v: {begin: -PI, end: PI, dist: .1},
+        name: 'Lemniscate',
+        list:2,
+        params: {A: 1.5},
+        u: {begin: -PI, end: PI, step: .1},
+        v: {begin: -PI, end: PI, step: .1},
         fxyz: (u, v) => {
             u /= 2;
             let cosvSqrtAbsSin2u = cos(v) * sqrt(abs(sin(2 * A * u)));
@@ -582,13 +639,14 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE
     });
 
-    // https://echarts.apache.org/examples/en/editor.html?c=surface-mollusc-shell&gl=1
     surface_types.push({
         id: 39,
-        name: 'mollusc-shell',
+        name: 'Mollusc-shell',
+        link: "https://echarts.apache.org/examples/en/editor.html?c=surface-mollusc-shell&gl=1",
+        list:2,
         params: {A: 1.16, B: 1, C: 2},
-        u: {begin: -PI, end: PI, dist: PI / 40},
-        v: {begin: -15, end: 6, dist: .21},
+        u: {begin: -PI, end: PI, step: PI / 40},
+        v: {begin: -15, end: 6, step: .21},
         fxyz: (u, v) => {
             let x = pow(A, v) * cos(v) * (B + cos(u));
             let y = -pow(A, v) * sin(v) * (B + cos(u));
@@ -598,13 +656,14 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE
     });
 
-    // https://echarts.apache.org/examples/en/editor.html?c=line3d-orthographic&gl=1
     surface_types.push({
         id: 40,
-        name: 'great spring',
+        name: 'Great spring',
+        link: "https://echarts.apache.org/examples/en/editor.html?c=line3d-orthographic&gl=1",
+        list:2,
         params: {A: 0.25, B: 75, C: 2.0},
-        u: {begin: 0, end: 1, dist: 1},
-        v: {begin: 0, end: 25, dist: 0.001},
+        u: {begin: 0, end: 1, step: 1},
+        v: {begin: 0, end: 25, step: 0.01},
         fxyz: (u, v) => {
             let x = (1 + A * cos(B * v)) * cos(v);
             // let x = (1 + A * cos(B * u)) * cos(u);  résultats intéressants avec (u) au lieu de (v), à étudier
@@ -615,13 +674,14 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE
     });
 
-    // https://echarts.apache.org/examples/en/editor.html?c=sphere-parametric-surface&gl=1
     surface_types.push({
         id: 41,
-        name: 'great sphere',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: -PI, end: PI, dist: PI / 40},
-        v: {begin: 0, end: PI, dist: PI / 40},
+        name: 'Sphere 3',
+        link: "https://echarts.apache.org/examples/en/editor.html?c=sphere-parametric-surface&gl=1",
+        list:3,
+        params: {},
+        u: {begin: -PI, end: PI, step: PI / 40},
+        v: {begin: 0, end: PI, step: PI / 40},
         fxyz: (u, v) => {
             let x = sin(v) * sin(u);
             let y = sin(v) * cos(u);
@@ -631,13 +691,14 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE * 4
     });
 
-    // https://echarts.apache.org/examples/en/editor.html?c=metal-surface&gl=1
     surface_types.push({
         id: 42,
-        name: 'great creature',
-        params: {A: 0.4, B: 0, C: 0},
-        u: {begin: -13.2, end: 13.2, dist: 0.4},  // begin: -1, end: 1, dist: .1
-        v: {begin: -37.4, end: 37.4, dist: 0.4},  // begin: -1, end: 1, dist: .1
+        name: 'Weird creature',
+        link: "https://echarts.apache.org/examples/en/editor.html?c=metal-surface&gl=1",
+        list:2,
+        params: {A: 0.4},
+        u: {begin: -13.2, end: 13.2, step: 0.4},  // begin: -1, end: 1, step: .1
+        v: {begin: -37.4, end: 37.4, step: 0.4},  // begin: -1, end: 1, step: .1
         fxyz: (u, v) => {
             let r = 1 - A * A;
             let w = sqrt(r);
@@ -652,13 +713,14 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE
     });
 
-    // https://echarts.apache.org/examples/en/editor.html?c=parametric-surface-rose&gl=1
     surface_types.push({
         id: 43,
         name: 'Rose',
-        params: {A: 0, B: 0, C: 0},
-        u: {begin: 0, end: 1, dist: 1 / 24},
-        v: {begin: -(20 / 9) * PI, end: 15 * PI, dist: ((15 * PI) - (-(20 / 9) * PI)) / 575},
+        list:2,
+        link: "https://echarts.apache.org/examples/en/editor.html?c=parametric-surface-rose&gl=1",
+        params: {},
+        u: {begin: 0, end: 1, step: 1 / 24},
+        v: {begin: -(20 / 9) * PI, end: 15 * PI, step: ((15 * PI) - (-(20 / 9) * PI)) / 575},
         fxyz: (u, v) => {
             let x = ((x1, theta) => {
                 let phi = (PI / 2) * exp(-theta / (8 * PI));
@@ -693,11 +755,12 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 44,
         name: 'Boy surface',
-        ref: "http://mathcurve.com/surfaces/boy/boy.shtml",
+        list:2,
+        link: "http://mathcurve.com/surfaces/boy/boy.shtml",
         comment: "algorithm identical to roman surface, but with A=1",
-        params: {A: 1, B: sqrt(2), C: 0},
-        u: {begin: 0, end: 1, dist: .1},
-        v: {begin: 0, end: TAU, dist: .1},
+        params: {A: 1, B: sqrt(2)},
+        u: {begin: 0, end: 1, step: .1},
+        v: {begin: 0, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fk = (u, v) => {
                 return cos(u) / (B - A * sin(2 * u) * sin(3 * v));
@@ -713,11 +776,12 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 45,
         name: 'Roman surface',
-        ref: "http://mathcurve.com/surfaces/romaine/romaine.shtml",
+        list:2,
+        link: "http://mathcurve.com/surfaces/romaine/romaine.shtml",
         comment: "algorithm identical to boy surface, but with A=0",
-        params: {A: 0, B: sqrt(2), C: 0},
-        u: {begin: 0, end: 1, dist: .1},
-        v: {begin: 0, end: TAU, dist: .1},
+        params: {A: 0, B: sqrt(2)},
+        u: {begin: 0, end: 1, step: .1},
+        v: {begin: 0, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fk = (u, v) => {
                 return cos(u) / (B - A * sin(2 * u) * sin(3 * v));
@@ -733,11 +797,12 @@ var parametricalSurfaces = (function () {
     surface_types.push({
         id: 46,
         name: 'Morin surface',
-        ref: "http://mathcurve.com/surfaces/morin/morin.shtml",
+        list:2,
+        link: "http://mathcurve.com/surfaces/morin/morin.shtml",
         comment: "try with A = 4 and C = 4 => funny shape",
         params: {A: 1, B: sqrt(2), C: 5},
-        u: {begin: 0, end: 1, dist: .1},
-        v: {begin: 0, end: TAU, dist: .1},
+        u: {begin: 0, end: 1, step: .1},
+        v: {begin: 0, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fk = (u, v) => {
                 return cos(u) / (B - A * sin(2 * u) * sin(C * v));
@@ -753,10 +818,13 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 50,
-        name: 'basket',
-        params: {A: .1, B: 0, C: 0},
-        u: {begin: -TAU, end: TAU, dist: .1},
-        v: {begin: -TAU, end: TAU, dist: .1},
+        name: 'Basket',
+        comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13',
+        link: "http://tangente-mag.com/numero.php?id=167",
+        list:2,
+        params: {A: .1},
+        u: {begin: -TAU, end: TAU, step: .1},
+        v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
                 return (PI / 2 - a) * cos(t);
@@ -774,10 +842,12 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 501,
-        name: 'basket (pretty bug 1)',
-        params: {A: .1, B: 0, C: 0},
-        u: {begin: -TAU, end: TAU, dist: .1},
-        v: {begin: -TAU, end: TAU, dist: .1},
+        name: 'Basket (pretty bug 1)',
+        comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
+        list:2,
+        params: {A: .1},
+        u: {begin: -TAU, end: TAU, step: .1},
+        v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
                 return (PI / 2 - a) * cos(t);
@@ -795,10 +865,12 @@ var parametricalSurfaces = (function () {
 
     surface_types.push({
         id: 502,
-        name: 'basket (pretty bug 2)',
-        params: {A: .1, B: 0, C: 0},
-        u: {begin: -TAU, end: TAU, dist: .1},
-        v: {begin: -TAU, end: TAU, dist: .1},
+        name: 'Basket (pretty bug 2)',
+        comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
+        list:2,
+        params: {A: .1},
+        u: {begin: -TAU, end: TAU, step: .1},
+        v: {begin: -TAU, end: TAU, step: .1},
         fxyz: (u, v) => {
             let fta = (t, a) => {
                 return (PI / 2 - a) * cos(t);
@@ -814,7 +886,40 @@ var parametricalSurfaces = (function () {
         scale: DEFAULT_SCALE * 4
     });
 
+    surface_types.push({
+        id: 60,
+        name: 'Doughnut',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {},
+        u: {begin: -80, end: 70, step: 3},
+        v: {begin: -100, end: 100, step: 10},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 0;
+                let yt = y * .7;
+                let d = sqrt(x*x+yt*yt);
+                if (d < 30 || d > 60) {
+                    z = 100;
+                } else {
+                    let d1 = abs(45 - d);
+                    z = 100 - 1.5 * sqrt(225 - d1 * d1);
+                }
+                return z;
+            };
+            return {x: u, y: v, z: fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    /**
+     * Set parameters for the current parametrical surface
+     * @param shape_name
+     * @returns {{fx: (string|null), fy: (string|null), fxyz: (string|null), fz: (string|null), refer: {}, rotation: {}, name: string, scale: number, id: number, params: *[], limits: {}}}
+     */
     function setSurface(shape_name) {
+        console.log(shape_name);
         var current_type = -1;
         for (let i = 0, imax = surface_types.length; i < imax; i++) {
             let item = surface_types[i];
@@ -831,11 +936,21 @@ var parametricalSurfaces = (function () {
             let surface = surface_types[current_type];
             current_surface_type = current_type;
             current_surface_name = surface.name;
-            A = surface.params.A;
-            B = surface.params.B;
-            C = surface.params.C;
+            A = surface.params.A || null;
+            B = surface.params.B || null;
+            C = surface.params.C || null;
             D = surface.params.D || null;
-            SCALE = surface.scale;
+            SCALE = surface.scale || 1;
+            ROTATION = surface.rotation || {};
+            REFER = {};
+            LIMITS = {u:surface.u, v:surface.v};
+            if (surface.hasOwnProperty('comment')) {
+                REFER.comment = surface.comment;
+            }
+            if (surface.hasOwnProperty('link')) {
+                REFER.link = surface.link;
+            }
+
             if (typeof surface.fxyz === 'function') {
                 FXYZ = surface.fxyz;
             } else {
@@ -849,19 +964,56 @@ var parametricalSurfaces = (function () {
         return getInfos();
     }
 
+    /**
+     * Extract parameter for exporting it
+     * @param paramkey
+     * @param paramval
+     * @returns {{}}
+     */
+    function extractParam(paramkey, paramval) {
+        var output = {};
+        if (typeof paramval === 'function') {
+            if (paramval.toString) {
+                output[paramkey] = paramval.toString();
+            } else {
+                output[paramkey] = "function embedded (visible with Firefox)";
+            }
+        } else {
+            output[paramkey] = paramval;
+        }
+        return output;
+    }
+
+    /**
+     * Get datas from the current parametrical surface (to export it)
+     * @returns {{fx: (string|null), fy: (string|null), fxyz: (string|null), fz: (string|null), refer: {}, rotation: {}, name: string, scale: number, id: number, params: [], limits: {}}}
+     */
     function getInfos() {
+        let params = [];
+        if (A != null) {
+            params.push(extractParam('A', A));
+        }
+        if (B != null) {
+            params.push(extractParam('B', B));
+        }
+        if (C != null) {
+            params.push(extractParam('C', C));
+        }
+        if (D != null) {
+            params.push(extractParam('D', D));
+        }
         return {
             id: current_surface_type,
             name: current_surface_name,
-            fx: (typeof FX === "function") ? FX.toString() : null,
-            fy: (typeof FY === "function") ? FY.toString() : null,
-            fz: (typeof FZ === "function") ? FZ.toString() : null,
-            fxyz: (typeof FXYZ === "function") ? FXYZ.toString() : null,
-            A: A,
-            B: B,
-            C: C,
-            D: D,
-            scale: SCALE
+            fx: (typeof FX === "function" && FX.toString) ? "fx "+ FX.toString() : null,
+            fy: (typeof FY === "function" && FY.toString) ? "fy "+ FY.toString() : null,
+            fz: (typeof FZ === "function" && FZ.toString) ? "fz "+ FZ.toString() : null,
+            fxyz: (typeof FXYZ === "function" && FXYZ.toString) ? "fxyz "+ FXYZ.toString() : null,
+            params: params,
+            limits: LIMITS,
+            scale: SCALE,
+            rotation: ROTATION,
+            refer: REFER
         }
     }
 
@@ -869,8 +1021,17 @@ var parametricalSurfaces = (function () {
         return DEFAULT_SCALE;
     }
 
-    function getList() {
-        return surface_types.map(item => item.name)
+    /**
+     * Get the list of parametrical surfaces (with an optional filter on the property "list")
+     * @param numlist
+     * @returns {unknown[]}
+     */
+    function getList(numlist=null) {
+        if (numlist == null) {
+            return surface_types.map(item => item.name).sort();
+        } else {
+            return surface_types.filter(item => item.list == numlist).map(item => item.name).sort();
+        }
     }
 
     /**
@@ -889,8 +1050,8 @@ var parametricalSurfaces = (function () {
 
         // first step : precalculation of coordinates and storage in a temporary array (with two entries)
         let v = surface.v.begin;
-        let vmax = surface.v.end + (surface.v.dist / 2);
-        let umax = surface.u.end + (surface.u.dist / 2);
+        let vmax = surface.v.end + (surface.v.step / 2);
+        let umax = surface.u.end + (surface.u.step / 2);
         let iv = 0;
         while (v <= vmax) {
             tmpPoints[iv] = [];
@@ -909,10 +1070,10 @@ var parametricalSurfaces = (function () {
                     z = FZ(u, v);
                 }
                 tmpPoints[iv][iu] = {adr: -1, coords: {x: x, y: y, z: z}};
-                u += surface.u.dist;
+                u += surface.u.step;
                 iu++;
             }
-            v += surface.v.dist;
+            v += surface.v.step;
             iv++;
         }
 
@@ -990,9 +1151,9 @@ var parametricalSurfaces = (function () {
                     z = FZ(u, v);
                 }
                 drawXYZ(x, y, z);
-                v = v + surface.v.dist;
+                v = v + surface.v.step;
             }
-            u = u + surface.u.dist;
+            u = u + surface.u.step;
         }
         return {
             points: points,
@@ -1038,9 +1199,9 @@ var parametricalSurfaces = (function () {
                     z = FZ(u, v);
                 }
                 drawXYZ(x, y, z);
-                u = u + surface.u.dist;
+                u = u + surface.u.step;
             }
-            v = v + surface.v.dist;
+            v = v + surface.v.step;
         }
         return {
             points: points,

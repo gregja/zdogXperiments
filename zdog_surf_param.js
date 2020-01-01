@@ -1,10 +1,18 @@
 {
     "use strict";
 
+    var ref = {
+        link: document.getElementById('link'),
+        comment: document.getElementById('comment'),
+        source: document.getElementById('source'),
+    };
+
     let surface_listing = parametricalSurfaces.getList();
+
+    let current_shape = parametricalSurfaces.setSurface(surface_listing[0]);
     let settings = {
-        default_colorU: "#ff0000",
-        default_colorV: "#336699",
+        default_colorU: "#ff0000", // previous ,"#5743e6"
+        default_colorV: "#336699", // previous "#d4541f",
         default_colorMesh: "#000000",
         draw_graphU: true,
         draw_graphV: true,
@@ -14,10 +22,10 @@
         stroke_value: 1,
         isSpinning: true,
         speed: 0.003,
-        scale: parametricalSurfaces.getDefaultScale(),
-        init_scale: parametricalSurfaces.getDefaultScale(),
-        type: surface_listing[0]
-    }
+        scale: current_shape.scale,
+        init_scale: current_shape.scale,
+        type:current_shape.name
+    };
 
     // clone settings for detection of changes
     let backup_settings = Object.assign({}, settings);
@@ -180,6 +188,9 @@
         backup_settings.isSpinning = settings.isSpinning;
         if (settings.isSpinning) {
             illo.rotate.z += settings.speed;
+            if (illo.rotate.x > -1) {
+                illo.rotate.x -= settings.speed/2;
+            }
         }
         let changes = false;
         let newshape = false;
@@ -206,6 +217,56 @@
                 illo.scale.z = infos.scale;
                 settings.scale = infos.scale;
                 backup_settings.scale = infos.scale;
+
+                if (infos.refer.comment) {
+                    ref.comment.innerHTML = `<fieldset><legend>Comment</legend>${infos.refer.comment}</fieldset>`;
+                } else {
+                    ref.comment.innerHTML = '';
+                }
+                if (infos.refer.link) {
+                    ref.link.innerHTML = `<fieldset><legend>Link</legend><a href="${infos.refer.link}" target="_blank">${infos.refer.link}</a></fieldset>`;
+                } else {
+                    ref.link.innerHTML = '';
+                }
+                ref.source.innerHTML = '';
+                let sources = [];
+                if (infos.params && infos.params.length > 0) {
+                    sources.push( '<pre>Constants => '+JSON.stringify(infos.params)+'</pre>\n' );
+                }
+                if (infos.limits && infos.limits.u) {
+                    sources.push( '<pre>Limits on U => '+JSON.stringify(infos.limits.u)+'</pre>\n' );
+                }
+                if (infos.limits && infos.limits.v) {
+                    sources.push( '<pre>Limits on V => '+JSON.stringify(infos.limits.v)+'</pre>\n' );
+                }
+                if (infos.fx != null) {
+                    sources.push( '<pre>'+infos.fx+'</pre>\n' );
+                }
+                if (infos.fy != null) {
+                    sources.push( '<pre>'+infos.fy+'</pre>\n' );
+                }
+                if (infos.fz != null) {
+                    sources.push( '<pre>'+infos.fz+'</pre>\n' );
+                }
+                if (infos.fxyz != null) {
+                    sources.push( '<pre>'+infos.fxyz+'</pre>\n' );
+                }
+                if (sources.length > 0) {
+                    let tmpsrc = sources.join('\n');
+                    ref.source.innerHTML = `<fieldset><legend>Source</legend>${tmpsrc}</fieldset>`;
+                }
+
+                if (infos.hasOwnProperty('rotation')) {
+                    if (infos.rotation.hasOwnProperty('x')) {
+                        illo.rotate.x = infos.rotation.x;
+                    }
+                    if (infos.rotation.hasOwnProperty('y')) {
+                        illo.rotate.y = infos.rotation.y;
+                    }
+                    if (infos.rotation.hasOwnProperty('z')) {
+                        illo.rotate.z = infos.rotation.z;
+                    }
+                }
             } else {
                 if (change_scale) {
                     let scale = Number(backup_settings['scale']);
@@ -245,7 +306,7 @@
 
         gui.add(obj, 'speed').min(0).max(.01).step(.001);
 
-        gui.add(obj, 'scale').min(0).max(400).step(1);
+        gui.add(obj, 'scale').min(1).max(400).step(1);
 
         let f1 = gui.addFolder('Colors');
         f1.addColor(obj, 'default_colorU');
