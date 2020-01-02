@@ -46,14 +46,14 @@ var parametricalSurfaces = (function () {
         }
     };
 
-    const square = function (x) {
-        return x * x;
-    };
+    const square = (x) => x * x;
 
-    const mod2 = function (a, b) {
+    const mod2 = (a, b) => {
         var c = a % b;
         return c > 0 ? c : (c + b);
     };
+
+    const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -817,6 +817,22 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
+        id: 49,
+        name: 'Surface of Scherk',
+        list:2,
+        comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 7',
+        link: "http://tangente-mag.com/numero.php?id=167",
+        params: {},
+        u: {begin: -HALF_PI +.1, end: HALF_PI-.1, step: .1},
+        v: {begin: -HALF_PI +.1, end: HALF_PI-.1, step: .1},
+        fx: (u, v) => u,
+        fy: (u, v) => v,
+        fz: (u, v) => log(cos(u) / cos(v)),
+        scale: 100,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
         id: 50,
         name: 'Basket',
         comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13',
@@ -891,7 +907,7 @@ var parametricalSurfaces = (function () {
         name: 'Doughnut',
         list:3,
         comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
-        params: {},
+        params: {A:30, B:60, C:100},
         u: {begin: -80, end: 70, step: 3},
         v: {begin: -100, end: 100, step: 10},
         fxyz: (u, v) => {
@@ -899,15 +915,209 @@ var parametricalSurfaces = (function () {
                 let z = 0;
                 let yt = y * .7;
                 let d = sqrt(x*x+yt*yt);
-                if (d < 30 || d > 60) {
-                    z = 100;
+                if (d < A || d > B) {
+                    z = C;
                 } else {
                     let d1 = abs(45 - d);
-                    z = 100 - 1.5 * sqrt(225 - d1 * d1);
+                    z = C - 1.5 * sqrt(225 - d1 * d1);
                 }
                 return z;
             };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 61,
+        name: 'Doughnut with inclined plane',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:30, B:60, C:100},
+        u: {begin: -80, end: 70, step: 3},
+        v: {begin: -100, end: 100, step: 10},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 0;
+                let yt = y * .7;
+                let d = sqrt(x*x+yt*yt);
+                if (d < A || d > B) {
+                    z = C + y;
+                } else {
+                    let d1 = abs(45 - d);
+                    z = C - 1.5 * sqrt(225 - d1 * d1);
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+
+    surface_types.push({
+        id: 62,
+        name: 'Volcano',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:30, B:80, C:55},
+        u: {begin: -100, end: 100, step: 5},
+        v: {begin: -100, end: 100, step: 5},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 0;
+                let tx = x * 2;
+                let d = sqrt(tx*tx+y*y);
+
+                if (d < A || d > B) {
+                    z = 0;
+                } else {
+                    z = A - abs(C - d);
+                }
+
+                return z;
+            };
             return {x: u, y: v, z: fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 63,
+        name: 'A Letter',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:3.333},
+        u: {begin: -20, end: 130, step: 5},
+        v: {begin: 0, end: 200, step: 5},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = y * .1;
+                let xt = x * .1;
+                let yt = (y + 120) * .06;
+
+                if (xt < 0 || xt > 10) {
+                    return z;
+                }
+                if ((xt < -A * (yt-10)+10 ) || (xt < A * (yt-10)-16.66666 )) {
+                    return z;
+                }
+                if ((xt < -A * (yt-10)+16.66666 ) || (xt < A * (yt-10)-10 ) || (xt > 6 && xt < 8)) {
+                    z = -20;
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 64,
+        name: 'Cone 2',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:90},
+        u: {begin: -100, end: 100, step: 5},
+        v: {begin: -100, end: 100, step: 5},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 0;
+                let d = sqrt(x*x+y*y);
+                if (d < A) {
+                    z = d - A;
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 65,
+        name: 'Aztec Pyramid',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:90},
+        u: {begin: -100, end: 100, step: 5},
+        v: {begin: -100, end: 100, step: 5},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = y * .1;
+                let d = sqrt(x*x+y*y);
+                if (d <= A) {
+                    z = 10 * floor(d/10)-A;
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 65,
+        name: 'Lovecraft\'s Castle',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:80},
+        u: {begin: -100, end: 100, step: 5},
+        v: {begin: -100, end: 100, step: 1},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let xt = 20*(x/20);
+                let yt = 10*(y/10);
+                let z = y * .2;
+                let d = sqrt(xt*xt+yt*yt);
+                d = 18 * floor(d/18);
+                if (d > A) {
+                    return z;
+                }
+                let zt = d - A;
+                if (zt < z) {
+                    return zt;
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 66,
+        name: 'Cross',
+        list:3,
+        comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
+        params: {A:80, B:30},
+        u: {begin: -100, end: 100, step: 5},
+        v: {begin: -100, end: 100, step: 5},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 100;
+                if (x < -A || x > A) {
+                    return z;
+                }
+                if (y > -B && y < B) {
+                    return 85;
+                }
+                if (y < -A || y > A) {
+                    return z;
+                }
+                if (x > -B && x < B) {
+                    return 85;
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
         },
         scale: 3,
         rotation: {x: TAU/8 }
@@ -1032,6 +1242,12 @@ var parametricalSurfaces = (function () {
         } else {
             return surface_types.filter(item => item.list == numlist).map(item => item.name).sort();
         }
+    }
+
+    function getRndItemFromList(numlist=null) {
+        let list = getList(numlist);
+        let rnd_item = getRandomInt(list.length);
+        return list[rnd_item];
     }
 
     /**
@@ -1239,6 +1455,7 @@ var parametricalSurfaces = (function () {
         getInfos: getInfos,
         getList: getList,
         setSurface: setSurface,
-        getDefaultScale: getDefaultScale
+        getDefaultScale: getDefaultScale,
+        getRndItemFromList: getRndItemFromList
     };
 })();

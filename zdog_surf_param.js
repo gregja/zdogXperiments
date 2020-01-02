@@ -9,7 +9,8 @@
 
     let surface_listing = parametricalSurfaces.getList();
 
-    let current_shape = parametricalSurfaces.setSurface(surface_listing[0]);
+    let current_shape = parametricalSurfaces.setSurface(parametricalSurfaces.getRndItemFromList());
+    let first_shape = true;
     let settings = {
         default_colorU: "#ff0000", // previous ,"#5743e6"
         default_colorV: "#336699", // previous "#d4541f",
@@ -194,6 +195,11 @@
         }
         let changes = false;
         let newshape = false;
+        if (first_shape) {
+            first_shape = false;
+            changes = true;
+            newshape = true;
+        }
         let change_scale = false;
         for (let item in backup_settings) {
             if (backup_settings[item] != settings[item]) {
