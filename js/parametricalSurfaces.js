@@ -23,7 +23,8 @@ var parametricalSurfaces = (function () {
     "use strict";
 
     const {
-        cos, sin, PI, tan, tanh, cosh, sinh, sqrt, pow, abs, sign, max, floor, log, exp
+        cos, sin, PI, tan, tanh, cosh, sinh, sqrt, pow, abs,
+        sign, max, floor, log, exp, asin, acos
     } = Math;
 
     const TAU = PI * 2;
@@ -54,6 +55,8 @@ var parametricalSurfaces = (function () {
     };
 
     const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+
+    const easeInQuad = (t, b, c, d) => c*(t/=d)*t + b;
 
     let current_surface_type = 0;
     let current_surface_name = '';
@@ -1120,6 +1123,81 @@ var parametricalSurfaces = (function () {
             return {x: u, y: v, z: -fnc(u, v)};
         },
         scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 67,
+        name: 'Box or Table ?',
+        list:3,
+        comment: 'derived from "Cross" plus an "easing" function',
+        params: {A:80, B:30},
+        u: {begin: -100, end: 100, step: 10},
+        v: {begin: -100, end: 100, step: 10},
+        fxyz: (u, v) => {
+            let fnc = (x, y) => {
+                let z = 100;
+                if (x < -A || x > A) {
+                    return easeInQuad(x, -A, A, A*2);
+                }
+                if (y > -B && y < B) {
+                    return easeInQuad(y, -B, B, B*2);
+                }
+                if (y < -A || y > A) {
+                    return easeInQuad(y, -A, A, A*2);
+                }
+                if (x > -B && x < B) {
+                    return easeInQuad(x, -B, B, B*2);
+                }
+                return z;
+            };
+            return {x: u, y: v, z: -fnc(u, v)};
+        },
+        scale: 3,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 68,
+        name: 'Tore - Variation 1',
+        list:3,
+        comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
+        params: {A:1, B:0,
+            C: (x,y) => {
+                let xc = 0.4;
+                let yc = 0.4;
+                let rc = 0.9;
+                return (square(x)+square(y)-1)*(square(x-xc)+square(y-yc)-square(rc)) ;
+            }
+        },
+        u: {begin: -2, end: 2, step: .04},
+        v: {begin: -2, end: 2, step: .04},
+        fxyz: (u, v) => {
+            let d = sqrt(B*B-4*A*C(u,v));
+            return {x: u, y: v, z: d};
+        },
+        scale: 400,
+        rotation: {x: TAU/8 }
+    });
+
+    surface_types.push({
+        id: 69,
+        name: 'Tore - Variation 2',
+        list:3,
+        comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
+        params: {A:1, B:0,
+            C: (x,y) => {
+                let tmp = x*x+y*y;
+                return (tmp-1)*(tmp-.81)*(tmp-.36)*(tmp-.04);
+            }
+        },
+        u: {begin: -2, end: 2, step: .04},
+        v: {begin: -2, end: 2, step: .04},
+        fxyz: (u, v) => {
+            let d = sqrt(B*B-4*A*C(u,v));
+            return {x: u, y: v, z: d};
+        },
+        scale: 400,
         rotation: {x: TAU/8 }
     });
 
