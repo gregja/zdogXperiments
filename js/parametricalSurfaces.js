@@ -9,7 +9,7 @@
 * I progressively enrich it adding some new parametrical function found on internet and in other books.
 *
 * Author: Gregory Jarrige
-* Version : 2020-01-01-A
+* Version : 2020-01-08-A
 * MIT License
 * ---------------------------------------------------
 *   Surface Types:
@@ -860,7 +860,7 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 501,
+        id: 51,
         name: 'Basket (pretty bug 1)',
         comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
         list:2,
@@ -883,7 +883,7 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 502,
+        id: 52,
         name: 'Basket (pretty bug 2)',
         comment: 'algorithm adapted from Tangente Magazine Hors Série n° 70, page 13 (version with a bug)',
         list:2,
@@ -1066,7 +1066,7 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 65,
+        id: 66,
         name: 'Lovecraft\'s Castle',
         list:3,
         comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
@@ -1096,7 +1096,7 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 66,
+        id: 67,
         name: 'Cross',
         list:3,
         comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
@@ -1127,7 +1127,7 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 67,
+        id: 68,
         name: 'Box or Table ?',
         list:3,
         comment: 'derived from "Cross" plus an "easing" function',
@@ -1158,22 +1158,21 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 68,
+        id: 69,
         name: 'Tore - Variation 1',
         list:3,
         comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
-        params: {A:1, B:0,
-            C: (x,y) => {
+        params: {A:1, B:0},
+        u: {begin: -2, end: 2, step: .04},
+        v: {begin: -2, end: 2, step: .04},
+        fxyz: (u, v) => {
+            let fc = (x,y) => {
                 let xc = 0.4;
                 let yc = 0.4;
                 let rc = 0.9;
                 return (square(x)+square(y)-1)*(square(x-xc)+square(y-yc)-square(rc)) ;
-            }
-        },
-        u: {begin: -2, end: 2, step: .04},
-        v: {begin: -2, end: 2, step: .04},
-        fxyz: (u, v) => {
-            let d = sqrt(B*B-4*A*C(u,v));
+            };
+            let d = sqrt(B*B-4*A*fc(u,v));
             return {x: u, y: v, z: d};
         },
         scale: 400,
@@ -1181,20 +1180,19 @@ var parametricalSurfaces = (function () {
     });
 
     surface_types.push({
-        id: 69,
+        id: 70,
         name: 'Tore - Variation 2',
         list:3,
         comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
-        params: {A:1, B:0,
-            C: (x,y) => {
-                let tmp = x*x+y*y;
-                return (tmp-1)*(tmp-.81)*(tmp-.36)*(tmp-.04);
-            }
-        },
+        params: {A:1, B:0},
         u: {begin: -2, end: 2, step: .04},
         v: {begin: -2, end: 2, step: .04},
         fxyz: (u, v) => {
-            let d = sqrt(B*B-4*A*C(u,v));
+            let fc = (x,y) => {
+                let tmp = x*x+y*y;
+                return (tmp-1)*(tmp-.81)*(tmp-.36)*(tmp-.04);
+            };
+            let d = sqrt(B*B-4*A*fc(u,v));
             return {x: u, y: v, z: d};
         },
         scale: 400,
