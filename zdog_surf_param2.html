@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Zdog - Parametric surfaces customizable</title>
+	<style>
+		html { height: 100%; }
+		body {
+			min-height: 100%;
+			margin: 0;
+			background: white;
+			font-family: sans-serif;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		pre {
+			text-align: left;
+		}
+		form {
+			text-align: left;
+		}
+		canvas {
+			display: block;
+			margin: 0px auto 20px;
+			cursor: move;
+		}
+		[data-active=true] {
+			display:block;
+		}
+		[data-active=false] {
+			display:none;
+		}
+		#edit-btn {
+			background-color: #4CAF50;
+			border-radius: 2px;
+		}
+		#edit-btn:hover {
+			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		}
+		#submit-btn {
+			background-color: #008CBA;
+			border-radius: 2px;
+		}
+		#submit-btn:hover {
+			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		}
+	</style>
+	<link rel="stylesheet" href="css/w3.css">
+	<link rel="stylesheet" href="css/w3compl.css">
+	<link href='https://fonts.googleapis.com/css?family=Source Code Pro' rel='stylesheet'>
+</head>
+<body>
+<div class="container" >
+	<canvas class="zdog-canvas" width="1000" height="800"></canvas>
+	<p>Click &amp; drag to rotate</p>
+	<div id="link"></div><div id="comment"></div>
+	<button class="w3-btn" id="edit-btn">Edit</button>&nbsp;
+	<input class="w3-btn" type="submit" id="submit-btn" form="myform" value="Validate & redraw">
+	<br><br>
+	<div id="source" data-active="true"></div>
+	<div id="edit-window" data-active="false">
+		<div class="w3-container w3-teal">
+			<h2>Edit Parameters</h2>
+		</div>
+		<form id="myform" class="w3-container">
+			<div class="w3-tag w3-round w3-green" style="padding:3px">
+				<div class="w3-tag w3-round w3-green w3-border w3-border-white">
+					Constants
+				</div>
+			</div>
+			<div class="w3-row-padding">
+				<label class="w3-third">A <input type="text" class="w3-input w3-border w3-round" data-field="const-a"></label>
+				<label class="w3-third">B <input type="text" class="w3-input w3-border w3-round" data-field="const-b"></label>
+				<label class="w3-third">C <input type="text" class="w3-input w3-border w3-round" data-field="const-c"></label>
+				<label class="w3-third">D <input type="text" class="w3-input w3-border w3-round" data-field="const-d"></label>
+				<label class="w3-third">E <input type="text" class="w3-input w3-border w3-round" data-field="const-e"></label>
+				<label class="w3-third">F <input type="text" class="w3-input w3-border w3-round" data-field="const-f"></label>
+				<br><br>
+			</div><br>
+			<div class="w3-tag w3-round w3-green" style="padding:3px">
+				<div class="w3-tag w3-round w3-green w3-border w3-border-white">
+					Limits on U
+				</div>
+			</div>
+			<div class="w3-row-padding">
+				<label class="w3-third">Begin <input type="text" class="w3-input w3-border w3-round" data-field="limit-u-begin"></label>
+				<label class="w3-third">End <input type="text" class="w3-input w3-border w3-round" data-field="limit-u-end"></label>
+				<label class="w3-third">Step <input type="text" class="w3-input w3-border w3-round" data-field="limit-u-step"></label>
+				<br><br>
+			</div><br>
+			<div class="w3-tag w3-round w3-green" style="padding:3px">
+				<div class="w3-tag w3-round w3-green w3-border w3-border-white">
+					Limits on V
+				</div>
+			</div>
+			<div class="w3-row-padding">
+				<label class="w3-third">Begin <input type="text" class="w3-input w3-border w3-round" data-field="limit-v-begin"></label>
+				<label class="w3-third">End <input type="text" class="w3-input w3-border w3-round" data-field="limit-v-end"></label>
+				<label class="w3-third">Step <input type="text" class="w3-input w3-border w3-round" data-field="limit-v-step"></label>
+				<br><br>
+			</div><br>
+			<div class="w3-tag w3-round w3-green" style="padding:3px">
+				<div class="w3-tag w3-round w3-green w3-border w3-border-white">
+					Functions
+				</div>
+			</div>
+			<div class="w3-row-padding">
+				<label>Fx(u,v) <textarea class="w3-input w3-border w3-round" data-field="fx" rows="4" cols="50"></textarea></label>
+				<label>Fy(u,v) <textarea class="w3-input w3-border w3-round" data-field="fy" rows="4" cols="50"></textarea></label>
+				<label>Fz(u,v) <textarea class="w3-input w3-border w3-round" data-field="fz" rows="4" cols="50"></textarea></label>
+				<label>Fxyz(u,v) <textarea class="w3-input w3-border w3-round" data-field="fxyz" rows="6" cols="50"></textarea></label>
+				<br><br>
+			</div>
+		</form>
+	</div>
+	<fieldset>
+		<legend>Tutorials</legend>
+		<p>Tutorials (in french) about <a href="http://mathcurve.com/surfaces/surfaces.shtml" target="_blank">parametric surfaces</a></p>
+		<p>Tutorials (in english) about <a href="http://paulbourke.net/geometry/toroidal/" target="_blank">toroidal geometry</a></p>
+	</fieldset>
+</div>
+<script src="js/dat.gui.min.js"></script>
+<script src="js/zdog.dist.js"></script>
+<script src="js/chroma.min.js"></script>
+<script src="js/parametricalSurfaces.js"></script>
+<script src="zdog_surf_param2.js"></script>
+</body>
+</html>

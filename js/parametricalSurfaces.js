@@ -175,9 +175,9 @@ var parametricalSurfaces = (function () {
         params: {A: 1.0, B: 1.0, C: 1.0},
         u: {begin: -PI / 2, end: PI / 2, step: 0.2},
         v: {begin: -PI, end: PI, step: 0.2},
-        fx: (u, v) => u,
-        fy: (u, v) => v,
-        fz: (u, v) => u * u - v * v,
+        fx: (u, v) => u * A,
+        fy: (u, v) => v * B,
+        fz: (u, v) => (u * u - v * v) * C,
         scale: DEFAULT_SCALE
     });
     surface_types.push({
@@ -197,11 +197,11 @@ var parametricalSurfaces = (function () {
         id: 9,
         name: 'Bi-horn',
         list:1,
-        params: {A: 1.0, B: 1.0, C: 1.0},
+        params: {A: 2.0, B: 2.0},
         u: {begin: -PI, end: PI, step: 0.1},
         v: {begin: -PI, end: PI, step: 0.1},
-        fx: (u, v) => (2 - cos(v)) * cos(u),
-        fy: (u, v) => (2 - sin(v)) * cos(u),
+        fx: (u, v) => (A - cos(v)) * cos(u),
+        fy: (u, v) => (B - sin(v)) * cos(u),
         fz: (u, v) => sin(u),
         scale: DEFAULT_SCALE * 2
     });
@@ -213,9 +213,9 @@ var parametricalSurfaces = (function () {
         params: {A: 1.0, B: 1.0, C: 1.0},
         u: {begin: -PI, end: PI, step: 0.1},
         v: {begin: -3, end: 3, step: 0.1},
-        fx: (u, v) => cos(u) / cosh(v),
-        fy: (u, v) => sin(u) / cosh(v),
-        fz: (u, v) => v - tanh(v),
+        fx: (u, v) => (cos(u) / cosh(v)) * A,
+        fy: (u, v) => (sin(u) / cosh(v)) * B,
+        fz: (u, v) => (v - tanh(v)) * C,
         scale: DEFAULT_SCALE * 3
     });
 
@@ -226,9 +226,9 @@ var parametricalSurfaces = (function () {
         params: {A: 1.0, B: 1.0, C: 1.0},
         u: {begin: -PI, end: PI, step: 0.2},
         v: {begin: 0, end: 4, step: 0.2},
-        fx: (u, v) => cos(u) / cosh(v),
-        fy: (u, v) => sin(u) / cosh(v),
-        fz: (u, v) => v - tanh(v),
+        fx: (u, v) => (cos(u) / cosh(v)) * A,
+        fy: (u, v) => (sin(u) / cosh(v)) * B,
+        fz: (u, v) => (v - tanh(v)) * C,
         scale: DEFAULT_SCALE * 3
     });
 
@@ -669,7 +669,7 @@ var parametricalSurfaces = (function () {
         v: {begin: 0, end: 25, step: 0.01},
         fxyz: (u, v) => {
             let x = (1 + A * cos(B * v)) * cos(v);
-            // let x = (1 + A * cos(B * u)) * cos(u);  résultats intéressants avec (u) au lieu de (v), à étudier
+            // let x = (1 + A * cos(B * u)) * cos(u);  interesting results  with (u) instead of (v)
             let y = (1 + A * cos(B * v)) * sin(v);
             let z = v + C * sin(B * v);
             return {x: x, y: y, z: z};
@@ -1070,16 +1070,16 @@ var parametricalSurfaces = (function () {
         name: 'Lovecraft\'s Castle',
         list:3,
         comment: 'adapted from the book "Graphismes sur IBM PC", de Gabriel Cuellar, Eyrolle 1987',
-        params: {A:80},
+        params: {A:80, B:18},
         u: {begin: -100, end: 100, step: 5},
-        v: {begin: -100, end: 100, step: 1},
+        v: {begin: -100, end: 100, step: 5},
         fxyz: (u, v) => {
             let fnc = (x, y) => {
                 let xt = 20*(x/20);
                 let yt = 10*(y/10);
                 let z = y * .2;
                 let d = sqrt(xt*xt+yt*yt);
-                d = 18 * floor(d/18);
+                d = B * floor(d/B);
                 if (d > A) {
                     return z;
                 }
@@ -1162,7 +1162,7 @@ var parametricalSurfaces = (function () {
         name: 'Tore - Variation 1',
         list:3,
         comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
-        params: {A:1, B:0},
+        params: {A:1, B:0.1},
         u: {begin: -2, end: 2, step: .04},
         v: {begin: -2, end: 2, step: .04},
         fxyz: (u, v) => {
@@ -1184,7 +1184,7 @@ var parametricalSurfaces = (function () {
         name: 'Tore - Variation 2',
         list:3,
         comment: 'adaptated from the book "Mathématiques et Graphismes", de Gérald Grandpierre et Gérald Cotté, PSI 1985',
-        params: {A:1, B:0},
+        params: {A:1, B:0.1},
         u: {begin: -2, end: 2, step: .04},
         v: {begin: -2, end: 2, step: .04},
         fxyz: (u, v) => {
@@ -1200,12 +1200,64 @@ var parametricalSurfaces = (function () {
     });
 
     /**
+     * Redefine a shape with custom parameters
+     * In this version, customization works only for letters (A to D) and limits (on "u" and "v")
+     * It doesn't work for functions fx, fy, fz and fxyz
+     * @param params
+     */
+    function customSurface(params) {
+        ['A', 'B', 'C', 'D'].forEach(letter => {
+            if (params.hasOwnProperty(letter)) {
+                switch(letter) {
+                    case 'A' : {
+                        A = eval(params[letter]);
+                        break;
+                    }
+                    case 'B' : {
+                        B = eval(params[letter]);
+                        break;
+                    }
+                    case 'C' : {
+                        C = eval(params[letter]);
+                        break;
+                    }
+                    case 'D' : {
+                        D = eval(params[letter]);
+                        break;
+                    }
+                }
+            }
+        });
+        ['u', 'v'].forEach(curve => {
+            if (params.hasOwnProperty(curve)) {
+                ['begin', 'end', 'step'].forEach(level => {
+                    if (params[curve].hasOwnProperty(level)) {
+                        LIMITS[curve][level] = eval(params[curve][level]);
+                    }
+                });
+            }
+        });
+        /*
+        TODO : develop the reinjection of functions
+        if (typeof params.fxyz === 'function') {
+            if (typeof params.fxyz === 'function') {
+                FXYZ = params.fxyz;
+            } else {
+
+            }
+        } else {
+            FX = params.fx;
+            FY = params.fy;
+            FZ = params.fz;
+        }
+        */
+    }
+    /**
      * Set parameters for the current parametrical surface
      * @param shape_name
      * @returns {{fx: (string|null), fy: (string|null), fxyz: (string|null), fz: (string|null), refer: {}, rotation: {}, name: string, scale: number, id: number, params: *[], limits: {}}}
      */
     function setSurface(shape_name) {
-        console.log(shape_name);
         var current_type = -1;
         for (let i = 0, imax = surface_types.length; i < imax; i++) {
             let item = surface_types[i];
@@ -1532,6 +1584,7 @@ var parametricalSurfaces = (function () {
         getList: getList,
         setSurface: setSurface,
         getDefaultScale: getDefaultScale,
-        getRndItemFromList: getRndItemFromList
+        getRndItemFromList: getRndItemFromList,
+        customSurface: customSurface
     };
 })();
