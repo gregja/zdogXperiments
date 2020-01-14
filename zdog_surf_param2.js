@@ -18,32 +18,7 @@
         ref.fields[key] = item;
     });
 
-    let surface_listing = parametricalSurfaces.getList();
-
-    let current_shape = parametricalSurfaces.setSurface(parametricalSurfaces.getRndItemFromList());
-    let first_shape = true;
-    let settings = {
-        default_colorU: "#ff0000", // previous ,"#5743e6"
-        default_colorV: "#336699", // previous "#d4541f",
-        default_colorMesh: "#000000",
-        draw_graphU: true,
-        draw_graphV: true,
-        draw_mesh1: false,
-        draw_mesh2: false,
-        draw_mesh3: false,
-        stroke_value: 1,
-        isSpinning: true,
-        speed: 0.003,
-        scale: current_shape.scale,
-        init_scale: current_shape.scale,
-        type:current_shape.name
-    };
-    infos = parametricalSurfaces.getInfos();
-
-    // clone settings for detection of changes
-    let backup_settings = Object.assign({}, settings);
-
-    function formatSource() {
+    var formatSource = function(){
         ref.source.innerHTML = '';
         let sources = [];
         if (infos.params && infos.params.length > 0) {
@@ -71,7 +46,33 @@
             let tmpsrc = sources.join('\n');
             ref.source.innerHTML = `<fieldset><legend>Source</legend>${tmpsrc}</fieldset>`;
         }
-    }
+    };
+
+    parametricalSurfaces.loadInternalShapes();
+    let surface_listing = parametricalSurfaces.getList();
+
+    let current_shape = parametricalSurfaces.setSurface(parametricalSurfaces.getRndItemFromList());
+    let first_shape = true;
+    let settings = {
+        default_colorU: "#ff0000", // previous ,"#5743e6"
+        default_colorV: "#336699", // previous "#d4541f",
+        default_colorMesh: "#000000",
+        draw_graphU: true,
+        draw_graphV: true,
+        draw_mesh1: false,
+        draw_mesh2: false,
+        draw_mesh3: false,
+        stroke_value: 1,
+        isSpinning: true,
+        speed: 0.003,
+        scale: current_shape.scale,
+        init_scale: current_shape.scale,
+        type:current_shape.name
+    };
+    infos = parametricalSurfaces.getInfos();
+
+    // clone settings for detection of changes
+    let backup_settings = Object.assign({}, settings);
 
     ref.edit_button.addEventListener('click', function(evt){
         evt.preventDefault();
@@ -86,8 +87,10 @@
             ref.source.setAttribute('data-active', 'true');
         }
         ['a', 'b', 'c', 'd', 'e', 'f'].forEach(letrItem => {
-            ref.fields['const-'+letrItem].parentNode.style.display = "none";
-            ref.fields['const-'+letrItem].value = '';
+            let node = ref.fields['const-'+letrItem];
+            node.parentNode.style.display = "none";
+            node.value = '';
+            node.setAttribute('data-hidden', 'true');
         });
 
         infos.params.forEach((items, idx) => {
@@ -95,8 +98,10 @@
                 let letrItem = item.toLowerCase();
                 let value = infos.params[idx][item];
                 if (value != '') {
-                    ref.fields['const-'+letrItem].value = value;
-                    ref.fields['const-'+letrItem].parentNode.style.display = "block";
+                    let node = ref.fields['const-'+letrItem];
+                    node.value = value;
+                    node.parentNode.style.display = "block";
+                    node.setAttribute('data-hidden', 'false');
                 }
             }
         });
@@ -108,14 +113,19 @@
             });
         });
 
-        ['fx', 'fy', 'fz', 'fxyz'].forEach(node => {
-            ref.fields[node].setAttribute('disabled', 'disabled');
-            if (infos[node] == null || infos[node] == 'null' || infos[node] == '') {
-                ref.fields[node].parentNode.style.display = "none";
-                ref.fields[node].innerText = '';
+        ['fx', 'fy', 'fz', 'fxyz'].forEach(fnc => {
+            let node = ref.fields[fnc];
+            let value = infos[fnc];
+            console.log(fnc, value);
+            node.setAttribute('disabled', 'disabled');
+            if (value == null || value == 'null' || value == '') {
+                node.parentNode.style.display = "none";
+                node.innerText = '';
+                node.setAttribute('data-hidden', 'true');
             } else {
-                ref.fields[node].parentNode.style.display = "block";
-                ref.fields[node].innerHTML = infos[node];
+                node.parentNode.style.display = "block";
+                node.innerHTML = value;
+                node.setAttribute('data-hidden', 'false');
             }
         });
 
@@ -125,7 +135,7 @@
         evt.preventDefault();
         var custom = {};
         infos.params.forEach((items, idx) => {
-            for(item in items) {
+            for(let item in items) {
                 let letrItem = item.toLowerCase();
                 let value = ref.fields['const-'+letrItem].value;
                 infos.params[idx][item] = value;

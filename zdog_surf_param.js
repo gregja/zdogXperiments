@@ -7,6 +7,7 @@
         source: document.getElementById('source'),
     };
 
+    parametricalSurfaces.loadInternalShapes();
     let surface_listing = parametricalSurfaces.getList();
 
     let current_shape = parametricalSurfaces.setSurface(parametricalSurfaces.getRndItemFromList());
