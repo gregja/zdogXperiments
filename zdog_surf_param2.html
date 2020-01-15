@@ -46,16 +46,27 @@
 		#submit-btn:hover {
 			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 		}
+		#export-btn {
+			background-color: #008CBA;
+			border-radius: 2px;
+		}
+		#export-btn:hover {
+			box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		}
+		span[data-id=warning] {
+			color: red;
+		}
 	</style>
 	<link rel="stylesheet" href="css/w3.css">
 </head>
 <body>
 <div class="container" >
-	<canvas class="zdog-canvas" width="1000" height="800"></canvas>
+	<canvas id="zdog-canvas" width="1200" height="800"></canvas>
 	<p>Click &amp; drag to rotate</p>
 	<div id="link"></div><div id="comment"></div>
 	<button class="w3-btn" id="edit-btn">Edit</button>&nbsp;
 	<input class="w3-btn" type="submit" id="submit-btn" form="myform" value="Validate & redraw">
+	<button class="w3-btn" id="export-btn" >Export</button>
 	<br><br>
 	<div id="source" data-active="true"></div>
 	<div id="edit-window" data-active="false">
@@ -105,10 +116,10 @@
 				</div>
 			</div>
 			<div class="w3-row-padding">
-				<label>Fx(u,v) <textarea class="w3-input w3-border w3-round" data-field="fx" rows="4" cols="50"></textarea></label>
-				<label>Fy(u,v) <textarea class="w3-input w3-border w3-round" data-field="fy" rows="4" cols="50"></textarea></label>
-				<label>Fz(u,v) <textarea class="w3-input w3-border w3-round" data-field="fz" rows="4" cols="50"></textarea></label>
-				<label>Fxyz(u,v) <textarea class="w3-input w3-border w3-round" data-field="fxyz" rows="6" cols="50"></textarea></label>
+				<label>Fx(u,v)<span data-id="warning"></span> <textarea class="w3-input w3-border w3-round" data-field="fx" rows="4" cols="50"></textarea></label>
+				<label>Fy(u,v)<span data-id="warning"></span> <textarea class="w3-input w3-border w3-round" data-field="fy" rows="4" cols="50"></textarea></label>
+				<label>Fz(u,v)<span data-id="warning"></span> <textarea class="w3-input w3-border w3-round" data-field="fz" rows="4" cols="50"></textarea></label>
+				<label>Fxyz(u,v)<span data-id="warning"></span> <textarea class="w3-input w3-border w3-round" data-field="fxyz" rows="6" cols="50"></textarea></label>
 				<br><br>
 			</div>
 		</form>

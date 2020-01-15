@@ -84,6 +84,17 @@ var parametricalSurfaces = (function () {
     let curpoly = -1;
 
     /**
+     * Replace all occurrences of a search term by a replace term
+     * @param stringRef
+     * @param searchTerm
+     * @param replaceTerm
+     * @returns {string}
+     */
+    function replaceAll(stringRef, searchTerm, replaceTerm) {
+        return stringRef.split(searchTerm).join(replaceTerm);
+    }
+
+    /**
      * Load external shapes
      */
     function loadExternalShapes(series) {
@@ -986,13 +997,11 @@ var parametricalSurfaces = (function () {
                     let z = 0;
                     let tx = x * 2;
                     let d = sqrt(tx * tx + y * y);
-
                     if (d < A || d > B) {
                         z = 0;
                     } else {
                         z = A - abs(C - d);
                     }
-
                     return z;
                 };
                 return {x: u, y: v, z: fnc(u, v)};
@@ -1214,6 +1223,27 @@ var parametricalSurfaces = (function () {
     }
 
     /**
+     * Check if the source code of a parametric function is correct
+     * @param fn
+     * @param code
+     * @returns {*}
+     */
+    function testFunction(fn, code) {
+        let source = replaceAll(code, '=&gt;', '=>');
+        source = replaceAll(source, fn+' (u, v)', '(u, v)');
+        try {
+            let newfunc = eval(source);
+            let response = {status:'OK', key:fn, fnc:newfunc, src:source};
+            console.log(response);
+            return response;
+        } catch (err) {
+            console.warn('Error on function ' + fn, err);
+            return {status:'BAD', key:fn, original:source};
+        }
+
+    }
+
+    /**
      * Redefine a shape with custom parameters
      * In this version, customization works only for letters (A to D) and limits (on "u" and "v")
      * It doesn't work for functions fx, fy, fz and fxyz
@@ -1251,20 +1281,34 @@ var parametricalSurfaces = (function () {
                 });
             }
         });
-        /*
-        TODO : develop the reinjection of functions
-        if (typeof params.fxyz === 'function') {
-            if (typeof params.fxyz === 'function') {
-                FXYZ = params.fxyz;
-            } else {
 
+        ['fx', 'fy', 'fz', 'fxyz'].forEach(fnc => {
+            if (params.hasOwnProperty(fnc)) {
+                let code = params[fnc];
+                let testfnc = testFunction(fnc, code);
+                if (testfnc.status == 'OK') {
+                    switch (fnc) {
+                        case 'fx': {
+                            FX = testfnc.fnc;
+                            break;
+                        }
+                        case 'fy': {
+                            FY = testfnc.fnc;
+                            break;
+                        }
+                        case 'fz': {
+                            FZ = testfnc.fnc;
+                            break;
+                        }
+                        case 'fxyz': {
+                            FXYZ = testfnc.fnc;
+                            break;
+                        }
+                    }
+                }
             }
-        } else {
-            FX = params.fx;
-            FY = params.fy;
-            FZ = params.fz;
-        }
-        */
+        });
+
     }
     /**
      * Set parameters for the current parametrical surface
@@ -1598,6 +1642,8 @@ var parametricalSurfaces = (function () {
         setSurface: setSurface,
         getDefaultScale: getDefaultScale,
         getRndItemFromList: getRndItemFromList,
-        customSurface: customSurface
+        customSurface: customSurface,
+        testFunction: testFunction,
+        replaceAll: replaceAll
     };
 })();

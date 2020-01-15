@@ -1,15 +1,39 @@
 {
     "use strict";
 
+    function download(filename, text) {
+        var new_name = parametricalSurfaces.replaceAll(filename, ' ', '_');
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', new_name+'_export.json');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
     var ref = {
+        canvas: document.getElementById('zdog-canvas'),
         link: document.getElementById('link'),
         comment: document.getElementById('comment'),
         source: document.getElementById('source'),
         edit_window: document.getElementById("edit-window"),
         edit_button: document.getElementById("edit-btn"),
+        submit_button: document.getElementById("submit-btn"),
+        export_button: document.getElementById("export-btn"),
         form: document.getElementById('myform'),
+        warnings: document.querySelectorAll('[data-id=warning]'),
         fields: {}
     };
+
+    function clearWarnings() {
+        for(let v=0, vmax=ref.warnings.length; v<vmax; v++) {
+            ref.warnings[v].innerText = '';
+        }
+    }
+
+    // if function "toString" not available on functions, so it's not possible to modify functions dynamically
+    var modify_functions = (Function.prototype.toString ? true: false);
 
     var infos = {};
 
@@ -74,9 +98,22 @@
     // clone settings for detection of changes
     let backup_settings = Object.assign({}, settings);
 
+    ref.export_button.addEventListener('click', function(evt){
+        var datas = JSON.stringify(infos);
+        download(infos.name, datas);
+    });
+
+    ref.submit_button.setAttribute('disabled', 'disabled');
+
     ref.edit_button.addEventListener('click', function(evt){
         evt.preventDefault();
+
+        if (ref.submit_button.hasAttribute('disabled')) {
+            ref.submit_button.removeAttribute('disabled');
+        }
+
         infos = parametricalSurfaces.getInfos();
+
         if (ref.edit_window.getAttribute('data-active') == 'false') {
             ref.edit_window.setAttribute('data-active', 'true');
             this.innerHTML = 'Cancel';
@@ -86,6 +123,7 @@
             this.innerHTML = 'Edit';
             ref.source.setAttribute('data-active', 'true');
         }
+
         ['a', 'b', 'c', 'd', 'e', 'f'].forEach(letrItem => {
             let node = ref.fields['const-'+letrItem];
             node.parentNode.style.display = "none";
@@ -113,19 +151,31 @@
             });
         });
 
+        clearWarnings();
+
         ['fx', 'fy', 'fz', 'fxyz'].forEach(fnc => {
             let node = ref.fields[fnc];
             let value = infos[fnc];
-            console.log(fnc, value);
-            node.setAttribute('disabled', 'disabled');
+
             if (value == null || value == 'null' || value == '') {
                 node.parentNode.style.display = "none";
-                node.innerText = '';
+                node.value = '';
                 node.setAttribute('data-hidden', 'true');
             } else {
                 node.parentNode.style.display = "block";
-                node.innerHTML = value;
+                node.value = value;
                 node.setAttribute('data-hidden', 'false');
+
+                if (modify_functions == false) {
+                    node.setAttribute('disabled', 'disabled');
+                } else {
+                    // check if function compatible with dynamic edition mode
+                    let checkcode = parametricalSurfaces.testFunction(fnc, value);
+                    if (checkcode.status != 'OK') {
+                        console.log('not good for '+fnc);
+                        node.setAttribute('disabled', 'disabled');
+                    }
+                }
             }
         });
 
@@ -134,6 +184,9 @@
     ref.form.addEventListener('submit', function(evt){
         evt.preventDefault();
         var custom = {};
+
+        clearWarnings();
+
         infos.params.forEach((items, idx) => {
             for(let item in items) {
                 let letrItem = item.toLowerCase();
@@ -151,21 +204,42 @@
                 custom[curveLevl][stepLevel] = value;
             });
         });
+        let all_functions_good = true;
+        if (modify_functions == true) {
+            ['fx', 'fy', 'fz', 'fxyz'].forEach((fnc, idx) => {
+                console.log(fnc);
+                let node = ref.fields[fnc];
+                let source = node.value;
+                if (node.getAttribute('data-hidden') == 'false' && !node.hasAttribute('disabled')) {
+                    let checkcode = parametricalSurfaces.testFunction(fnc, source);
+                    if (checkcode.status == 'OK') {
+                        custom[fnc] = source;
+                    } else {
+                        all_functions_good = false;
+                        console.log(idx);
+                        ref.warnings[idx].innerHTML = 'Syntax error';
+                    }
+                }
+            });
+        }
+        if (all_functions_good) {
+            formatSource();
 
-        formatSource();
-        setTimeout(()=>{
-            parametricalSurfaces.customSurface(custom);
-            infos = parametricalSurfaces.getInfos();
-            generateGraph();
-            illo.updateRenderGraph();
-        }, 10);
+            setTimeout(() => {
+                parametricalSurfaces.customSurface(custom);
+                infos = parametricalSurfaces.getInfos();
+                generateGraph();
+                illo.updateRenderGraph();
+            }, 10);
+        }
+
     }, false);
 
     // global variables
     let illo, mainGroupU, mainGroupV, shapeU, shapeV, mesh;
 
     illo = new Zdog.Illustration({
-        element: '.zdog-canvas',
+        element: ref.canvas,
         dragRotate: true,
         scale: {x: settings.init_scale, y: settings.init_scale, z: settings.init_scale},
     });
