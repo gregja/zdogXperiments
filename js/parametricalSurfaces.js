@@ -1438,12 +1438,11 @@ var parametricalSurfaces = (function () {
 
     /**
      * curvesInMesh
-     * @param render_mode (1=draw one facet on two; 2=draw all facets)
+     * @param render_mode (0=quad ; 1=triangle, draw one facet by two; 2=triangle, draw all facets)
      * @returns {{polygons: Array, edges: Array, points: Array}}
      */
-    function curvesInMesh(render_mode = 1) {
+    function curvesInMesh(render_mode = 0) {
         let surface = surface_types[current_surface_type];
-
         points = [];
         edges = [];
         polys = [];
@@ -1502,9 +1501,13 @@ var parametricalSurfaces = (function () {
                 let point_c = tmpPoints[iv + 1][iu + 1];
                 let point_d = tmpPoints[iv][iu + 1];
 
-                polys.push([point_a.adr, point_c.adr, point_b.adr, point_a.adr]);
-                if (render_mode == 2) {
-                    polys.push([point_a.adr, point_d.adr, point_c.adr, point_a.adr]);
+                if (render_mode == 0) {
+                    polys.push([point_a.adr, point_b.adr, point_c.adr, point_d.adr, point_a.adr]);
+                } else {
+                    polys.push([point_a.adr, point_c.adr, point_b.adr, point_a.adr]);
+                    if (render_mode == 2) {
+                        polys.push([point_a.adr, point_d.adr, point_c.adr, point_a.adr]);
+                    }
                 }
             }
         }

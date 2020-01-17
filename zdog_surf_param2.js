@@ -75,6 +75,15 @@
     parametricalSurfaces.loadInternalShapes();
     let surface_listing = parametricalSurfaces.getList();
 
+    var rendering = {
+        'none': 9,
+        'quads wireframe': 0,
+        'triangles wireframe': 1,
+        'triangles filled 1/2': 2,
+    //    'triangles filled ': 3,   not visually interesting
+        'quads filled': 4
+    };
+
     let current_shape = parametricalSurfaces.setSurface(parametricalSurfaces.getRndItemFromList());
     let first_shape = true;
     let settings = {
@@ -83,11 +92,9 @@
         default_colorMesh: "#000000",
         draw_graphU: true,
         draw_graphV: true,
-        draw_mesh1: false,
-        draw_mesh2: false,
-        draw_mesh3: false,
+        rendering: 9,
         stroke_value: 1,
-        isSpinning: true,
+        isSpinning: false,
         speed: 0.003,
         scale: current_shape.scale,
         init_scale: current_shape.scale,
@@ -247,8 +254,8 @@
     function generateGraph() {
         illo.children = []; // drop all children before regeneration
 
-        if (settings.draw_mesh1) {
-            mesh = parametricalSurfaces.curvesInMesh();
+        if (settings.rendering == 0 || settings.rendering == 1) {
+            mesh = parametricalSurfaces.curvesInMesh(settings.rendering);
 
             mainGroupU = new Zdog.Anchor({
                 addTo: illo,
@@ -276,10 +283,14 @@
 
         }
 
-        if (settings.draw_mesh2 || settings.draw_mesh3) {
-            let render_mode = 1; // draw one facet on two
-            if (settings.draw_mesh3){
-                render_mode = 2;  // draw all facets
+        if (settings.rendering == 2 || settings.rendering == 3 || settings.rendering == 4) {
+            let render_mode = 0; // quad rendering
+            if (settings.rendering == 2){
+                render_mode = 1;  // triangle rendering, draw 1 triangle by 2
+            } else {
+                if (settings.rendering == 3) {
+                    render_mode = 2;  // triangle rendering, draw all triangles
+                }
             }
 
             let obj3d = parametricalSurfaces.curvesInMesh(render_mode);
@@ -476,7 +487,7 @@
         requestAnimationFrame(animate);
     }
 
-    function addGui(obj, surf_list) {
+    function addGui(obj, surf_list, renderlist) {
 
         let gui = new dat.gui.GUI();
 
@@ -487,9 +498,9 @@
 
         gui.add(obj, 'draw_graphU');
         gui.add(obj, 'draw_graphV');
-        gui.add(obj, 'draw_mesh1');
-        gui.add(obj, 'draw_mesh2');
-        gui.add(obj, 'draw_mesh3');
+
+        gui.add(obj, 'rendering', renderlist, 9);  // none by default
+
         gui.add(obj, 'isSpinning');
 
         gui.add(obj, 'stroke_value').min(1).max(5).step(1);
@@ -507,7 +518,7 @@
 
     document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
-        addGui(settings, surface_listing);
+        addGui(settings, surface_listing, rendering);
         animate();
     });
 
