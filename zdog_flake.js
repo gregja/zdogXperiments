@@ -19,10 +19,10 @@
 
         levelselector.blur();
         levelselector.addEventListener('change', function(evt) {
-          evt.preventDefault();
-          this.blur();
-          level_value = this.value;
-          generateGraph();
+            evt.preventDefault();
+            this.blur();
+            level_value = this.value;
+            generateGraph();
 
         }, false);
     } else {
@@ -39,9 +39,47 @@
 
     function generateGraph() {
         illo.children = []; // drop all children before regeneration
-
-        var shape_params = {x:0, y:0, z:0, r:250, level:1, ref:illo, maxLevel: Number(level_value)};
+        let maxLevel = Number(level_value);
+        if (maxLevel > 2) {
+            if (isSpinning) {
+                spin_mode_btn.click();
+            }
+        }
+        var shape_params = {x:0, y:0, z:0, r:250, level:1, maxLevel: maxLevel};
         generateShape(shape_params);
+
+        var blocks = generateShape(shape_params);
+        let imax = blocks.length;
+        console.log('nombre de blocs : '+imax);
+
+        var timer = 1;
+        if (maxLevel == 2) {
+            timer = 1000;
+        } else {
+            if(maxLevel == 3) {
+                timer = 100;
+            }
+        }
+        for (let i = 0; i < imax; i++) {
+            let block = blocks[i];
+            setTimeout(function(){
+                new Zdog.Box({
+                    addTo: illo,
+                    width: block.width,
+                    height: block.height,
+                    depth: block.depth,
+                    translate: {x: block.pos.x, y: block.pos.y, z: block.pos.z},
+                    stroke: block.stroke,
+                    color: block.color, // default face color
+                    leftFace: block.leftFace,
+                    rightFace: block.rightFace,
+                    topFace: block.topFace,
+                    bottomFace: block.bottomFace,
+                });
+
+            }, timer);
+        }
+
     }
 
     generateGraph();
@@ -83,33 +121,33 @@
         //const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-          case ESCAPE:{
-              resetScale();
-              break;
-          }
-          case LEFT_ARROW:{
-              illo.scale.z += 0.3;
-              break;
-          }
-          case RIGHT_ARROW:{
-              illo.scale.z -= 0.3;
-              break;
-          }
-          case UP_ARROW:{
-              illo.scale.x += 0.3;
-              illo.scale.y += 0.3;
-              illo.scale.z += 0.3;
-              break;
-          }
-          case DOWN_ARROW:{
-              illo.scale.x -= 0.3;
-              illo.scale.y -= 0.3;
-              illo.scale.z -= 0.3;
-              break;
-          }
+            case ESCAPE:{
+                resetScale();
+                break;
+            }
+            case LEFT_ARROW:{
+                illo.scale.z += 0.3;
+                break;
+            }
+            case RIGHT_ARROW:{
+                illo.scale.z -= 0.3;
+                break;
+            }
+            case UP_ARROW:{
+                illo.scale.x += 0.3;
+                illo.scale.y += 0.3;
+                illo.scale.z += 0.3;
+                break;
+            }
+            case DOWN_ARROW:{
+                illo.scale.x -= 0.3;
+                illo.scale.y -= 0.3;
+                illo.scale.z -= 0.3;
+                break;
+            }
 
         }
-      }
+    }
 
     function keyReleased (e) {
         e.preventDefault();
@@ -132,7 +170,6 @@
                 isSpinning = true;
             }
             spin_mode_btn.innerHTML = other_mode;
-            generateGraph();
         }, false);
     } else {
         console.warn('spin mode button not found');
