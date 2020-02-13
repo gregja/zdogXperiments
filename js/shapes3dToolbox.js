@@ -2322,10 +2322,10 @@ var shapes3dToolbox = (function () {
                                 pos[t] = {x: x + i * newR, y: y + j * newR, z: z + k * newR};
                                 if (level === maxLevel) {
                                     datablocks.push({
-                                        width: newR,
-                                        height: newR,
-                                        depth: newR,
-                                        pos: {x: pos[t].x, y: pos[t].y, z: pos[t].z},
+                                        side: newR,
+                                        x: pos[t].x,
+                                        y: pos[t].y,
+                                        z: pos[t].z,
                                         stroke: false,
                                         color: '#C25', // default face color
                                         leftFace: '#EA0',
@@ -2394,10 +2394,10 @@ var shapes3dToolbox = (function () {
                                 pos[t] = {x: x + i * newR, y: y + j * newR, z: z + k * newR};
                                 if (level === maxLevel) {
                                     datablocks.push({
-                                        width: newR,
-                                        height: newR,
-                                        depth: newR,
-                                        pos: {x: pos[t].x, y: pos[t].y, z: pos[t].z},
+                                        side: newR,
+                                        x: pos[t].x,
+                                        y: pos[t].y,
+                                        z: pos[t].z,
                                         stroke: false,
                                         color: '#C25', // default face color
                                         leftFace: '#EA0',

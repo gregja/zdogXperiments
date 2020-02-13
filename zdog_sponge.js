@@ -7,6 +7,11 @@
     var spin_modes = ['Spinning', 'Static'];
     var spin_mode_default = spin_modes[0];
     var isSpinning = true;
+    var tasks = [];
+
+    let blocks_array = [];
+    let block_current = -999;
+    let block_maximum = -999;
 
     var levelselector = document.getElementById("levelselector");
     if (levelselector) {
@@ -37,6 +42,25 @@
         //onDragEnd: () => isSpinning = true
     });
 
+    let shapemaster = function (block, num_task) {
+        if (num_task !== false) {
+            tasks[num_task] = false;  // flag to know that the task is ended
+        }
+        new Zdog.Box({
+            addTo: illo,
+            width: block.side,
+            height: block.side,
+            depth: block.side,
+            translate: {x: block.x, y: block.y, z: block.z},
+            stroke: block.stroke,
+            color: block.color, // default face color
+            leftFace: block.leftFace,
+            rightFace: block.rightFace,
+            topFace: block.topFace,
+            bottomFace: block.bottomFace,
+        });
+    };
+
     function generateGraph() {
         illo.children = []; // drop all children before regeneration
 
@@ -49,30 +73,39 @@
         var shape_params = {x:0, y:0, z:0, r:250, level:1, maxLevel: maxLevel};
         var blocks = generateShape(shape_params);
         let imax = blocks.length;
-        console.log('nombre de blocs : '+imax);
+        console.log('Number of blocks to generate : '+imax);
 
-        var timer = 1;
-        if (maxLevel == 2) {
-            timer = 100;
+        if (tasks.length > 0) {
+            // stop remanining tasks before initializing a new series of tasks
+            tasks.forEach(task => {
+                if (task != false) {
+                    clearTimeout(task);
+                }
+            });
+            tasks = [];
         }
-        for (let i = 0; i < imax; i++) {
-            let block = blocks[i];
-            setTimeout(function(){
-                new Zdog.Box({
-                    addTo: illo,
-                    width: block.width,
-                    height: block.height,
-                    depth: block.depth,
-                    translate: {x: block.pos.x, y: block.pos.y, z: block.pos.z},
-                    stroke: block.stroke,
-                    color: block.color, // default face color
-                    leftFace: block.leftFace,
-                    rightFace: block.rightFace,
-                    topFace: block.topFace,
-                    bottomFace: block.bottomFace,
-                });
 
-            }, timer);
+        blocks_array = [];
+        block_current = -999;
+        block_maximum = -999;
+
+        if (maxLevel < 3) {
+            let timer = 1;
+            if (maxLevel == 2) {
+                timer = 100;
+            }
+            for (let i = 0; i < imax; i++) {
+                let block = blocks[i];
+                tasks[i] = setTimeout(() => {
+                    shapemaster(block, i);
+                }, timer);
+            }
+        } else {
+            block_current = -1;
+            for (let i = 0; i < imax; i++) {
+                blocks_array[i] = blocks[i];
+            }
+            block_maximum = imax;
         }
     }
 
@@ -86,6 +119,15 @@
     }
 
     function animate() {
+
+        if (block_current != -999) {
+            block_current++;
+            if (block_current < block_maximum) {
+                let block = blocks_array[block_current];
+                shapemaster(block, false);
+            }
+        }
+
         draw();
         requestAnimationFrame( animate );
     }
