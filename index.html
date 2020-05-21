@@ -5,42 +5,231 @@
     <title>ZdogXperiments</title>
     <link rel="stylesheet" href="css/w3.css">
     <link rel="stylesheet" href="css/main.css">
+    <style>
+        /* https://www.w3schools.com/css/tryit.asp?filename=trycss3_flexbox_flex-wrap_wrap  */
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: mintcream;
+        }
+
+        .flex-container > div {
+            background-color: #f1f1f1;
+            width: 200px;
+            margin: 10px;
+            text-align: center;
+            /*    line-height: 75px;  */
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
 <div>
     <h2>Experiments with Zdog</h2>
-    <ul class="zdog_list">
-        <li><a href="zdog_cube.html">Zdog Cube</a></li>
-        <li><a href="zdog_shapes.html">Zdog 3D Shapes</a></li>
-        <li><a href="zdog_obj.html">Load Wavefront OBJ files (V1) -> wireframe & fill modes - Synchronuous loading</a></li>
-        <li><a href="zdog_obj_v2.html">Load Wavefront OBJ files (V2) -> V1 + Asynchronuous loading (better practice)</a></li>
-        <li><a href="zdog_obj_v3.html">Load Wavefront OBJ files (V3) -> V2 + Paint mode (slower but prettier)</a></li>
-        <li><a href="zdog_sponge.html">Menger Sponge generator with Zdog</a></li>
-        <li><a href="zdog_flake.html">Flake generator with Zdog</a></li>
-        <li><a href="zdog_tunnel.html">Tunnel 3D with Zdog</a></li>
-        <li><a href="zdog_8cubes.html">8 cubes linked</a></li>
-        <li><a href="zdog_8cubes_click.html">8 cubes linked and clickable</a></li>
-        <li><a href="zdog_xshapes2.html">8 cubes linked in a mesh</a></li>
-        <li><a href="zdog_surf_param.html">Parametrical surfaces (updated 2020-01-01)</a></li>
-        <li><a href="zdog_surf_param2.html">Parametrical surfaces customizable (*** NEW ***)</a></li>
-        <li><a href="zdog_magnetcubes.html">Magnetic cubes</a></li>
-        <li><a href="zdog_solarsystem.html">Solar system (n-body algorithm) (=> experimental, for fun, not finalized)</a></li>
-        <li><a href="zdog_xwing.html">XWing</a></li>
-        <li><a href="zdog_xshapes.html">Complex 3D object created with 3 primitives</a></li>
-        <li><a href="zdog_animals.html">3D animals running</a></li>
-        <li><a href="zdog_shapegenerator.html">3D Shape generator</a></li>
-        <li><a href="zdog_boxman.html">Boxman</a></li>
-        <li><a href="zdog_swingcubes.html">Grid of cubes swinging</a></li>
-        <li><a href="zdog_calabiyau.html">Calabi-Yau manifold</a></li>
-        <li><a href="zdog_segment1.html">Segments - first test</a></li>
-        <li><a href="zdog_segment2.html">Segments - one segment animated by one slider</a></li>
-        <li><a href="zdog_segment3.html">Segments - two segments linked and two sliders</a></li>
-        <li><a href="zdog_segment4.html">Segments - Natural walk with two legs and five sliders</a></li>
-        <li><a href="zdog_segment5.html">Segments - Natural walk with two legs and two arms</a></li>
-        <li><a href="zdog_leap_v1.html">Leap Motion & Zdog - drawing hands</a></li>
-        <li><a href="zdog_cuboid_delaunay.html">Cuboid with Delaunay Triangulation (** NEW **)</a></li>
-        <li><a href="zdog_shapes_xcav.html">3D Objects excavated (*** NEW ***)</a></li>
-    </ul>
+
+
+    <div class="flex-container" id="container"></div>
+
+    <script>
+        /*
+        // dataliste generated from the old index.html, with the code below :
+        var selection = document.querySelectorAll('a');
+        var datas = [];
+        for(let i=0; i<selection.length; i++ ) {
+           let item = selection[i];
+
+            datas.push({
+                path: item.getAttribute('href'),
+                title: item.innerHTML,
+                screenshot: "",
+                tags: []
+            })
+        }
+        console.log(JSON.stringify(datas));
+        */
+
+        var dataliste = [{
+            "path": "zdog_cube.html",
+            "title": "Zdog Cube",
+            "screenshot": "scr0001.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_shapes.html",
+            "title": "Zdog 3D Shapes",
+            "screenshot": "scr0002.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_obj.html",
+            "title": "Load Wavefront OBJ files (V1) -&gt; wireframe &amp; fill modes - Synchronuous loading",
+            "screenshot": "scr0003.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_obj_v2.html",
+            "title": "Load Wavefront OBJ files (V2) -&gt; V1 + Asynchronuous loading (better practice)",
+            "screenshot": "scr0004.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_obj_v3.html",
+            "title": "Load Wavefront OBJ files (V3) -&gt; V2 + Paint mode (slower but prettier)",
+            "screenshot": "scr0005.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_sponge.html",
+            "title": "Menger Sponge generator with Zdog",
+            "screenshot": "scr0006.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_flake.html",
+            "title": "Flake generator with Zdog",
+            "screenshot": "scr0007.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_tunnel.html",
+            "title": "Tunnel 3D with Zdog",
+            "screenshot": "scr0008.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_8cubes.html",
+            "title": "8 cubes linked",
+            "screenshot": "scr0009.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_8cubes_click.html",
+            "title": "8 cubes linked and clickable",
+            "screenshot": "scr0010.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_xshapes2.html",
+            "title": "8 cubes linked in a mesh",
+            "screenshot": "scr0011.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_surf_param.html",
+            "title": "Parametrical surfaces",
+            "screenshot": "scr0012.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_surf_param2.html",
+            "title": "Parametrical surfaces customizable",
+            "screenshot": "scr0013.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_magnetcubes.html",
+            "title": "Magnetic cubes",
+            "screenshot": "scr0014.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_solarsystem.html",
+            "title": "Solar system (n-body algorithm) (for fun, not finalized)",
+            "screenshot": "scr0015.PNG",
+            "tags": []
+        }, {"path": "zdog_xwing.html", "title": "XWing", "screenshot": "scr0016.PNG", "tags": []}, {
+            "path": "zdog_xshapes.html",
+            "title": "Complex 3D object created with 3 primitives",
+            "screenshot": "scr0017.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_animals.html",
+            "title": "3D animals running",
+            "screenshot": "scr0018.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_shapegenerator.html",
+            "title": "3D Shape generator",
+            "screenshot": "scr0019.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_boxman.html",
+            "title": "Boxman",
+            "screenshot": "scr0020.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_swingcubes.html",
+            "title": "Grid of cubes swinging",
+            "screenshot": "scr0021.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_calabiyau.html",
+            "title": "Calabi-Yau manifold",
+            "screenshot": "scr0022.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_segment1.html",
+            "title": "Segments - first test",
+            "screenshot": "scr0023.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_segment2.html",
+            "title": "Segments - one segment animated by one slider",
+            "screenshot": "scr0024.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_segment3.html",
+            "title": "Segments - two segments linked and two sliders",
+            "screenshot": "scr0025.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_segment4.html",
+            "title": "Segments - Natural walk with two legs and five sliders",
+            "screenshot": "scr0026.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_segment5.html",
+            "title": "Segments - Natural walk with two legs and two arms",
+            "screenshot": "scr0027.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_leap_v1.html",
+            "title": "Leap Motion &amp; Zdog - drawing hands",
+            "screenshot": "scr0028.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_cuboid_delaunay.html",
+            "title": "Cuboid with Delaunay Triangulation",
+            "screenshot": "scr0029.PNG",
+            "tags": []
+        }, {
+            "path": "zdog_shapes_xcav.html",
+            "title": "3D Objects excavated",
+            "screenshot": "scr0030.PNG",
+            "tags": []
+        }
+        ];
+
+
+        function fillpage(list) {
+            "use strict";
+            let container = document.getElementById('container');
+
+            list.forEach(item => {
+                let div = document.createElement('div');
+                let a = document.createElement('a');
+                a.setAttribute('href', item.path);
+                a.setAttribute('title', item.title);
+                let img = document.createElement('img');
+                img.setAttribute('width', '200px');
+                img.setAttribute('height', '200px');
+                if (item.hasOwnProperty("screenshot") && item.screenshot != "") {
+                    img.src = "screenshots/" + item.screenshot;
+                } else {
+                    img.src = "screenshots/default.png";
+                }
+                a.appendChild(img);
+                div.appendChild(a);
+                let p = document.createElement('p');
+                p.innerHTML = item.title;
+                div.appendChild(p);
+                container.appendChild(div);
+            });
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            fillpage(dataliste);
+        });
+
+    </script>
+
     <br>
     <p><a href="https://github.com/gregja/zdogXperiments/" target="_blank">Project zdogXperiments on Github</a></p>
     <p><a href="https://zzz.dog/" target="_blank">Zdog official site</a></p>
