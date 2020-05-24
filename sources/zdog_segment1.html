@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Segments with Zdog - test 1</title>
+		<style>
+			html { height: 100%; }
+			body {
+			  min-height: 100%;
+			  margin: 0;
+			/*  background: #FD0; */
+			background: white;
+			  font-family: sans-serif;
+			  text-align: center;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+			canvas {
+			  display: block;
+			  margin: 0px auto 20px;
+			  cursor: move;
+			}
+		</style>
+	</head>
+ <body>
+	 <div class="container">
+		 <p>Segments - first test with Zdog </p>
+		 <p>Click &amp; drag to rotate</p>
+		 <canvas id="zdog-canvas" width="800" height="600"></canvas>
+		 <p>Inspired by the chapter 13 of the book : <a href="http://lamberta.github.io/html5-animation/" target="_blank">Foundation HTML5 Animation with JavaScript</a></p>
+		 <p>No mobiles segments are drawn directly with the canvas 2D API, mobiles segments are drawn with Zdog</p>
+	 </div>
+	<script src="../js/zdog.dist.js"></script>
+	 <script src="../js/segment.js"></script>
+	<script src="zdog_segment1.js"></script>
+</body>
+</html>

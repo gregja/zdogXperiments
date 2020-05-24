@@ -200,11 +200,11 @@
         function fillpage(list) {
             "use strict";
             let container = document.getElementById('container');
-
+            let path = "sources/";
             list.forEach(item => {
                 let div = document.createElement('div');
                 let a = document.createElement('a');
-                a.setAttribute('href', item.path);
+                a.setAttribute('href', path + item.path);
                 a.setAttribute('title', item.title);
                 let img = document.createElement('img');
                 img.setAttribute('width', '200px');

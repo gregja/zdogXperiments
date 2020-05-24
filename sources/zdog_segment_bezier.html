@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Segments with Zdog - test 1</title>
+	<style>
+		html { height: 100%; }
+		body {
+			min-height: 100%;
+			margin: 0;
+			/*  background: #FD0; */
+			background: white;
+			font-family: sans-serif;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		canvas {
+			display: block;
+			margin: 0px auto 20px;
+			cursor: move;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<input id="colorpicker" type="color">
+	<button id="drawmode"></button>
+	<button id="spinning"></button>
+	<p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
+	<canvas class="zdog-canvas" width="800" height="600"></canvas>
+</div>
+<script src="../js/zdog.dist.js"></script>
+<script src="../js/chroma.min.js"></script>
+<script src="../js/bezier.js"></script>
+<script src="js/segment3D££.js"></script>
+<script src="zdog_segment_bezier.js"></script>
+</body>
+</html>

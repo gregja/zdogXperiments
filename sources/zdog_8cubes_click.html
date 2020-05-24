@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Zdog - 8 cubes clickable</title>
+		<style>
+			html { height: 100%; }
+			body {
+				min-height: 100%;
+				margin: 0;
+				/*  background: #FD0; */
+				background: white;
+				font-family: sans-serif;
+				text-align: center;
+				margin-left: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			canvas {
+				display: block;
+				margin: 0px auto 20px;
+				cursor: move;
+			}
+		</style>
+	</head>
+ <body>
+	 <div class="container">
+		 <h3>This example shows how to set a clickable list of items in Zdog</h3>
+		 <p>To do this, draw 2 canvas, the second is the "ghost" of the first.<br>Each shape in the ghost has a unique color which enables to detect which shape has been clicked. <br>
+		 Because I don't know - for the moment - how to synchronize the draggable mode between the vibible canvas and his ghost, I deactivated the draggable mode.<br>
+	   It's experimental but it works fine on Chrome and Firefox</p>
+		 <canvas id="zdog-canvas" width="400" height="200"></canvas>
+		 <canvas id="zdog-ghost"></canvas>
+		 <button type="button" id="hide_ghost"></button>
+		 		 <p>Click on cubes and cylinders + Arrow keys to zoom (or Escape to reset)</p>
+	 </div>
+	<script src="../js/zdog.dist.js"></script>
+	<script src="../js/chroma.min.js"></script>
+	<script src="zdog_8cubes_click.js"></script>
+</body>
+</html>

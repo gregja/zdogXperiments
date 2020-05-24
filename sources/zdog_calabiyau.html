@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Calabi-Yau</title>
+		<style>
+			html { height: 100%; }
+			body {
+			  min-height: 100%;
+			  margin: 0;
+			/*  background: #FD0; */
+			background: white;
+			  font-family: sans-serif;
+			  text-align: center;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+			canvas {
+			  display: block;
+			  margin: 0px auto 20px;
+			  cursor: move;
+			}
+		</style>
+	</head>
+ <body>
+	 <div class="container">
+		 <input id="colorpicker" type="color">
+		 <button id="drawmode"></button>
+		 <button id="spinning"></button>
+		 <button id="zoom1">Zoom-</button>
+		 <button id="zoom2">Zoom+</button><br><br>
+		 <label>Exponent = <span id="span_exponent"></span><br>
+		 	<input id="exponent" type="range" min="1" max="20"></label><br>
+		 <label>Projection = <span id="span_projection"></span><br>
+			 <input id="projection" type="range" min="0" max="6"></label><br>
+		 <label>Disorder = <span id="span_disorder"></span><br>
+			 <input id="disorder" type="range" min="0" max="1" step="0.1" value="0.2"></label>
+
+		 <p>Click &amp; drag to rotate + Arrow keys to change scale (or Escape to reset)</p>
+		 <canvas id="zdog-canvas" width="800" height="600"></canvas>
+
+		 <p>
+			 <a href="https://fr.wikipedia.org/wiki/Vari%C3%A9t%C3%A9_de_Calabi-Yau" target="_blank">Variété de Calabi-Yau sur Wikipedia (french)</a><br>
+			 <a href="https://en.wikipedia.org/wiki/Calabi%E2%80%93Yau_manifold" target="_blank">Calabi-Yau manifold on Wikipedia (english)</a><br>
+			 <a href="https://observablehq.com/@sw1227/calabi-yau-manifold-3d" target="_blank">The tutorial I used and adapted to Zdog</a>
+		 </p>
+	 </div>
+	<script src="../js/zdog.dist.js"></script>
+	<script src="../js/chroma.min.js"></script>
+	 <script src="../js/math.min.js"></script>
+	<script src="../js/shapes3dToolbox.js"></script>
+	 <script src="../js/shapeCalabiYau.js"></script>
+	<script src="zdog_calabiyau.js"></script>
+</body>
+</html>
