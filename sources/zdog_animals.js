@@ -318,8 +318,6 @@
      * @param e
      */
     function keyPressed(e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -397,11 +395,6 @@
             }
 
         }
-    }
-
-    function keyReleased(e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
     }
 
     /**
@@ -507,7 +500,7 @@
         }
 
         document.addEventListener('keydown', keyPressed, false);
-        document.addEventListener('keyup', keyReleased, false);
+       // document.addEventListener('keyup', keyReleased, false);
     }
 
     /**

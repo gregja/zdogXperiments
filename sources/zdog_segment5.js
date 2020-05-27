@@ -1,4 +1,3 @@
-
 {
 
     var canvas = document.getElementById("zdog-canvas");
@@ -41,22 +40,70 @@
 
         var thickness = 10;
         // leg top left
-        segment[0] = new Segment({width: 100, height: 30, color: colors[color][0], lineWidth: thickness, offset:-offset});
+        segment[0] = new Segment({
+            width: 100,
+            height: 30,
+            color: colors[color][0],
+            lineWidth: thickness,
+            offset: -offset
+        });
         // leg bottom left
-        segment[1] = new Segment({width: 100, height: 20, color: colors[color][1], lineWidth: thickness, offset:-offset});
+        segment[1] = new Segment({
+            width: 100,
+            height: 20,
+            color: colors[color][1],
+            lineWidth: thickness,
+            offset: -offset
+        });
         // leg bottom right
-        segment[2] = new Segment({width: 100, height: 30, color: colors[color][2], lineWidth: thickness, offset:offset});
+        segment[2] = new Segment({
+            width: 100,
+            height: 30,
+            color: colors[color][2],
+            lineWidth: thickness,
+            offset: offset
+        });
         // leg top right
-        segment[3] = new Segment({width: 100, height: 20, color: colors[color][3], lineWidth: thickness, offset:offset});
+        segment[3] = new Segment({
+            width: 100,
+            height: 20,
+            color: colors[color][3],
+            lineWidth: thickness,
+            offset: offset
+        });
 
         // arm top left
-        segment[4] = new Segment({width: 80, height: 20, color: colors[color][0], lineWidth: thickness, offset:-offset});
+        segment[4] = new Segment({
+            width: 80,
+            height: 20,
+            color: colors[color][0],
+            lineWidth: thickness,
+            offset: -offset
+        });
         // arm bottom left
-        segment[5] = new Segment({width: 80, height: 10, color: colors[color][1], lineWidth: thickness, offset:-offset});
+        segment[5] = new Segment({
+            width: 80,
+            height: 10,
+            color: colors[color][1],
+            lineWidth: thickness,
+            offset: -offset
+        });
         // arm bottom right
-        segment[6] = new Segment({width: 80, height: 20, color: colors[color][2], lineWidth: thickness, offset:offset});
+        segment[6] = new Segment({
+            width: 80,
+            height: 20,
+            color: colors[color][2],
+            lineWidth: thickness,
+            offset: offset
+        });
         // arm top right
-        segment[7] = new Segment({width: 80, height: 10, color: colors[color][3], lineWidth: thickness, offset:offset});
+        segment[7] = new Segment({
+            width: 80,
+            height: 10,
+            color: colors[color][3],
+            lineWidth: thickness,
+            offset: offset
+        });
 
         slider.speed = new Slider(0, 0.2, 0.08);
         slider.thighRange = new Slider(0, 90, 45);
@@ -83,7 +130,7 @@
         segment[3].z = thickness;
 
         segment[4].x = -10;
-        segment[4].y = body_size-10;
+        segment[4].y = body_size - 10;
         segment[4].z = -thickness;
 
         segment[5].x = segment[4].getPin().x;
@@ -91,7 +138,7 @@
         segment[5].z = -thickness;
 
         segment[6].x = -10;
-        segment[6].y = body_size-10;
+        segment[6].y = body_size - 10;
         segment[6].z = thickness;
 
         segment[7].x = segment[6].getPin().x;
@@ -107,101 +154,101 @@
         slider.speed.x = 10;
         slider.speed.y = 10;
         slider.speed.captureMouse(canvas2);
-        slider.speed.onchange = function() {
-          top_change = true;
+        slider.speed.onchange = function () {
+            top_change = true;
         };
 
         slider.thighRange.x = 30;
         slider.thighRange.y = 10;
         slider.thighRange.captureMouse(canvas2);
-        slider.thighRange.onchange = function() {
-          top_change = true;
+        slider.thighRange.onchange = function () {
+            top_change = true;
         };
 
         slider.thighBase.x = 50;
         slider.thighBase.y = 10;
         slider.thighBase.captureMouse(canvas2);
-        slider.thighBase.onchange = function() {
-          top_change = true;
+        slider.thighBase.onchange = function () {
+            top_change = true;
         };
 
         slider.calfRange.x = 70;
         slider.calfRange.y = 10;
         slider.calfRange.captureMouse(canvas2);
-        slider.calfRange.onchange = function() {
-          top_change = true;
+        slider.calfRange.onchange = function () {
+            top_change = true;
         };
 
         slider.calfOffset.x = 90;
         slider.calfOffset.y = 10;
         slider.calfOffset.captureMouse(canvas2);
-        slider.calfOffset.onchange = function() {
-          top_change = true;
+        slider.calfOffset.onchange = function () {
+            top_change = true;
         };
 
         slider.thickness.x = 110;
         slider.thickness.y = 10;
         slider.thickness.captureMouse(canvas2);
-        slider.thickness.onchange = function() {
-          top_change = true;
-          let value = Math.round(slider.thickness.value)
+        slider.thickness.onchange = function () {
+            top_change = true;
+            let value = Math.round(slider.thickness.value)
 
-          segment.forEach(item => {
-            item.lineWidth = value;
-          });
+            segment.forEach(item => {
+                item.lineWidth = value;
+            });
         };
 
         slider.colors.x = 130;
         slider.colors.y = 10;
         slider.colors.captureMouse(canvas2);
-        slider.colors.onchange = function() {
-          top_change = true;
-          let choice = Math.round(slider.colors.value) - 1;
-          segment[0].color = colors[choice][0];
-          segment[1].color = colors[choice][1];
-          segment[2].color = colors[choice][2];
-          segment[3].color = colors[choice][3];
-          segment[4].color = colors[choice][0];
-          segment[5].color = colors[choice][1];
-          segment[6].color = colors[choice][2];
-          segment[7].color = colors[choice][3];
+        slider.colors.onchange = function () {
+            top_change = true;
+            let choice = Math.round(slider.colors.value) - 1;
+            segment[0].color = colors[choice][0];
+            segment[1].color = colors[choice][1];
+            segment[2].color = colors[choice][2];
+            segment[3].color = colors[choice][3];
+            segment[4].color = colors[choice][0];
+            segment[5].color = colors[choice][1];
+            segment[6].color = colors[choice][2];
+            segment[7].color = colors[choice][3];
         };
 
         top_change = true;
     }
 
-    function drawFrame () {
-      context2.clearRect(0, 0, canvas2.width, canvas2.height);
-      slider.speed.draw(context2);
-      slider.thighRange.draw(context2);
-      slider.thighBase.draw(context2);
-      slider.calfRange.draw(context2);
-      slider.calfOffset.draw(context2);
-      slider.thickness.draw(context2);
-      slider.colors.draw(context2);
+    function drawFrame() {
+        context2.clearRect(0, 0, canvas2.width, canvas2.height);
+        slider.speed.draw(context2);
+        slider.thighRange.draw(context2);
+        slider.thighBase.draw(context2);
+        slider.calfRange.draw(context2);
+        slider.calfOffset.draw(context2);
+        slider.thickness.draw(context2);
+        slider.colors.draw(context2);
     }
 
-    function walk4Legs (segA, segB, cyc) {
-      var angle0 = degToRad(sin(cyc) * slider.thighRange.value + slider.thighBase.value);
-      var angle1 = degToRad(sin(cyc + slider.calfOffset.value) * slider.calfRange.value + slider.calfRange.value);
+    function walk4Legs(segA, segB, cyc) {
+        var angle0 = degToRad(sin(cyc) * slider.thighRange.value + slider.thighBase.value);
+        var angle1 = degToRad(sin(cyc + slider.calfOffset.value) * slider.calfRange.value + slider.calfRange.value);
 
-      segA.rotation = angle0;
-      segB.rotation = segA.rotation + angle1;
-      segB.x = segA.getPin().x;
-      segB.y = segA.getPin().y;
+        segA.rotation = angle0;
+        segB.rotation = segA.rotation + angle1;
+        segB.x = segA.getPin().x;
+        segB.y = segA.getPin().y;
     }
 
-    function walk4Arms (segA, segB, cyc) {
-      var angle0 = degToRad(sin(cyc) * slider.thighRange.value + slider.thighBase.value);
-      var angle1 = degToRad(sin(cyc + slider.calfOffset.value) * slider.calfRange.value + slider.calfRange.value);
+    function walk4Arms(segA, segB, cyc) {
+        var angle0 = degToRad(sin(cyc) * slider.thighRange.value + slider.thighBase.value);
+        var angle1 = degToRad(sin(cyc + slider.calfOffset.value) * slider.calfRange.value + slider.calfRange.value);
 
-      segA.rotation = angle0;
-      segB.rotation = (segA.rotation - angle1);
-      segB.x = segA.getPin().x;
-      segB.y = segA.getPin().y;
+        segA.rotation = angle0;
+        segB.rotation = (segA.rotation - angle1);
+        segB.x = segA.getPin().x;
+        segB.y = segA.getPin().y;
     }
 
-    function draw (){
+    function draw() {
         top_change = false;
         illo.children = [];
 
@@ -211,11 +258,11 @@
 
         walk4Arms(segment[4], segment[5], -cycle);
         walk4Arms(segment[6], segment[7], -cycle - PI);
-/*
-        segment.forEach(item => {
-          item.draw(illo);
-        });
-*/
+        /*
+                segment.forEach(item => {
+                  item.draw(illo);
+                });
+        */
         segment[0].draw(illo);
         segment[1].draw(illo);
         segment[4].draw(illo);
@@ -228,13 +275,13 @@
         segment[6].draw(illo);
         segment[7].draw(illo);
 
-      drawFrame();
-      illo.updateRenderGraph();
+        drawFrame();
+        illo.updateRenderGraph();
     }
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -243,9 +290,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -262,45 +307,40 @@
         const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-          case ESCAPE:{
-              resetScale();
-              break;
-          }
-          /*
-          case LEFT_ARROW:{
-              illo.scale.z += 0.3;
-              break;
-          }
-          case RIGHT_ARROW:{
-              illo.scale.z -= 0.3;
-              break;
-          }
-          */
-          case UP_ARROW:{
-              illo.scale.x += 0.3;
-              illo.scale.y += 0.3;
-              illo.scale.z += 0.3;
-              break;
-          }
-          case DOWN_ARROW:{
-              illo.scale.x -= 0.3;
-              illo.scale.y -= 0.3;
-              illo.scale.z -= 0.3;
-              break;
-          }
+            case ESCAPE: {
+                resetScale();
+                break;
+            }
+            /*
+            case LEFT_ARROW:{
+                illo.scale.z += 0.3;
+                break;
+            }
+            case RIGHT_ARROW:{
+                illo.scale.z -= 0.3;
+                break;
+            }
+            */
+            case UP_ARROW: {
+                illo.scale.x += 0.3;
+                illo.scale.y += 0.3;
+                illo.scale.z += 0.3;
+                break;
+            }
+            case DOWN_ARROW: {
+                illo.scale.x -= 0.3;
+                illo.scale.y -= 0.3;
+                illo.scale.z -= 0.3;
+                break;
+            }
 
         }
-      }
-
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         if (canvas == undefined) {
             console.error('DOM target not found for ID zdog-canvas');

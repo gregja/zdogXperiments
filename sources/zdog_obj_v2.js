@@ -1,4 +1,3 @@
-
 {
     "use strict";
 
@@ -6,8 +5,8 @@
     var fill_value = false;
     var stroke_value = 1;
     var list_shapes = ['cube', 'diamond', 'dodecahedron', 'gem', 'humanoid', 'icosahedron', 'icosphere',
-                        'magnolia', 'shuttle', 'skyscraper',
-                        'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus'];
+        'magnolia', 'shuttle', 'skyscraper',
+        'teapot', 'tetrahedron', 'toroid', 'torusknot', 'twistedtorus'];
     var spin_modes = ['Spinning', 'Static'];
     var spin_mode_default = spin_modes[0];
 
@@ -23,18 +22,18 @@
     });
 
     function start() {
-        shapes3dToolbox.import3dObjAsync ({
-            url: "../assets/"+list_shapes[0]+".obj.txt",
+        shapes3dToolbox.import3dObjAsync({
+            url: "../assets/" + list_shapes[0] + ".obj.txt",
             scaleTo: 200,
             reorder: false,
             center: true
-        }, function(shape3d) {
+        }, function (shape3d) {
             illo.children = []; // drop all children before regeneration
 
             mainshape = new Zdog.Shape({
                 addTo: illo,
                 path: generatePath(shape3d),
-                translate: { z: 10 },
+                translate: {z: 10},
                 color: default_color,
                 stroke: stroke_value,
                 closed: false,
@@ -49,9 +48,9 @@
     if (colpicker) {
         colpicker.value = default_color;
         colpicker.blur();
-        colpicker.addEventListener('change', function(evt) {
-          evt.preventDefault();
-          this.blur();
+        colpicker.addEventListener('change', function (evt) {
+            evt.preventDefault();
+            this.blur();
             default_color = this.value;
             mainshape.color = default_color;
         }, false);
@@ -69,15 +68,15 @@
         });
         objselector.value = list_shapes[0];
         objselector.blur();
-        objselector.addEventListener('change', function(evt) {
-          evt.preventDefault();
-          this.blur();
-            let newshape = shapes3dToolbox.import3dObjAsync ({
-                url: "../assets/"+this.value+".obj.txt",
+        objselector.addEventListener('change', function (evt) {
+            evt.preventDefault();
+            this.blur();
+            let newshape = shapes3dToolbox.import3dObjAsync({
+                url: "../assets/" + this.value + ".obj.txt",
                 scaleTo: 200,
                 reorder: false,
                 center: true
-            }, function(newshape){
+            }, function (newshape) {
                 stroke_value = 1;
                 mainshape.stroke = stroke_value;
                 mainshape.path = generatePath(newshape);
@@ -107,7 +106,7 @@
         return path;
     }
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             illo.rotate.x += 0.003;
             illo.rotate.y += 0.003;
@@ -118,84 +117,77 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
-    function keyPressed (e) {
-      e.preventDefault();
-      // console.log(e.keyCode);
+    function keyPressed(e) {
 
-      // Documentation about keyboard events :
-      //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
-      const DOWN_ARROW = 40;
-      const LEFT_ARROW = 37;
-      const RIGHT_ARROW = 39;
-      const UP_ARROW = 38;
-      const BACKSPACE = 8;
-      const ESCAPE = 27;
-      const KEY_ONE = 49;
-      const KEY_TWO = 50;
-      const KEY_THREE = 51;
-      const KEY_FOUR = 52;
-      const KEY_FIVE = 53;
+        // Documentation about keyboard events :
+        //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+        const DOWN_ARROW = 40;
+        const LEFT_ARROW = 37;
+        const RIGHT_ARROW = 39;
+        const UP_ARROW = 38;
+        const BACKSPACE = 8;
+        const ESCAPE = 27;
+        const KEY_ONE = 49;
+        const KEY_TWO = 50;
+        const KEY_THREE = 51;
+        const KEY_FOUR = 52;
+        const KEY_FIVE = 53;
 
-      switch (e.keyCode) {
-        case ESCAPE:{
-            resetScale();
-            break;
-        }
-        case LEFT_ARROW:{
-            illo.scale.z += 0.3;
-            break;
-        }
-        case RIGHT_ARROW:{
-            illo.scale.z -= 0.3;
-            break;
-        }
-        case UP_ARROW:{
-            illo.scale.x += 0.3;
-            illo.scale.y += 0.3;
-            illo.scale.z += 0.3;
-            break;
-        }
-        case DOWN_ARROW:{
-            illo.scale.x -= 0.3;
-            illo.scale.y -= 0.3;
-            illo.scale.z -= 0.3;
-            break;
-        }
-        case KEY_ONE:{
-            stroke_value = 1;
-            mainshape.stroke = stroke_value;
-            break;
-        }
-        case KEY_TWO:{
-            stroke_value = 2;
-            mainshape.stroke = stroke_value;
-            break;
-        }
-        case KEY_THREE:{
-            stroke_value = 3;
-            mainshape.stroke = stroke_value;
-            break;
-        }
-        case KEY_FOUR:{
-            stroke_value = 4;
-            mainshape.stroke = stroke_value;
-            break;
-        }
-        case KEY_FIVE:{
-            stroke_value = 5;
-            mainshape.stroke = stroke_value;
-            break;
-        }
+        switch (e.keyCode) {
+            case ESCAPE: {
+                resetScale();
+                break;
+            }
+            case LEFT_ARROW: {
+                illo.scale.z += 0.3;
+                break;
+            }
+            case RIGHT_ARROW: {
+                illo.scale.z -= 0.3;
+                break;
+            }
+            case UP_ARROW: {
+                illo.scale.x += 0.3;
+                illo.scale.y += 0.3;
+                illo.scale.z += 0.3;
+                break;
+            }
+            case DOWN_ARROW: {
+                illo.scale.x -= 0.3;
+                illo.scale.y -= 0.3;
+                illo.scale.z -= 0.3;
+                break;
+            }
+            case KEY_ONE: {
+                stroke_value = 1;
+                mainshape.stroke = stroke_value;
+                break;
+            }
+            case KEY_TWO: {
+                stroke_value = 2;
+                mainshape.stroke = stroke_value;
+                break;
+            }
+            case KEY_THREE: {
+                stroke_value = 3;
+                mainshape.stroke = stroke_value;
+                break;
+            }
+            case KEY_FOUR: {
+                stroke_value = 4;
+                mainshape.stroke = stroke_value;
+                break;
+            }
+            case KEY_FIVE: {
+                stroke_value = 5;
+                mainshape.stroke = stroke_value;
+                break;
+            }
 
-      }
-    }
-
-    function keyReleased (e) {
-      e.preventDefault();
-      // TODO : find something to implement here ;)
+        }
     }
 
     var fill_switcher = document.getElementById('fill_switcher');
@@ -205,7 +197,7 @@
         } else {
             fill_switcher.innerHTML = 'Filling On';
         }
-        fill_switcher.addEventListener('click', function(evt) {
+        fill_switcher.addEventListener('click', function (evt) {
             fill_value = !fill_value;
             if (fill_value) {
                 fill_switcher.innerHTML = 'Filling Off';
@@ -221,7 +213,7 @@
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
-        spin_mode_btn.addEventListener('click', function(evt) {
+        spin_mode_btn.addEventListener('click', function (evt) {
             evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
@@ -241,9 +233,9 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         start();
     });

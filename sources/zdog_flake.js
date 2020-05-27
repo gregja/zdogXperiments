@@ -139,8 +139,6 @@
     }
 
     function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -185,11 +183,6 @@
         }
     }
 
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
@@ -212,7 +205,7 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
     document.addEventListener("DOMContentLoaded", function(event) {
         console.log("DOM fully loaded and parsed");

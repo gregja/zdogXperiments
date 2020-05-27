@@ -6,7 +6,7 @@
 {
     "use strict";
 
-    var shape_params = {exponent: 5, projection: 3, disorder:0};
+    var shape_params = {exponent: 5, projection: 3, disorder: 0};
 
     var default_color = "#000000";  // color picker : https://www.w3schools.com/colors/colors_picker.asp
     var stroke_value = 1;
@@ -43,7 +43,7 @@
                 nb_colors += 1;
             }
             let tmp_colors = chroma.scale(['#2A4858', '#9cdf7c']).mode('lch').colors(Math.round(nb_colors / 2));
-            for (let i=tmp_colors.length-1; i>=0; i--) {
+            for (let i = tmp_colors.length - 1; i >= 0; i--) {
                 tmp_colors.push(tmp_colors[i]);
             }
             colors = tmp_colors;
@@ -70,7 +70,7 @@
     }
 
     // filled shape
-    function genShape2(ref, gradient_color=1) {
+    function genShape2(ref, gradient_color = 1) {
         var obj3d = generateShape(shape_params);
 
         if (shape_params.hasOwnProperty('gradient_color')) {
@@ -138,8 +138,6 @@
     }
 
     function keyPressed(e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -184,15 +182,10 @@
         }
     }
 
-    function keyReleased(e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
+        colpicker.addEventListener('change', function (evt) {
             default_color = this.value;
             if (mainshape) {
                 mainshape.color = default_color;
@@ -209,7 +202,7 @@
         } else {
             draw_mode_btn.innerHTML = draw_modes[1];
         }
-        draw_mode_btn.addEventListener('click', function(evt) {
+        draw_mode_btn.addEventListener('click', function (evt) {
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
                 draw_mode_default = draw_modes[1];
@@ -234,7 +227,7 @@
         } else {
             spin_mode_btn.innerHTML = spin_modes[1];
         }
-        spin_mode_btn.addEventListener('click', function(evt) {
+        spin_mode_btn.addEventListener('click', function (evt) {
             evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
@@ -261,7 +254,7 @@
         } else {
             span_exponent.innerHTML = shape_params.exponent;
         }
-        cursor_exponent.addEventListener('change', function(evt) {
+        cursor_exponent.addEventListener('change', function (evt) {
             evt.preventDefault();
             shape_params.exponent = Number(evt.currentTarget.value);
             span_exponent.innerHTML = shape_params.exponent;
@@ -280,7 +273,7 @@
         } else {
             span_projection.innerHTML = shape_params.projection;
         }
-        cursor_projection.addEventListener('change', function(evt) {
+        cursor_projection.addEventListener('change', function (evt) {
             evt.preventDefault();
             shape_params.projection = Number(evt.currentTarget.value);
             span_projection.innerHTML = shape_params.projection;
@@ -299,7 +292,7 @@
         } else {
             span_disorder.innerHTML = shape_params.disorder;
         }
-        cursor_disorder.addEventListener('change', function(evt) {
+        cursor_disorder.addEventListener('change', function (evt) {
             evt.preventDefault();
             shape_params.disorder = Number(evt.currentTarget.value);
             span_disorder.innerHTML = shape_params.disorder;
@@ -334,7 +327,7 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
     document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");

@@ -1,7 +1,7 @@
 /**
  * Generator of shapes largely inspired by an example excerpt of the book of
  *  Nikolaus Gradwohl : "Processing 2: Creative Programming Hotshot", Packt Publishing 2013
- * You can watch another adaptation I've made before, with Processing.js, in 
+ * You can watch another adaptation I've made before, with Processing.js, in
  *  that repository (in sketch17) : https://github.com/gregja/pjs3D_experiments
  */
 {
@@ -27,7 +27,7 @@
     } = Math;
     const DEG_TO_RAD = PI / 180;
     const degToRad = angle => angle * DEG_TO_RAD;
-    const radToDeg = angle => angle * ( 180 / PI );
+    const radToDeg = angle => angle * (180 / PI);
 
     var max_tri_strips = 30;
     var max_vertices = 72;
@@ -43,12 +43,12 @@
 
     // list of filters to generate as field forms
     var filters = [];   // count , radius , twist, hcount, phase, hradius
-    filters.push({field:"count", min:1, max:100, value:5, step:1, label:"Count", callback:slider_callback});
-    filters.push({field:"radius", min:-10, max:100, value:5, step:1, label:"Radius", callback:slider_callback});
-    filters.push({field:"twist", min:-2, max:2, value:2, step:.1, label:"Twist", callback:slider_callback});
-    filters.push({field:"hcount", min:0, max:2, value:1.5, step:.1, label:"HCount", callback:slider_callback});
-    filters.push({field:"phase", min:0, max:4, value:2, step:1, label:"Phase", callback:slider_callback});
-    filters.push({field:"hradius", min:-10, max:10, value:5, step:1, label:"HRadius", callback:slider_callback});
+    filters.push({field: "count", min: 1, max: 100, value: 5, step: 1, label: "Count", callback: slider_callback});
+    filters.push({field: "radius", min: -10, max: 100, value: 5, step: 1, label: "Radius", callback: slider_callback});
+    filters.push({field: "twist", min: -2, max: 2, value: 2, step: .1, label: "Twist", callback: slider_callback});
+    filters.push({field: "hcount", min: 0, max: 2, value: 1.5, step: .1, label: "HCount", callback: slider_callback});
+    filters.push({field: "phase", min: 0, max: 4, value: 2, step: 1, label: "Phase", callback: slider_callback});
+    filters.push({field: "hradius", min: -10, max: 10, value: 5, step: 1, label: "HRadius", callback: slider_callback});
 
     // store live parameters (attached to filters)
     var data_form = {};
@@ -59,7 +59,7 @@
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
+        colpicker.addEventListener('change', function (evt) {
             default_color = this.value;
             if (mainshape) {
                 mainshape.color = default_color;
@@ -82,9 +82,9 @@
             let point_b = obj3d.points[node[1]];
             let point_c = obj3d.points[node[2]];
 
-            datas.push({x: point_a.x, y:point_a.y, z:point_a.z});
-            datas.push({x: point_b.x, y:point_b.y, z:point_b.z});
-            datas.push({x: point_c.x, y:point_c.y, z:point_c.z});
+            datas.push({x: point_a.x, y: point_a.y, z: point_a.z});
+            datas.push({x: point_b.x, y: point_b.y, z: point_b.z});
+            datas.push({x: point_c.x, y: point_c.y, z: point_c.z});
         });
 
         return datas;
@@ -111,7 +111,7 @@
                 nb_colors += 1;
             }
             let tmp_colors = chroma.scale(['#2A4858', '#9cdf7c']).mode('lch').colors(Math.round(nb_colors / 2));
-            for (let i=tmp_colors.length-1; i>=0; i--) {
+            for (let i = tmp_colors.length - 1; i >= 0; i--) {
                 tmp_colors.push(tmp_colors[i]);
             }
             colors = tmp_colors;
@@ -126,7 +126,7 @@
      * @param shape_params
      * @param gradient_color
      */
-    function genShape2(ref, shape_params, gradient_color=1) {
+    function genShape2(ref, shape_params, gradient_color = 1) {
 
         if (shape_params.hasOwnProperty('gradient_color')) {
             // if gradient_color is set in shape_params, it has priority
@@ -147,7 +147,7 @@
             let shape = [];
             vertices.forEach(item => {
                 let point = points1[item];
-                shape.push({x:point.x, y:point.y, z:point.z});
+                shape.push({x: point.x, y: point.y, z: point.z});
             });
 
             new Zdog.Shape({
@@ -170,7 +170,7 @@
             let shape = [];
             vertices.forEach(item => {
                 let point = points2[item];
-                shape.push({x:point.x, y:point.y, z:point.z});
+                shape.push({x: point.x, y: point.y, z: point.z});
             });
 
             new Zdog.Shape({
@@ -187,9 +187,9 @@
     illo = new Zdog.Illustration({
         element: '.zdog-canvas',
         dragRotate: true,
-        translate: {y:-300},
+        translate: {y: -300},
         //  rotate: {z:degToRad(20)},
-        scale:4,
+        scale: 4,
         // pause spinning while dragging
         //onDragStart: () => isSpinning = false,
         //onDragEnd: () => isSpinning = false
@@ -200,7 +200,7 @@
         let shape_params = JSON.parse(JSON.stringify(data_form));
         shape_params.max_tri_strips = max_tri_strips;
         shape_params.max_vertices = max_vertices;
-        shape_params.rendrMode = rendrMode?1:2;
+        shape_params.rendrMode = rendrMode ? 1 : 2;
 
         if (!isPainting) {
             // Wireframe mode
@@ -220,7 +220,7 @@
         }
     }
 
-    function draw (){
+    function draw() {
 
         if (isSpinning) {
             illo.rotate.y += spinning_y;
@@ -231,7 +231,7 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -240,9 +240,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -259,59 +257,59 @@
         const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-            case ESCAPE:{
+            case ESCAPE: {
                 resetScale();
                 break;
             }
-            case LEFT_ARROW:{
+            case LEFT_ARROW: {
                 illo.scale.z += scale_value;
                 break;
             }
-            case RIGHT_ARROW:{
+            case RIGHT_ARROW: {
                 illo.scale.z -= scale_value;
                 break;
             }
-            case UP_ARROW:{
+            case UP_ARROW: {
                 illo.scale.x += scale_value;
                 illo.scale.y += scale_value;
                 illo.scale.z += scale_value;
                 break;
             }
-            case DOWN_ARROW:{
+            case DOWN_ARROW: {
                 illo.scale.x -= scale_value;
                 illo.scale.y -= scale_value;
                 illo.scale.z -= scale_value;
                 break;
             }
-            case KEY_ONE:{
+            case KEY_ONE: {
                 stroke_value = 1;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_TWO:{
+            case KEY_TWO: {
                 stroke_value = 2;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_THREE:{
+            case KEY_THREE: {
                 stroke_value = 3;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FOUR:{
+            case KEY_FOUR: {
                 stroke_value = 4;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FIVE:{
+            case KEY_FIVE: {
                 stroke_value = 5;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
@@ -322,92 +320,87 @@
         }
     }
 
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     function prepareEnvironment() {
 
-      var draw_mode_btn = document.getElementById('drawmode');
-      if (draw_mode_btn) {
-          if (!isPainting) {
-              draw_mode_btn.innerHTML = draw_modes[0];
-          } else {
-              draw_mode_btn.innerHTML = draw_modes[1];
-          }
-          draw_mode_btn.addEventListener('click', function(evt) {
-              evt.preventDefault();
-              let other_mode;
-              if (isPainting) {
-                  isPainting = false;
-                  other_mode = draw_modes[0];
-                  colpicker.setAttribute('disabled', 'disabled');
-              } else {
-                  isPainting = true;
-                  other_mode = draw_modes[1];
-                  colpicker.removeAttribute('disabled');
-              }
-              draw_mode_btn.innerHTML = other_mode;
-              generateGraph();
-          }, false);
-      } else {
-          console.warn('draw mode button not found');
-      }
+        var draw_mode_btn = document.getElementById('drawmode');
+        if (draw_mode_btn) {
+            if (!isPainting) {
+                draw_mode_btn.innerHTML = draw_modes[0];
+            } else {
+                draw_mode_btn.innerHTML = draw_modes[1];
+            }
+            draw_mode_btn.addEventListener('click', function (evt) {
+                evt.preventDefault();
+                let other_mode;
+                if (isPainting) {
+                    isPainting = false;
+                    other_mode = draw_modes[0];
+                    colpicker.setAttribute('disabled', 'disabled');
+                } else {
+                    isPainting = true;
+                    other_mode = draw_modes[1];
+                    colpicker.removeAttribute('disabled');
+                }
+                draw_mode_btn.innerHTML = other_mode;
+                generateGraph();
+            }, false);
+        } else {
+            console.warn('draw mode button not found');
+        }
 
-      var spin_mode_btn = document.getElementById('spinning');
-      if (spin_mode_btn) {
-          if (isSpinning) {
-              spin_mode_btn.innerHTML = spin_modes[1];
-          } else {
-              spin_mode_btn.innerHTML = spin_modes[0];
-          }
-          spin_mode_btn.addEventListener('click', function(evt) {
-              evt.preventDefault();
-              let other_mode;
-              if (isSpinning) {
-                  other_mode = spin_modes[0];
-                  isSpinning = false;
-              } else {
-                  other_mode = spin_modes[1];
-                  isSpinning = true;
-              }
-              spin_mode_btn.innerHTML = other_mode;
-              generateGraph();
-          }, false);
-      } else {
-          console.warn('spin mode button not found');
-      }
+        var spin_mode_btn = document.getElementById('spinning');
+        if (spin_mode_btn) {
+            if (isSpinning) {
+                spin_mode_btn.innerHTML = spin_modes[1];
+            } else {
+                spin_mode_btn.innerHTML = spin_modes[0];
+            }
+            spin_mode_btn.addEventListener('click', function (evt) {
+                evt.preventDefault();
+                let other_mode;
+                if (isSpinning) {
+                    other_mode = spin_modes[0];
+                    isSpinning = false;
+                } else {
+                    other_mode = spin_modes[1];
+                    isSpinning = true;
+                }
+                spin_mode_btn.innerHTML = other_mode;
+                generateGraph();
+            }, false);
+        } else {
+            console.warn('spin mode button not found');
+        }
 
-      var render_mode_btn = document.getElementById('rendrmode');
-      if (render_mode_btn) {
-          if (rendrMode) {
-              render_mode_btn.innerHTML = render_modes[1];
-          } else {
-              render_mode_btn.innerHTML = render_modes[0];
-          }
-          render_mode_btn.addEventListener('click', function(evt) {
-              evt.preventDefault();
-              let other_mode;
-              if (rendrMode) {
-                  other_mode = render_modes[0];
-                  rendrMode = false;
-              } else {
-                  other_mode = render_modes[1];
-                  rendrMode = true;
-              }
-              render_mode_btn.innerHTML = other_mode;
-              generateGraph();
-          }, false);
-      } else {
-          console.warn('spin mode button not found');
-      }
+        var render_mode_btn = document.getElementById('rendrmode');
+        if (render_mode_btn) {
+            if (rendrMode) {
+                render_mode_btn.innerHTML = render_modes[1];
+            } else {
+                render_mode_btn.innerHTML = render_modes[0];
+            }
+            render_mode_btn.addEventListener('click', function (evt) {
+                evt.preventDefault();
+                let other_mode;
+                if (rendrMode) {
+                    other_mode = render_modes[0];
+                    rendrMode = false;
+                } else {
+                    other_mode = render_modes[1];
+                    rendrMode = true;
+                }
+                render_mode_btn.innerHTML = other_mode;
+                generateGraph();
+            }, false);
+        } else {
+            console.warn('spin mode button not found');
+        }
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         prepareEnvironment();
         generateGraph();

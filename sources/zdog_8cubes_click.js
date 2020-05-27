@@ -30,34 +30,34 @@
 
 
     let boxes = [];
-    boxes.push({x:-dist, y:-dist, z:-dist});
-    boxes.push({x:dist, y:dist, z:dist});
-    boxes.push({x:-dist, y:dist, z:dist});
-    boxes.push({x:dist, y:-dist, z:dist});
-    boxes.push({x:dist, y:dist, z:-dist});
-    boxes.push({x:-dist, y:-dist, z:dist});
-    boxes.push({x:-dist, y:dist, z:-dist});
-    boxes.push({x:dist, y:-dist, z:-dist});
+    boxes.push({x: -dist, y: -dist, z: -dist});
+    boxes.push({x: dist, y: dist, z: dist});
+    boxes.push({x: -dist, y: dist, z: dist});
+    boxes.push({x: dist, y: -dist, z: dist});
+    boxes.push({x: dist, y: dist, z: -dist});
+    boxes.push({x: -dist, y: -dist, z: dist});
+    boxes.push({x: -dist, y: dist, z: -dist});
+    boxes.push({x: dist, y: -dist, z: -dist});
 
     const distance = (a, b) => {
-      let dx = b.x - a.x;
-      let dy = b.y - a.y;
-      let dz = b.z - a.z;
-      return Math.sqrt(dx*dx + dy*dy + dz*dz);
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let dz = b.z - a.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     let links = [];
     let deja_vu = [];
 
     const search_deja_vu = (idx1, idx2) => {
-        let criteria = String(idx1)+'-'+String(idx2);
-        let found = deja_vu.find(function(element) {
-          return element == criteria;
+        let criteria = String(idx1) + '-' + String(idx2);
+        let found = deja_vu.find(function (element) {
+            return element == criteria;
         });
         if (!found) {
-            criteria = String(idx2)+'-'+String(idx1);
-            found = deja_vu.find(function(element) {
-              return element == criteria;
+            criteria = String(idx2) + '-' + String(idx1);
+            found = deja_vu.find(function (element) {
+                return element == criteria;
             });
         }
         return found;
@@ -70,9 +70,9 @@
                 if (!search_deja_vu(idx1, idx2)) {
                     let xdist = distance(item2, item1);
                     if (xdist == global_dist) {
-                        links.push({a:idx1, b:idx2});
-                        deja_vu.push(String(idx1)+'-'+String(idx2));
-                        deja_vu.push(String(idx2)+'-'+String(idx1));
+                        links.push({a: idx1, b: idx2});
+                        deja_vu.push(String(idx1) + '-' + String(idx2));
+                        deja_vu.push(String(idx2) + '-' + String(idx1));
                     }
                 }
             }
@@ -100,14 +100,14 @@
     }
 
     const getPixel = function (context, x, y) {
-        let imageData = context.getImageData( x, y, 1, 1 );
+        let imageData = context.getImageData(x, y, 1, 1);
         //console.log(imageData);
         let data = imageData.data;
-        return rgbToHex(data[ 0 ], data[ 1 ], data[ 2 ]);
+        return rgbToHex(data[0], data[1], data[2]);
     }
 
     let nb_colors = links.length + boxes.length;
-    let colors = chroma.scale(['#ffffcc','#663300'])
+    let colors = chroma.scale(['#ffffcc', '#663300'])
         .mode('lch').colors(nb_colors);
 
     let current_color = 0;
@@ -123,8 +123,8 @@
         let visible = new Zdog.Shape({
             addTo: illo,
             path: [
-                { x: a.x, y: a.y, z:a.z },  // start
-                { x: b.x, y: b.y, z:b.z }   // end
+                {x: a.x, y: a.y, z: a.z},  // start
+                {x: b.x, y: b.y, z: b.z}   // end
             ],
             closed: false,
             stroke: 10,
@@ -134,8 +134,8 @@
         let hidden = new Zdog.Shape({
             addTo: ghost,
             path: [
-                { x: a.x, y: a.y, z:a.z },  // start
-                { x: b.x, y: b.y, z:b.z }   // end
+                {x: a.x, y: a.y, z: a.z},  // start
+                {x: b.x, y: b.y, z: b.z}   // end
             ],
             closed: false,
             stroke: 10,
@@ -181,7 +181,7 @@
 
     })
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             let mini_move = 0.003;
             illo.rotate.z += mini_move;
@@ -196,7 +196,7 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -206,9 +206,7 @@
         ghost.scale = illo.scale
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -222,37 +220,37 @@
         const mini_move = 0.3;
 
         switch (e.keyCode) {
-          case ESCAPE:{
-              resetScale();
-              break;
-          }
-          case LEFT_ARROW:{
-              illo.scale.z += mini_move;
-              ghost.scale = illo.scale;
-              break;
-          }
-          case RIGHT_ARROW:{
-              illo.scale.z -= mini_move;
-              ghost.scale = illo.scale;
-              break;
-          }
-          case UP_ARROW:{
-              illo.scale.x += mini_move;
-              illo.scale.y += mini_move;
-              illo.scale.z += mini_move;
-              ghost.scale = illo.scale
-              break;
-          }
-          case DOWN_ARROW:{
-              illo.scale.x -= mini_move;
-              illo.scale.y -= mini_move;
-              illo.scale.z -= mini_move;
-              ghost.scale = illo.scale;
-              break;
-          }
+            case ESCAPE: {
+                resetScale();
+                break;
+            }
+            case LEFT_ARROW: {
+                illo.scale.z += mini_move;
+                ghost.scale = illo.scale;
+                break;
+            }
+            case RIGHT_ARROW: {
+                illo.scale.z -= mini_move;
+                ghost.scale = illo.scale;
+                break;
+            }
+            case UP_ARROW: {
+                illo.scale.x += mini_move;
+                illo.scale.y += mini_move;
+                illo.scale.z += mini_move;
+                ghost.scale = illo.scale
+                break;
+            }
+            case DOWN_ARROW: {
+                illo.scale.x -= mini_move;
+                illo.scale.y -= mini_move;
+                illo.scale.z -= mini_move;
+                ghost.scale = illo.scale;
+                break;
+            }
 
         }
-      }
+    }
 
     function shapeClicked(evt) {
         let forced_color = 'red';
@@ -271,25 +269,20 @@
                 item.visible.bottomFace = forced_color;
             }
         } else {
-            console.log('color not found : ' , color, getPixel(context_visible, coords.x, coords.y));
+            console.log('color not found : ', color, getPixel(context_visible, coords.x, coords.y));
         }
     }
 
     canvas_visible.addEventListener('click', shapeClicked, false);
 
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
     let button = document.getElementById('hide_ghost');
     if (button) {
         button.innerHTML = 'Hide the ghost';
         button.setAttribute('data-status', 'visible');
-        button.addEventListener('click', function(evt) {
+        button.addEventListener('click', function (evt) {
             let status = this.getAttribute('data-status');
             if (status == 'visible') {
                 status = 'hidden';
@@ -305,7 +298,7 @@
         console.log('button #hide_ghost not found');
     }
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         animate();
     });

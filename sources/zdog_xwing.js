@@ -1,6 +1,5 @@
-
 {
-  "use strict";
+    "use strict";
 //    var shape_params = {scale: 100, lats:30, longs:20, generateUVs: false}; // example for sphere
 
     var list_shapes = shapes3dToolbox.getGeneratorsList();
@@ -25,7 +24,7 @@
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
+        colpicker.addEventListener('change', function (evt) {
             default_color = this.value;
             if (mainshape) {
                 mainshape.color = default_color;
@@ -53,7 +52,7 @@
     function genShape2(ref) {
         var obj3d = generateShape(shape_params);
 
-        var colors = chroma.scale(['#f8f4ec','#4c3a1a']).mode('lch').colors(obj3d.polygons.length);
+        var colors = chroma.scale(['#f8f4ec', '#4c3a1a']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
             let shape = [];
@@ -103,7 +102,7 @@
 
     generateGraph();
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             illo.rotate.z += 0.003;
         }
@@ -112,7 +111,7 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -121,9 +120,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -140,82 +137,77 @@
         const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-          case ESCAPE:{
-              resetScale();
-              break;
-          }
-          case LEFT_ARROW:{
-              illo.scale.z += zoom_factor;
-              break;
-          }
-          case RIGHT_ARROW:{
-              illo.scale.z -= zoom_factor;
-              break;
-          }
-          case UP_ARROW:{
-              illo.scale.x += zoom_factor;
-              illo.scale.y += zoom_factor;
-              illo.scale.z += zoom_factor;
-              break;
-          }
-          case DOWN_ARROW:{
-              illo.scale.x -= zoom_factor;
-              illo.scale.y -= zoom_factor;
-              illo.scale.z -= zoom_factor;
-              break;
-          }
-          case KEY_ONE:{
-              stroke_value = 1;
-              if (mainshape) {
-                  mainshape.stroke = stroke_value;
+            case ESCAPE: {
+                resetScale();
+                break;
+            }
+            case LEFT_ARROW: {
+                illo.scale.z += zoom_factor;
+                break;
+            }
+            case RIGHT_ARROW: {
+                illo.scale.z -= zoom_factor;
+                break;
+            }
+            case UP_ARROW: {
+                illo.scale.x += zoom_factor;
+                illo.scale.y += zoom_factor;
+                illo.scale.z += zoom_factor;
+                break;
+            }
+            case DOWN_ARROW: {
+                illo.scale.x -= zoom_factor;
+                illo.scale.y -= zoom_factor;
+                illo.scale.z -= zoom_factor;
+                break;
+            }
+            case KEY_ONE: {
+                stroke_value = 1;
+                if (mainshape) {
+                    mainshape.stroke = stroke_value;
                 }
-              break;
-          }
-          case KEY_TWO:{
-              stroke_value = 2;
-              if (mainshape) {
-                mainshape.stroke = stroke_value;
+                break;
             }
-              break;
-          }
-          case KEY_THREE:{
-              stroke_value = 3;
-              if (mainshape) {
-                mainshape.stroke = stroke_value;
+            case KEY_TWO: {
+                stroke_value = 2;
+                if (mainshape) {
+                    mainshape.stroke = stroke_value;
+                }
+                break;
             }
-              break;
-          }
-          case KEY_FOUR:{
-              stroke_value = 4;
-              if (mainshape) {
-                mainshape.stroke = stroke_value;
+            case KEY_THREE: {
+                stroke_value = 3;
+                if (mainshape) {
+                    mainshape.stroke = stroke_value;
+                }
+                break;
             }
-              break;
-          }
-          case KEY_FIVE:{
-              stroke_value = 5;
-              if (mainshape) {
-                mainshape.stroke = stroke_value;
+            case KEY_FOUR: {
+                stroke_value = 4;
+                if (mainshape) {
+                    mainshape.stroke = stroke_value;
+                }
+                break;
             }
-              break;
-          }
+            case KEY_FIVE: {
+                stroke_value = 5;
+                if (mainshape) {
+                    mainshape.stroke = stroke_value;
+                }
+                break;
+            }
 
         }
-      }
-
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
     }
 
     var draw_mode_btn = document.getElementById('drawmode');
     if (draw_mode_btn) {
         if (draw_mode_default == draw_modes[1]) {
-          draw_mode_btn.innerHTML = draw_modes[0];
+            draw_mode_btn.innerHTML = draw_modes[0];
         } else {
-          draw_mode_btn.innerHTML = draw_modes[1];
+            draw_mode_btn.innerHTML = draw_modes[1];
         }
-        draw_mode_btn.addEventListener('click', function(evt) {
+        draw_mode_btn.addEventListener('click', function (evt) {
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
                 draw_mode_default = draw_modes[1];
@@ -235,34 +227,34 @@
 
     var zoom1_btn = document.getElementById('zoom1');
     if (zoom1_btn) {
-      zoom1_btn.addEventListener('click', function(e){
-        console.log('zoom 1');
-        e.preventDefault();
-        illo.scale.x -= zoom_factor;
-        illo.scale.y -= zoom_factor;
-        illo.scale.z -= zoom_factor;
-      }, false);
+        zoom1_btn.addEventListener('click', function (e) {
+            console.log('zoom 1');
+            e.preventDefault();
+            illo.scale.x -= zoom_factor;
+            illo.scale.y -= zoom_factor;
+            illo.scale.z -= zoom_factor;
+        }, false);
     } else {
-      console.warn('zoom- button not found');
+        console.warn('zoom- button not found');
     }
 
     var zoom2_btn = document.getElementById('zoom2');
     if (zoom2_btn) {
-      zoom2_btn.addEventListener('click', function(e){
-        console.log('zoom 2');
-        e.preventDefault();
-        illo.scale.x += zoom_factor;
-        illo.scale.y += zoom_factor;
-        illo.scale.z += zoom_factor;
-      }, false);
+        zoom2_btn.addEventListener('click', function (e) {
+            console.log('zoom 2');
+            e.preventDefault();
+            illo.scale.x += zoom_factor;
+            illo.scale.y += zoom_factor;
+            illo.scale.z += zoom_factor;
+        }, false);
     } else {
-      console.warn('zoom+ button not found');
+        console.warn('zoom+ button not found');
     }
 
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
-        spin_mode_btn.addEventListener('click', function(evt) {
+        spin_mode_btn.addEventListener('click', function (evt) {
             evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
@@ -282,9 +274,9 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         animate();
     });

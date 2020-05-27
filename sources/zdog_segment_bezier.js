@@ -1,4 +1,3 @@
-
 {
     var generateShape = (params) => {
         var segment = new Segment3D(params);
@@ -6,7 +5,7 @@
         //segment.draw(illo);
         return segment.exportMesh();
     };
-    var shape_params = {width: 200, height: 40, color: "red", lineWidth: 2, depth:20};
+    var shape_params = {width: 200, height: 40, color: "red", lineWidth: 2, depth: 20};
 
     var default_color = "#000000";  // color picker : https://www.w3schools.com/colors/colors_picker.asp
     var stroke_value = 1;
@@ -21,7 +20,7 @@
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
+        colpicker.addEventListener('change', function (evt) {
             default_color = this.value;
             if (mainshape) {
                 mainshape.color = default_color;
@@ -54,7 +53,7 @@
         var obj3d = generateShape(shape_params);
         console.log(obj3d);
 
-        var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
+        var colors = chroma.scale(['#9cdf7c', '#2A4858']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
             let shape = [];
@@ -106,7 +105,7 @@
 
     generateGraph();
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             illo.rotate.z += 0.003;
         }
@@ -115,7 +114,7 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -124,9 +123,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -143,59 +140,59 @@
         const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-            case ESCAPE:{
+            case ESCAPE: {
                 resetScale();
                 break;
             }
-            case LEFT_ARROW:{
+            case LEFT_ARROW: {
                 illo.scale.z += 0.3;
                 break;
             }
-            case RIGHT_ARROW:{
+            case RIGHT_ARROW: {
                 illo.scale.z -= 0.3;
                 break;
             }
-            case UP_ARROW:{
+            case UP_ARROW: {
                 illo.scale.x += 0.3;
                 illo.scale.y += 0.3;
                 illo.scale.z += 0.3;
                 break;
             }
-            case DOWN_ARROW:{
+            case DOWN_ARROW: {
                 illo.scale.x -= 0.3;
                 illo.scale.y -= 0.3;
                 illo.scale.z -= 0.3;
                 break;
             }
-            case KEY_ONE:{
+            case KEY_ONE: {
                 stroke_value = 1;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_TWO:{
+            case KEY_TWO: {
                 stroke_value = 2;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_THREE:{
+            case KEY_THREE: {
                 stroke_value = 3;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FOUR:{
+            case KEY_FOUR: {
                 stroke_value = 4;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FIVE:{
+            case KEY_FIVE: {
                 stroke_value = 5;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
@@ -206,11 +203,6 @@
         }
     }
 
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     var draw_mode_btn = document.getElementById('drawmode');
     if (draw_mode_btn) {
         if (draw_mode_default == draw_modes[1]) {
@@ -218,7 +210,7 @@
         } else {
             draw_mode_btn.innerHTML = draw_modes[1];
         }
-        draw_mode_btn.addEventListener('click', function(evt) {
+        draw_mode_btn.addEventListener('click', function (evt) {
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
                 draw_mode_default = draw_modes[1];
@@ -239,7 +231,7 @@
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
-        spin_mode_btn.addEventListener('click', function(evt) {
+        spin_mode_btn.addEventListener('click', function (evt) {
             evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
@@ -259,9 +251,9 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         animate();
     });

@@ -1,4 +1,3 @@
-
 {
     var generateShape = shapes3dToolbox.spongeGenerator;
     var illo = undefined; // pointer to the main object (for refreshing)
@@ -23,7 +22,7 @@
         });
 
         levelselector.blur();
-        levelselector.addEventListener('change', function(evt) {
+        levelselector.addEventListener('change', function (evt) {
             evt.preventDefault();
             this.blur();
             level_value = this.value;
@@ -70,10 +69,10 @@
                 spin_mode_btn.click();
             }
         }
-        var shape_params = {x:0, y:0, z:0, r:250, level:1, maxLevel: maxLevel};
+        var shape_params = {x: 0, y: 0, z: 0, r: 250, level: 1, maxLevel: maxLevel};
         var blocks = generateShape(shape_params);
         let imax = blocks.length;
-        console.log('Number of blocks to generate : '+imax);
+        console.log('Number of blocks to generate : ' + imax);
 
         if (tasks.length > 0) {
             // stop remanining tasks before initializing a new series of tasks
@@ -111,7 +110,7 @@
 
     generateGraph();
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             illo.rotate.z += 0.003;
         }
@@ -129,7 +128,7 @@
         }
 
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -138,9 +137,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -157,25 +154,25 @@
         //const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-            case ESCAPE:{
+            case ESCAPE: {
                 resetScale();
                 break;
             }
-            case LEFT_ARROW:{
+            case LEFT_ARROW: {
                 illo.scale.z += 0.3;
                 break;
             }
-            case RIGHT_ARROW:{
+            case RIGHT_ARROW: {
                 illo.scale.z -= 0.3;
                 break;
             }
-            case UP_ARROW:{
+            case UP_ARROW: {
                 illo.scale.x += 0.3;
                 illo.scale.y += 0.3;
                 illo.scale.z += 0.3;
                 break;
             }
-            case DOWN_ARROW:{
+            case DOWN_ARROW: {
                 illo.scale.x -= 0.3;
                 illo.scale.y -= 0.3;
                 illo.scale.z -= 0.3;
@@ -185,7 +182,7 @@
         }
     }
 
-    function keyReleased (e) {
+    function keyReleased(e) {
         e.preventDefault();
         // TODO : find something to implement here ;)
     }
@@ -193,7 +190,7 @@
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
-        spin_mode_btn.addEventListener('click', function(evt) {
+        spin_mode_btn.addEventListener('click', function (evt) {
             evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
@@ -212,9 +209,9 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         animate();
     });

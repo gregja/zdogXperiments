@@ -2,45 +2,45 @@
 // https://codepen.io/gregja/pen/2b14a173072a742e2e259f65bd0c7cc6
 
 let illo = new Zdog.Illustration({
-  element: '.zdog-canvas',
-  dragRotate: true,
+    element: '.zdog-canvas',
+    dragRotate: true,
 });
 
-var side = 40;
-var dist = 50;
-var mid_side = side / 2;
-var global_dist = dist * 2;
-var isSpinning = true;
+let side = 40;
+let dist = 50;
+let mid_side = side / 2;
+let global_dist = dist * 2;
+let isSpinning = true;
 
-var boxes = [];
-boxes.push({x:-dist, y:-dist, z:-dist});
-boxes.push({x:dist, y:dist, z:dist});
-boxes.push({x:-dist, y:dist, z:dist});
-boxes.push({x:dist, y:-dist, z:dist});
-boxes.push({x:dist, y:dist, z:-dist});
-boxes.push({x:-dist, y:-dist, z:dist});
-boxes.push({x:-dist, y:dist, z:-dist});
-boxes.push({x:dist, y:-dist, z:-dist});
+let boxes = [];
+boxes.push({x: -dist, y: -dist, z: -dist});
+boxes.push({x: dist, y: dist, z: dist});
+boxes.push({x: -dist, y: dist, z: dist});
+boxes.push({x: dist, y: -dist, z: dist});
+boxes.push({x: dist, y: dist, z: -dist});
+boxes.push({x: -dist, y: -dist, z: dist});
+boxes.push({x: -dist, y: dist, z: -dist});
+boxes.push({x: dist, y: -dist, z: -dist});
 
 const distance = (a, b) => {
-  let dx = b.x - a.x;
-  let dy = b.y - a.y;
-  let dz = b.z - a.z;
-  return Math.sqrt(dx*dx + dy*dy + dz*dz);
+    let dx = b.x - a.x;
+    let dy = b.y - a.y;
+    let dz = b.z - a.z;
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-var links = [];
-var deja_vu = [];
+let links = [];
+let deja_vu = [];
 
 const search_deja_vu = (idx1, idx2) => {
-    var criteria = String(idx1)+'-'+String(idx2);
-    var found = deja_vu.find(function(element) {
-      return element == criteria;
+    let criteria = String(idx1) + '-' + String(idx2);
+    let found = deja_vu.find(function (element) {
+        return element == criteria;
     });
     if (!found) {
-        criteria = String(idx2)+'-'+String(idx1);
-        found = deja_vu.find(function(element) {
-          return element == criteria;
+        criteria = String(idx2) + '-' + String(idx1);
+        found = deja_vu.find(function (element) {
+            return element == criteria;
         });
     }
     return found;
@@ -53,9 +53,9 @@ boxes.forEach((item1, idx1) => {
             if (!search_deja_vu(idx1, idx2)) {
                 let xdist = distance(item2, item1);
                 if (xdist == global_dist) {
-                    links.push({a:idx1, b:idx2});
-                    deja_vu.push(String(idx1)+'-'+String(idx2));
-                    deja_vu.push(String(idx2)+'-'+String(idx1));
+                    links.push({a: idx1, b: idx2});
+                    deja_vu.push(String(idx1) + '-' + String(idx2));
+                    deja_vu.push(String(idx2) + '-' + String(idx1));
                 }
             }
         }
@@ -69,8 +69,8 @@ links.forEach(item => {
     new Zdog.Shape({
         addTo: illo,
         path: [
-            { x: a.x, y: a.y, z:a.z },  // start
-            { x: b.x, y: b.y, z:b.z }   // end
+            {x: a.x, y: a.y, z: a.z},  // start
+            {x: b.x, y: b.y, z: b.z}   // end
         ],
         closed: false,
         stroke: 10,
@@ -93,9 +93,9 @@ boxes.forEach(item => {
         topFace: '#ED0',
         bottomFace: '#636',
     });
-})
+});
 
-function draw (){
+function draw() {
     if (isSpinning) {
         illo.rotate.z += 0.003;
     }
@@ -104,7 +104,7 @@ function draw (){
 
 function animate() {
     draw();
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
 }
 
 function resetScale() {
@@ -113,9 +113,7 @@ function resetScale() {
     illo.scale.z = 1;
 }
 
-function keyPressed (e) {
-    e.preventDefault();
-    // console.log(e.keyCode);
+function keyPressed(e) {
 
     // Documentation about keyboard events :
     //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -127,43 +125,39 @@ function keyPressed (e) {
     const ESCAPE = 27;
 
     switch (e.keyCode) {
-      case ESCAPE:{
-          resetScale();
-          break;
-      }
-      case LEFT_ARROW:{
-          illo.scale.z += 0.3;
-          break;
-      }
-      case RIGHT_ARROW:{
-          illo.scale.z -= 0.3;
-          break;
-      }
-      case UP_ARROW:{
-          illo.scale.x += 0.3;
-          illo.scale.y += 0.3;
-          illo.scale.z += 0.3;
-          break;
-      }
-      case DOWN_ARROW:{
-          illo.scale.x -= 0.3;
-          illo.scale.y -= 0.3;
-          illo.scale.z -= 0.3;
-          break;
-      }
+        case ESCAPE: {
+            resetScale();
+            break;
+        }
+        case LEFT_ARROW: {
+            illo.scale.z += 0.3;
+            break;
+        }
+        case RIGHT_ARROW: {
+            illo.scale.z -= 0.3;
+            break;
+        }
+        case UP_ARROW: {
+            illo.scale.x += 0.3;
+            illo.scale.y += 0.3;
+            illo.scale.z += 0.3;
+            break;
+        }
+        case DOWN_ARROW: {
+            illo.scale.x -= 0.3;
+            illo.scale.y -= 0.3;
+            illo.scale.z -= 0.3;
+            break;
+        }
 
     }
-  }
-
-function keyReleased (e) {
-    e.preventDefault();
-    // TODO : find something to implement here ;)
 }
 
-document.addEventListener('keydown', keyPressed, false);
-document.addEventListener('keyup', keyReleased, false);
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener('keydown', keyPressed, false);
+//document.addEventListener('keyup', keyReleased, false);
+
+document.addEventListener("DOMContentLoaded", function (event) {
     console.log("DOM fully loaded and parsed");
     animate();
 });

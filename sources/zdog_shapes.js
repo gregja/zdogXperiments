@@ -1,4 +1,3 @@
-
 {
     "use strict";
 
@@ -20,7 +19,7 @@
     var colpicker = document.getElementById("colorpicker");
     if (colpicker) {
         colpicker.value = default_color;
-        colpicker.addEventListener('change', function(evt) {
+        colpicker.addEventListener('change', function (evt) {
             default_color = this.value;
             if (mainshape) {
                 mainshape.color = default_color;
@@ -43,7 +42,7 @@
             }
         });
         objselector.blur();
-        objselector.addEventListener('change', function(evt) {
+        objselector.addEventListener('change', function (evt) {
             evt.preventDefault();
             this.blur();
             var current_id = Number(String(this.value).replace('p', ''));
@@ -83,7 +82,7 @@
     }
 
     // filled shape
-    function genShape2(ref, gradient_color=1) {
+    function genShape2(ref, gradient_color = 1) {
         var obj3d = generateShape(shape_params);
 
         if (shape_params.hasOwnProperty('gradient_color')) {
@@ -97,7 +96,7 @@
         var colors = [];
         if (gradient_color == 1) {
             // each polygon has a unique color
-            colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length)
+            colors = chroma.scale(['#9cdf7c', '#2A4858']).mode('lch').colors(obj3d.polygons.length)
         } else {
             // generate a first set of unique colors (from darkest to brightest) for the first half
             // of the polygons, then reverse that color series for the second half of the polygons
@@ -108,7 +107,7 @@
                 nb_colors += 1;
             }
             let tmp_colors = chroma.scale(['#9cdf7c', '#2A4858']).mode('lch').colors(Math.round(nb_colors / 2));
-            for (let i=tmp_colors.length-1; i>=0; i--) {
+            for (let i = tmp_colors.length - 1; i >= 0; i--) {
                 tmp_colors.push(tmp_colors[i]);
             }
             colors = tmp_colors;
@@ -118,8 +117,8 @@
             let shape = [];
             vertices.forEach(item => {
                 if (item != undefined && obj3d.points[item] != undefined) {
-                  let point = obj3d.points[item];
-                    shape.push({x:point.x, y:point.y, z:point.z});
+                    let point = obj3d.points[item];
+                    shape.push({x: point.x, y: point.y, z: point.z});
                 }
             });
             new Zdog.Shape({
@@ -161,7 +160,7 @@
         }
     }
 
-    function draw (){
+    function draw() {
         if (isSpinning) {
             illo.rotate.z += 0.003;
         }
@@ -170,7 +169,7 @@
 
     function animate() {
         draw();
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
     }
 
     function resetScale() {
@@ -179,9 +178,7 @@
         illo.scale.z = 1;
     }
 
-    function keyPressed (e) {
-        e.preventDefault();
-        // console.log(e.keyCode);
+    function keyPressed(e) {
 
         // Documentation about keyboard events :
         //    https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -198,59 +195,59 @@
         const KEY_FIVE = 53;
 
         switch (e.keyCode) {
-            case ESCAPE:{
+            case ESCAPE: {
                 resetScale();
                 break;
             }
-            case LEFT_ARROW:{
+            case LEFT_ARROW: {
                 illo.scale.z += 0.3;
                 break;
             }
-            case RIGHT_ARROW:{
+            case RIGHT_ARROW: {
                 illo.scale.z -= 0.3;
                 break;
             }
-            case UP_ARROW:{
+            case UP_ARROW: {
                 illo.scale.x += 0.3;
                 illo.scale.y += 0.3;
                 illo.scale.z += 0.3;
                 break;
             }
-            case DOWN_ARROW:{
+            case DOWN_ARROW: {
                 illo.scale.x -= 0.3;
                 illo.scale.y -= 0.3;
                 illo.scale.z -= 0.3;
                 break;
             }
-            case KEY_ONE:{
+            case KEY_ONE: {
                 stroke_value = 1;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_TWO:{
+            case KEY_TWO: {
                 stroke_value = 2;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_THREE:{
+            case KEY_THREE: {
                 stroke_value = 3;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FOUR:{
+            case KEY_FOUR: {
                 stroke_value = 4;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
                 }
                 break;
             }
-            case KEY_FIVE:{
+            case KEY_FIVE: {
                 stroke_value = 5;
                 if (mainshape) {
                     mainshape.stroke = stroke_value;
@@ -261,16 +258,11 @@
         }
     }
 
-    function keyReleased (e) {
-        e.preventDefault();
-        // TODO : find something to implement here ;)
-    }
-
     var draw_mode_btn = document.getElementById('drawmode');
     if (draw_mode_btn) {
         draw_mode_btn.innerHTML = draw_modes[1];
-        draw_mode_btn.addEventListener('click', function(evt) {
-          evt.preventDefault();
+        draw_mode_btn.addEventListener('click', function (evt) {
+            evt.preventDefault();
             let other_mode;
             if (draw_mode_default == draw_modes[0]) {
                 draw_mode_default = draw_modes[1];
@@ -291,8 +283,8 @@
     var spin_mode_btn = document.getElementById('spinning');
     if (spin_mode_btn) {
         spin_mode_btn.innerHTML = spin_modes[1];
-        spin_mode_btn.addEventListener('click', function(evt) {
-          evt.preventDefault();
+        spin_mode_btn.addEventListener('click', function (evt) {
+            evt.preventDefault();
             let other_mode;
             if (spin_mode_default == spin_modes[0]) {
                 spin_mode_default = spin_modes[1];
@@ -311,9 +303,9 @@
     }
 
     document.addEventListener('keydown', keyPressed, false);
-    document.addEventListener('keyup', keyReleased, false);
+    //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         console.log("DOM fully loaded and parsed");
         generateGraph();
         animate();
