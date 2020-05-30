@@ -63,9 +63,11 @@ The content of the project :
 
 - Leap Motion with Zdog - draw hands (*9)
 
-- Cuboid generated with Delaunay Triangulation (NEW) (*10)
+- Cuboid generated with Delaunay Triangulation (*10)
 
-- 3D Objects excavated (new) (*11)
+- 3D Objects excavated (*11)
+
+- Constructive Solid Geometry with csg.js (new) (*12)
 
 
 -------------------
@@ -94,6 +96,7 @@ https://codepen.io/ncodefun/pen/aggZKP
 (*11) Adaptation for Javascript of an algorithm excerpt from the book :
       "Graphisme 3D en Turbo Pascal", Gérald Grandpierre and Richard Cotté, édiTests 1988
 
+(*12) Link to the project csg.js : http://evanw.github.io/csg.js/
 
 ------------------
 
