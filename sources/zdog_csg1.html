@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Zdog - Constructive Solid Geometry (CSG)</title>
+		<style>
+			html { height: 100%; }
+			body {
+			  min-height: 100%;
+			  margin: 0;
+			/*  background: #FD0; */
+			background: white;
+			  font-family: sans-serif;
+			  text-align: center;
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
+			canvas {
+			  display: block;
+			  margin: 0px auto 20px;
+			  cursor: move;
+			}
+		</style>
+	</head>
+ <body>
+ <div class="container">
+		 <div>Constructive Solid Geometry (CSG) with the CSG component of <a href="https://en.wikibooks.org/wiki/OpenJSCAD_User_Guide" target="_blank">OpenJSCAD</a></div><br>
+		 <input id="colorpicker" type="color">
+		 <button id="drawmode"></button>
+		 <button id="spinning"></button>
+		 <p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
+		 <canvas class="zdog-canvas" width="800" height="600"></canvas>
+
+	 </div>
+	<script src="../js/zdog.dist.js"></script>
+	<script src="../js/chroma.min.js"></script>
+	<script src="../js/csg.js"></script>
+	<script src="zdog_csg1.js" type="module"></script>
+</body>
+</html>

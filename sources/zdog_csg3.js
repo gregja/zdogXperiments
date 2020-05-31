@@ -1,18 +1,44 @@
+import {CsgLibrary} from "../js/csg_library.js";
 
-{
-    var generateShape = function(scale=150) {
-        var a = CSG.cube();
-        var b = CSG.sphere({ radius: 1.35, stacks: 12 });
-        var c = CSG.cylinder({ radius: 0.7, start: [-1, 0, 0], end: [1, 0, 0] });
-        var d = CSG.cylinder({ radius: 0.7, start: [0, -1, 0], end: [0, 1, 0] });
-        var e = CSG.cylinder({ radius: 0.7, start: [0, 0, -1], end: [0, 0, 1] });
-        var f = a.intersect(b).subtract(c.union(d).union(e));
+function generateCSG(code) {
+    var final ;
+    if (warning) {
+        warning.innerHTML = "";
+    }
+    try {
+        let res = eval(code);
+        if (res == undefined) {
+            if (warning) {
+                warning.innerHTML = "always finih code with 'final' not prefixed by 'var' like that : <pre>final = ...</pre> ";
+            }
+            return null;
+        }
+        return res;
+    } catch(error) {
+        console.warn(error);
+        if (warning) {
+            warning.innerHTML = error;
+        }
+        return null;
+    }
+}
+
+function letsgo() {
+    let current_code = CsgLibrary.basic_1.code;
+
+    let textarea = document.getElementById('csgcode');
+    textarea.value = current_code;
+    let warning = document.getElementById('warning');
+    let submit = document.getElementById('submit');
+
+    var generateShape = function(scale=100) {
+        var res = generateCSG(textarea.value);
 
         var points = [];
         var polygons = [];
         var id_poly = -1;
 
-        f.polygons.forEach(items => {
+        res.polygons.forEach(items => {
             var polygon = [];
             items.vertices.forEach(vertex => {
                 let point = {x:vertex.pos.x*scale, y:vertex.pos.y*scale, z:vertex.pos.z*scale};
@@ -64,7 +90,9 @@
     // filled shape
     function genShape2(ref) {
         var obj3d = generateShape();
-
+        if (obj3d == null) {
+            return;
+        }
         var colors = chroma.scale(['#9cdf7c','#2A4858']).mode('lch').colors(obj3d.polygons.length);
 
         obj3d.polygons.forEach((vertices, idx) => {
@@ -97,9 +125,13 @@
     function generateGraph() {
         illo.children = []; // drop all children before regeneration
         if (draw_mode_default == 'Wireframe') {
+            let shape = generateShape();
+            if (shape == null) {
+                return;
+            }
             mainshape = new Zdog.Shape({
                 addTo: illo,
-                path: genShape1(generateShape()),
+                path: genShape1(shape),
                 color: default_color,
                 closed: false,
                 stroke: stroke_value,
@@ -111,7 +143,13 @@
         }
     }
 
-    generateGraph();
+    submit.addEventListener("click",(evt)=>{
+        evt.preventDefault();
+        generateGraph();
+    }, false);
+
+    // generate first shape
+    submit.click();
 
     function draw (){
         if (isSpinning) {
@@ -261,9 +299,10 @@
     document.addEventListener('keydown', keyPressed, false);
     //document.addEventListener('keyup', keyReleased, false);
 
-    document.addEventListener("DOMContentLoaded", function(event) {
-        console.log("DOM fully loaded and parsed");
-        animate();
-    });
-
+    animate();
 }
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    console.log("DOM fully loaded and parsed");
+    letsgo();
+});
