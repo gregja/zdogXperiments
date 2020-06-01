@@ -175,18 +175,6 @@ function main(params)
   return gear;
 }
 
-// Here we define the user editable parameters: 
-function getParameterDefinitions() {
-  return [
-    { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', default: 15 },
-    { name: 'circularPitch', caption: 'Circular pitch:', type: 'float', default: 10 },
-    { name: 'pressureAngle', caption: 'Pressure angle:', type: 'float', default: 20 },
-    { name: 'clearance', caption: 'Clearance:', type: 'float', default: 0 },
-    { name: 'thickness', caption: 'Thickness:', type: 'float', default: 5 },
-    { name: 'centerholeradius', caption: 'Radius of center hole (0 for no hole):', type: 'float', default: 2 },
-  ];
-}
-
 /*
   For gear terminology see: 
     http://www.astronomiainumbria.org/advanced_internet_files/meccanica/easyweb.easynet.co.uk/_chrish/geardata.htm
@@ -272,14 +260,7 @@ function involuteGear(numTeeth, circularPitch, pressureAngle, clearance, thickne
   return result;
 }
 
-var data = {
-    numTeeth: 15,
-    circularPitch:10,
-    pressureAngle:20,
-    clearance:0,
-    thickness:5
-\t};
-final = main(data);
+final = main(userdata);
 `
 };
 

@@ -1,7 +1,25 @@
 import {CsgLibrary} from "../js/csg_library.js";
 import {CSG} from "../js/csg.js";
 
-function generateCSG(code) {
+// Here we define the user editable parameters:
+function getParameterDefinitions() {
+    return [
+        { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', default: 15 },
+        { name: 'circularPitch', caption: 'Circular pitch:', type: 'float', default: 10 },
+        { name: 'pressureAngle', caption: 'Pressure angle:', type: 'float', default: 20 },
+        { name: 'clearance', caption: 'Clearance:', type: 'float', default: 0 },
+        { name: 'thickness', caption: 'Thickness:', type: 'float', default: 5 },
+        { name: 'centerholeradius', caption: 'Radius of center hole (0 for no hole):', type: 'float', default: 2 },
+    ];
+}
+/**
+ * Bind the user code to generate the
+ * @param code
+ * @param data
+ * @returns {null|any}
+ */
+function generateCSG(code, userdata) {
+
     let usercode = String(code).trim();
     let fnc_code;
     // bind the user code in the "fnc_code" function to avoid pollution of the current scope
@@ -28,8 +46,40 @@ function generateCSG(code) {
 }
 
 function letsgo() {
-    var generateShape = function(scale=15) {
-        var res = generateCSG(CsgLibrary.gear_01.code);
+
+    let data_dictionary = [];
+
+    let tableparams = document.getElementById('gearparams');
+    getParameterDefinitions().forEach(item => {
+        let tr = document.createElement('tr');
+        let td1 = document.createElement('td');
+        let td2 = document.createElement('td');
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        let input = document.createElement('input');
+        input.setAttribute('id', item.name);
+        input.setAttribute('value', item.default);
+        if (item.type == 'int' || item.type == 'float') {
+            input.setAttribute('type', 'number');
+        }
+        td2.appendChild(input);
+        data_dictionary.push(input);
+        let label = document.createElement('label');
+        label.innerText = item.caption;
+        label.setAttribute('for', item.name);
+        td1.appendChild(label);
+        tableparams.appendChild(tr);
+    });
+
+    var generateShape = function(scale=10) {
+
+        // collect parameters from formulary
+        let xdata = {};
+        data_dictionary.forEach(item => {
+           xdata[item.id] = Number(item.value);
+        });
+
+        var res = generateCSG(CsgLibrary.gear_01.code, xdata);
 
         var points = [];
         var polygons = [];
@@ -140,8 +190,6 @@ function letsgo() {
             genShape2(illo);
         }
     }
-
-    generateGraph();
 
     function draw (){
         if (isSpinning) {
@@ -290,6 +338,12 @@ function letsgo() {
 
     document.addEventListener('keydown', keyPressed, false);
     //document.addEventListener('keyup', keyReleased, false);
+
+    let update_button = document.getElementById('update');
+    update_button.addEventListener('click', (evt)=>{
+        generateGraph();
+    }, false);
+    update_button.click();
 
     animate();
 }
