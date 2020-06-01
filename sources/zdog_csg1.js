@@ -1,21 +1,28 @@
 import {CsgLibrary} from "../js/csg_library.js";
+import {CSG} from "../js/csg.js";
 
-function generateCSG(code, warning=null) {
-    var final ;
+function generateCSG(code) {
+    let usercode = String(code).trim();
+    let fnc_code;
+    // bind the user code in the "fnc_code" function to avoid pollution of the current scope
+    let binded_code = `fnc_code = ()=> {
+        "use strict";
+        let final = null;
+        ${usercode}  
+        return final;
+        }
+        fnc_code();
+        `;
+
     try {
-        let res = eval(code);
-        if (res == undefined) {
-            if (warning) {
-                warning.innerHTML = "always finih code with 'final' not prefixed by 'var' like that : <pre>final = ...</pre> ";
-            }
+        let res = eval(binded_code);
+        if (res == undefined || res == null) {
             return null;
         }
         return res;
     } catch(error) {
         console.warn(error);
-        if (warning) {
-            warning.innerHTML = error;
-        }
+        console.log(binded_code);
         return null;
     }
 }

@@ -1,21 +1,33 @@
 import {CsgLibrary} from "../js/csg_library.js";
+import {CSG} from "../js/csg.js";
 
 function generateCSG(code) {
-    var final ;
-    if (warning) {
-        warning.innerHTML = "";
-    }
+    let usercode = String(code).trim();
+    let fnc_code;
+    // bind the user code in the "fnc_code" function to avoid pollution of the current scope
+    let binded_code = `fnc_code = ()=> {
+        "use strict";
+        let final = null;
+        ${usercode}  
+        return final;
+        }
+        fnc_code();
+        `;
+
+    warning.innerHTML = '';
+
     try {
-        let res = eval(code);
-        if (res == undefined) {
+        let res = eval(binded_code);
+        if (res == undefined || res == null) {
             if (warning) {
-                warning.innerHTML = "always finih code with 'final' not prefixed by 'var' like that : <pre>final = ...</pre> ";
+                warning.innerHTML = "You must always finish your code with the predefined variable 'final' like on that example : <pre>final = your_last_var;</pre> ";
             }
             return null;
         }
         return res;
     } catch(error) {
         console.warn(error);
+        console.log(binded_code);
         if (warning) {
             warning.innerHTML = error;
         }
