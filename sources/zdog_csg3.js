@@ -1,41 +1,9 @@
 import {CsgLibrary} from "../js/csg_library.js";
 import {CSG} from "../js/csg.js";
-
-function generateCSG(code) {
-    let usercode = String(code).trim();
-    let fnc_code;
-    // bind the user code in the "fnc_code" function to avoid pollution of the current scope
-    let binded_code = `fnc_code = ()=> {
-        "use strict";
-        let final = null;
-        ${usercode}  
-        return final;
-        }
-        fnc_code();
-        `;
-
-    warning.innerHTML = '';
-
-    try {
-        let res = eval(binded_code);
-        if (res == undefined || res == null) {
-            if (warning) {
-                warning.innerHTML = "You must always finish your code with the predefined variable 'final' like on that example : <pre>final = your_last_var;</pre> ";
-            }
-            return null;
-        }
-        return res;
-    } catch(error) {
-        console.warn(error);
-        console.log(binded_code);
-        if (warning) {
-            warning.innerHTML = error;
-        }
-        return null;
-    }
-}
+import {generateCSG, generateOutputFileBlobUrl} from "../js/csg_tools.js";
 
 function letsgo() {
+    let current3Dobject;
     let current_code = CsgLibrary.basic_1.code;
 
     let textarea = document.getElementById('csgcode');
@@ -43,23 +11,39 @@ function letsgo() {
     let warning = document.getElementById('warning');
     let submit = document.getElementById('submit');
 
+    let export_area = document.getElementById('export');
+
+    let downloadLink = document.getElementById('export_link');
+    if (downloadLink == undefined) {
+        console.warn('Export not possible because the hidden download link is missing');
+    } else {
+        let export_button_stl = document.createElement('button');
+        export_button_stl.innerText = 'Generate STL';
+        export_area.appendChild(export_button_stl);
+        export_button_stl.addEventListener('click', (evt)=>{
+            generateOutputFileBlobUrl(current3Dobject, downloadLink, 'stl' )
+        }, false);
+    }
+
     var generateShape = function(scale=100) {
-        var res = generateCSG(textarea.value);
+        current3Dobject = generateCSG(CSG, textarea.value, null, warning);
 
-        var points = [];
-        var polygons = [];
-        var id_poly = -1;
+        let points = [];
+        let polygons = [];
+        let id_poly = -1;
 
-        res.polygons.forEach(items => {
-            var polygon = [];
-            items.vertices.forEach(vertex => {
-                let point = {x:vertex.pos.x*scale, y:vertex.pos.y*scale, z:vertex.pos.z*scale};
-                points.push(point);
-                id_poly++;
-                polygon.push(id_poly);
+        if (current3Dobject != null) {
+            current3Dobject.polygons.forEach(items => {
+                let polygon = [];
+                items.vertices.forEach(vertex => {
+                    let point = {x: vertex.pos.x * scale, y: vertex.pos.y * scale, z: vertex.pos.z * scale};
+                    points.push(point);
+                    id_poly++;
+                    polygon.push(id_poly);
+                });
+                polygons.push(polygon);
             });
-            polygons.push(polygon);
-        });
+        }
 
         return {points: points, polygons: polygons};
     };

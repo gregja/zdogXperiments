@@ -156,6 +156,14 @@ final = a.intersect(b).subtract(c.union(d).union(e))`
 csg_library['gear_01'] = {
     title: 'Gear example 1',
     comment: 'example of gear taken on : https://joostn.github.io/OpenJsCad/',
+    params: [
+        { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', default: 15 },
+        { name: 'circularPitch', caption: 'Circular pitch:', type: 'float', default: 10 },
+        { name: 'pressureAngle', caption: 'Pressure angle:', type: 'float', default: 20 },
+        { name: 'clearance', caption: 'Clearance:', type: 'float', default: 0 },
+        { name: 'thickness', caption: 'Thickness:', type: 'float', default: 5 },
+        { name: 'centerholeradius', caption: 'Radius of center hole (0 for no hole):', type: 'float', default: 2 },
+    ],
     code: `
 function main(params)
 {

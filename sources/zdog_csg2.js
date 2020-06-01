@@ -1,75 +1,28 @@
-import {CsgLibrary} from "../js/csg_library.js";
 import {CSG} from "../js/csg.js";
+import {CsgLibrary} from "../js/csg_library.js";
+import {generateOutputFileBlobUrl, generateCSG, generateTableForm} from "../js/csg_tools.js";
 
-// Here we define the user editable parameters:
-function getParameterDefinitions() {
-    return [
-        { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', default: 15 },
-        { name: 'circularPitch', caption: 'Circular pitch:', type: 'float', default: 10 },
-        { name: 'pressureAngle', caption: 'Pressure angle:', type: 'float', default: 20 },
-        { name: 'clearance', caption: 'Clearance:', type: 'float', default: 0 },
-        { name: 'thickness', caption: 'Thickness:', type: 'float', default: 5 },
-        { name: 'centerholeradius', caption: 'Radius of center hole (0 for no hole):', type: 'float', default: 2 },
-    ];
-}
-/**
- * Bind the user code to generate the
- * @param code
- * @param data
- * @returns {null|any}
- */
-function generateCSG(code, userdata) {
-
-    let usercode = String(code).trim();
-    let fnc_code;
-    // bind the user code in the "fnc_code" function to avoid pollution of the current scope
-    let binded_code = `fnc_code = ()=> {
-        "use strict";
-        let final = null;
-        ${usercode}  
-        return final;
-        }
-        fnc_code();
-        `;
-
-    try {
-        let res = eval(binded_code);
-        if (res == undefined || res == null) {
-            return null;
-        }
-        return res;
-    } catch(error) {
-        console.warn(error);
-        console.log(binded_code);
-        return null;
-    }
-}
 
 function letsgo() {
 
-    let data_dictionary = [];
+    let current3Dobject;
+    let externalShape = CsgLibrary.gear_01;
 
-    let tableparams = document.getElementById('gearparams');
-    getParameterDefinitions().forEach(item => {
-        let tr = document.createElement('tr');
-        let td1 = document.createElement('td');
-        let td2 = document.createElement('td');
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        let input = document.createElement('input');
-        input.setAttribute('id', item.name);
-        input.setAttribute('value', item.default);
-        if (item.type == 'int' || item.type == 'float') {
-            input.setAttribute('type', 'number');
-        }
-        td2.appendChild(input);
-        data_dictionary.push(input);
-        let label = document.createElement('label');
-        label.innerText = item.caption;
-        label.setAttribute('for', item.name);
-        td1.appendChild(label);
-        tableparams.appendChild(tr);
-    });
+    let export_area = document.getElementById('export');
+
+    let downloadLink = document.getElementById('export_link');
+    if (downloadLink == undefined) {
+        console.warn('Export not possible because the hidden download link is missing');
+    } else {
+        let export_button_stl = document.createElement('button');
+        export_button_stl.innerText = 'Generate STL';
+        export_area.appendChild(export_button_stl);
+        export_button_stl.addEventListener('click', (evt)=>{
+            generateOutputFileBlobUrl(current3Dobject, downloadLink, 'stl' )
+        }, false);
+    }
+
+    let data_dictionary = generateTableForm('gearparams', externalShape.params);
 
     var generateShape = function(scale=10) {
 
@@ -79,22 +32,24 @@ function letsgo() {
            xdata[item.id] = Number(item.value);
         });
 
-        var res = generateCSG(CsgLibrary.gear_01.code, xdata);
+        current3Dobject = generateCSG(CSG, externalShape.code, xdata);
 
-        var points = [];
-        var polygons = [];
-        var id_poly = -1;
+        let points = [];
+        let polygons = [];
+        let id_poly = -1;
 
-        res.polygons.forEach(items => {
-            var polygon = [];
-            items.vertices.forEach(vertex => {
-                let point = {x:vertex.pos.x*scale, y:vertex.pos.y*scale, z:vertex.pos.z*scale};
-                points.push(point);
-                id_poly++;
-                polygon.push(id_poly);
+        if (current3Dobject != null) {
+            current3Dobject.polygons.forEach(items => {
+                let polygon = [];
+                items.vertices.forEach(vertex => {
+                    let point = {x: vertex.pos.x * scale, y: vertex.pos.y * scale, z: vertex.pos.z * scale};
+                    points.push(point);
+                    id_poly++;
+                    polygon.push(id_poly);
+                });
+                polygons.push(polygon);
             });
-            polygons.push(polygon);
-        });
+        }
 
         return {points: points, polygons: polygons};
     };

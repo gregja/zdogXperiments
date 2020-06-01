@@ -1,7 +1,8 @@
 import {CsgLibrary} from "../js/csg_library.js";
 import {CSG} from "../js/csg.js";
+import {generateCSG} from "../js/csg_tools.js";
 
-function generateCSG(code) {
+function generateCSGxx(code) {
     let usercode = String(code).trim();
     let fnc_code;
     // bind the user code in the "fnc_code" function to avoid pollution of the current scope
@@ -28,8 +29,16 @@ function generateCSG(code) {
 }
 
 function letsgo() {
+
+    let externalShape = CsgLibrary.xtrusions_1;
+
+    let target_jscode = document.getElementById('jscode');
+    if (target_jscode) {
+        target_jscode.innerHTML = externalShape.code;
+    }
+
     var generateShape = function(scale=150) {
-        var res = generateCSG(CsgLibrary.xtrusions_1.code);
+        var res = generateCSG(CSG, externalShape.code);
 
         var points = [];
         var polygons = [];

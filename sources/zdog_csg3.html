@@ -29,19 +29,21 @@
 		 <input id="colorpicker" type="color">
 		 <button id="drawmode"></button>
 		 <button id="spinning"></button>
+		 <div id="export" style="float: right;"><a id="export_link" style="display: none;"></a></div>
 		 <form id="datas">
 			 <label for="csgcode">Code editable :</label><br>
 			 <textarea id="csgcode" style="background-color: #f1f1f1; border-radius: 3px;" rows="10" cols="100"></textarea>
 			 </label><p id="warning" style="color:red;"></p>
 			 <input type="submit" value="Submit" id="submit" style="border-radius: 3px;">
 		 </form><br>
-		 <p>Operations (example) : <pre style="display:inline;">a.intersect(b).subtract(c.union(d).union(e))</pre></p>
-		 <p>Documentations : <a target="_blank" href="https://joostn.github.io/OpenJsCad/">joostn.github.io/OpenJsCad</a>,
-			 &nbsp;<a target="_blank" href="http://evanw.github.io/csg.js/">evanw.github.io/csg.js</a>,
-			 &nbsp;<a target="_blank" href="https://en.wikibooks.org/wiki/OpenJSCAD_User_Guide">OpenJSCAD wikibook</a></p>
+		 <!-- <p>Operations (example) : <pre style="display:inline;">a.intersect(b).subtract(c.union(d).union(e))</pre></p> -->
+
 		 <p>Click &amp; drag to rotate + Arrow keys to zoom (or Escape to reset)</p>
 		 <canvas class="zdog-canvas" width="800" height="600"></canvas>
 
+		 <p>Documentations : <a target="_blank" href="https://joostn.github.io/OpenJsCad/">joostn.github.io/OpenJsCad</a>,
+			 &nbsp;<a target="_blank" href="http://evanw.github.io/csg.js/">evanw.github.io/csg.js</a>,
+			 &nbsp;<a target="_blank" href="https://en.wikibooks.org/wiki/OpenJSCAD_User_Guide">OpenJSCAD wikibook</a></p>
 	 </div>
 	<script src="../js/zdog.dist.js"></script>
 	<script src="../js/chroma.min.js"></script>
