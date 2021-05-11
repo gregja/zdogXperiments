@@ -9,7 +9,7 @@
  *    https://petercollingridge.appspot.com/3D-tutorial/rotating-objects
  */
 
-var shapeCalabiYau = (function (mathjs) {
+var shapeCalabiYau = (function (math) {
     "use strict";
 
     const {
